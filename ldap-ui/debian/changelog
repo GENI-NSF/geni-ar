@@ -1,3 +1,11 @@
+idp-tools-ldap-ui (0.0.0-0dev~1.gbp86bfd5) UNRELEASED; urgency=low
+
+  ** SNAPSHOT build @86bfd5c5b621cc0afe8ec277a5a0dd4cbee98a47 **
+
+  * UNRELEASED
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Thu, 25 Apr 2013 16:53:07 -0400
+
 idp-tools-ldap-ui (0.0.0-0) UNRELEASED; urgency=low
 
   * Initial version
