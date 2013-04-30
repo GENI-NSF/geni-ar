@@ -1,10 +1,18 @@
-idp-tools-ldap-ui (0.0.0-0dev~1.gbp86bfd5) UNRELEASED; urgency=low
+idp-tools-ldap-ui (0.0.0-0dev~2.gbp07f46f) UNRELEASED; urgency=low
 
+  ** SNAPSHOT build @07f46f57d3fc7bd5376f69e4e45b562d32d7222c **
+
+  [ Tom Mitchell ]
   ** SNAPSHOT build @86bfd5c5b621cc0afe8ec277a5a0dd4cbee98a47 **
 
   * UNRELEASED
+  * Create snapshot package idp-tools-ldap-ui-0.0.0-0dev~1.gbp86bfd5
 
- -- Tom Mitchell <tmitchel@bbn.com>  Thu, 25 Apr 2013 16:53:07 -0400
+  [ Chaos Golubitsky ]
+  * * request.html should point to handlerequest.php where this repo
+    puts it
+
+ -- Chaos Golubitsky <chaos@bbn.com>  Tue, 30 Apr 2013 15:53:10 -0400
 
 idp-tools-ldap-ui (0.0.0-0) UNRELEASED; urgency=low
 
