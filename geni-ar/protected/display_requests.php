@@ -1,0 +1,62 @@
+<?php
+//----------------------------------------------------------------------
+// Copyright (c) 2012 Raytheon BBN Technologies
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and/or hardware specification (the "Work") to
+// deal in the Work without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Work, and to permit persons to whom the Work
+// is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Work.
+//
+// THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+// IN THE WORK.
+//----------------------------------------------------------------------
+
+$mypath = '/usr/share/geni-ar/lib/php' . PATH_SEPARATOR . '/etc/geni-ar';
+set_include_path($mypath . PATH_SEPARATOR . get_include_path());
+
+require_once('db_utils.php');
+require_once('ar_constants.php');
+require_once('settings.php');
+
+  $conn = db_conn();
+  $sql = "SELECT * FROM " . $AR_TABLENAME;
+  $result = db_fetch_rows($sql);
+//  error_log(print_r($result,true));
+    error_log("TEST");
+
+    $rows = $result['value'];
+    //$row = $line[0];
+    //error_log(print_r($row['last_name'],true));
+
+print '<table border="1">';
+print '<tr><th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
+print '<th>Account Created</th><th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
+foreach ($rows as $row) {
+	error_log(print_r($row, true));
+	$firstname = $row['first_name'];
+	$lastname = $row['last_name'];
+	$email = $row['email'];
+	$uname = $row['username_requested'];
+	$phone = $row['phone'];
+	$pw = $row['password_hash'];
+	$requested = $row['request_ts'];
+	$created = $row['created_ts'];
+	$inst = $row['organization'];
+	$title = $row['title'];
+	$reason = $row['reason'];
+	print "<tr><td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$created</td><td>$inst</td><td>$title</td><td>$reason</td></tr>";
+}
+print '</table>'; 	
+
+?>
