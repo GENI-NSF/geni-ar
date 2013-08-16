@@ -4,10 +4,12 @@ nobase_dist_pkgdata_DATA = \
 	apache2.conf \
 	www/request.html \
 	www/handlerequest.php \
+	protected/display_requests.php \
 	protected/index.html \
 	lib/php/db_utils.php \
 	lib/php/geni_syslog.php \
 	lib/php/response_format.php \
+	lib/php/ar_constants.php \
 	db/postgresql/schema.sql
 
 dist_sbin_SCRIPTS = \
