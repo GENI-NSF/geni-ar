@@ -7,6 +7,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/display_requests.php \
 	protected/approve_request.php \
 	protected/index.html \
+	protected/ldap.php \
 	lib/php/db_utils.php \
 	lib/php/geni_syslog.php \
 	lib/php/response_format.php \
