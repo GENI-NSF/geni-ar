@@ -5,6 +5,7 @@ nobase_dist_pkgdata_DATA = \
 	www/request.html \
 	www/handlerequest.php \
 	protected/display_requests.php \
+	protected/approve_request.php \
 	protected/index.html \
 	lib/php/db_utils.php \
 	lib/php/geni_syslog.php \

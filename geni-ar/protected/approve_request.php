@@ -25,46 +25,15 @@
 $mypath = '/usr/share/geni-ar/lib/php' . PATH_SEPARATOR . '/etc/geni-ar';
 set_include_path($mypath . PATH_SEPARATOR . get_include_path());
 
-require_once('db_utils.php');
-require_once('ar_constants.php');
-require_once('settings.php');
+print 'APPROVED ';
 
-$conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME;
-$result = db_fetch_rows($sql);
+$username = $_REQUEST['username'];
+print $username;
+//$ldap_conn = ldap_connect("macomb.gpolab.bbn.com");
+//error_log($ldap_conn);
 
-$rows = $result['value'];
+//$result = shell_exec("ldapsearch -xLLL -b 'dc=shib-idp2,dc=gpolab,dc=bbn,dc=com' uid=* sn givenName cn");
+$cmd = "ldapadd -D cn=" . $username . ",dc=gpolab, dc=bbn, dc=com -f ldap/users.gpolab.bbn.com.ldif";
+$result = shell_exec($cmd);
 
-
-print '<table border="1">';
-print '<tr>';
-print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
-print '<th>Account Created</th><th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
-foreach ($rows as $row) {
-  $firstname = $row['first_name'];
-  $lastname = $row['last_name'];
-  $email = $row['email'];
-  $uname = $row['username_requested'];
-  $phone = $row['phone'];
-  $pw = $row['password_hash'];
-  $requested = $row['request_ts'];
-  $created = $row['created_ts'];
-  $inst = $row['organization'];
-  $title = $row['title'];
-  $reason = $row['reason'];
-  print '<form method="POST" action="approve_request.php">';
-  print "<tr>";
-  print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$created</td><td>$inst</td><td>$title</td><td>$reason</td>";
-  print'<td>';
-  print '<input type="submit" value="APPROVE"/>';
-  print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
-  print '</td>';
-  print '</tr>';
-  print '</form>';	
-
-
-}
-
-print '</table>';
-
-?>
+print $result;
