@@ -9,6 +9,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/index.html \
 	protected/ldap.php \
 	lib/php/db_utils.php \
+	lib/php/ldap_utils.php \
 	lib/php/geni_syslog.php \
 	lib/php/response_format.php \
 	lib/php/ar_constants.php \
