@@ -49,7 +49,6 @@ $attrs['sn'] = $sn;
 $attrs['givenName'] = $givenName;
 $attrs['cn'] = $givenName . " " . $sn;
 $attrs['displayName'] = $givenName . " " . $sn;
-# default password is geni
 $attrs['userPassword'] = $pw;
 $attrs['mail'] = $mail;
 $attrs['eduPersonAffiliation'][] = "member";
