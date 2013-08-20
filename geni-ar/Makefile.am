@@ -32,6 +32,7 @@ nobase_dist_pkgdata_DATA = \
 	www/handlerequest.php \
 	protected/display_requests.php \
 	protected/approve_request.php \
+	protected/deny_request.php \
 	protected/index.html \
 	protected/ldap.php \
 	lib/php/db_utils.php \

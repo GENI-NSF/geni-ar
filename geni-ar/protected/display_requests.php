@@ -53,10 +53,10 @@ foreach ($rows as $row) {
   $org = $row['organization'];
   $title = $row['title'];
   $reason = $row['reason'];
-  print '<form method="POST" action="approve_request.php">';
   print "<tr>";
   print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$org</td><td>$title</td><td>$reason</td>";
   print'<td>';
+  print '<form method="POST" action="approve_request.php">';
   print '<input type="submit" value="APPROVE"/>';
   print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
   print "<input type=\"hidden\" name=\"firstname\" value=\"$firstname\"/>";
@@ -65,9 +65,13 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"phone\" value=\"$phone\"/>";
   print "<input type=\"hidden\" name=\"pw\" value=\"$pw\"/>";
   print "<input type=\"hidden\" name=\"org\" value=\"$org\"/>";
+  print "</form>";
+  print '<form method="POST" action="deny_request.php">';
+  print '<input type="submit" value="DENY"/>';
+  print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
+  print '</form>';	
   print '</td>';
   print '</tr>';
-  print '</form>';	
 }
 print '</table>';
 
@@ -77,7 +81,7 @@ $result = db_fetch_rows($sql);
 $rows = $result['value'];
 
 print '<h1>';
-print '<p>Completed Account Requests</p>';
+print '<p>Approved Account Requests</p>';
 print '</h1>';
 
 print '<table border="1">';
