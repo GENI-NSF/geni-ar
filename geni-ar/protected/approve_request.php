@@ -21,19 +21,15 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-
+include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 
-$mypath = '/usr/share/geni-ar/lib/php' . PATH_SEPARATOR . '/etc/geni-ar';
-set_include_path($mypath . PATH_SEPARATOR . get_include_path());
+global $user_dn;
 
 //Add account to ldap database
-
 $ldapconn = ldap_setup();
-
-$base_dn = "dc=shib-idp2,dc=gpolab,dc=bbn,dc=com";
 
 $uid = $_REQUEST['username'];
 print $uid;
@@ -45,7 +41,7 @@ $phone =  $_REQUEST['phone'];
 $pw =  $_REQUEST['pw'];
 $org =  $_REQUEST['org'];
 
-$new_dn = "uid=" . $uid . ",ou=people,dc=shib-idp2,dc=gpolab,dc=bbn,dc=com";
+$new_dn = "uid=" . $uid . $user_dn;
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
 $attrs['uid'] = $uid;

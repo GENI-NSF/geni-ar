@@ -26,18 +26,12 @@ include_once('/etc/geni-ar/settings.php');
 
 function ldap_setup()
 {
-  // Load from settings
-  $ldaprdn  = 'cn=admin,dc=shib-idp2,dc=gpolab,dc=bbn,dc=com';
-
-  // Load from settings
-  $ldappass = 'HrHQdYVP5tWSNYADyEA8';
-
-  // Load from settings
-  $ldap_host = 'localhost';
-  $ldap_port = 389;
+  global $ldap_host;
+  global $ldap_port;
+  global $ldaprdn;
+  global $ldappass;
 
   // Note: try "ldap://" instead of host
-
   // connect to ldap server
   $ldapconn = ldap_connect($ldap_host, $ldap_port)
     or die("Could not connect to LDAP server.");

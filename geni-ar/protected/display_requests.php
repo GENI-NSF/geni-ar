@@ -21,13 +21,9 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-
-$mypath = '/usr/share/geni-ar/lib/php' . PATH_SEPARATOR . '/etc/geni-ar';
-set_include_path($mypath . PATH_SEPARATOR . get_include_path());
-
 require_once('db_utils.php');
 require_once('ar_constants.php');
-require_once('settings.php');
+include_once('/etc/geni-ar/settings.php');
 
 $conn = db_conn();
 $sql = "SELECT * FROM " . $AR_TABLENAME;
