@@ -23,6 +23,9 @@ apache2.conf: Makefile
 
 apache2.conf: $(srcdir)/apache2.conf.in
 
+EXTRA_DIST = apache2.conf.in
+CLEANFILES = apache2.conf
+
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
 	www/request.html \
