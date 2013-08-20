@@ -1,0 +1,14 @@
+Source: geni-ar
+Section: contrib/misc
+Priority: extra
+Maintainer: Tom Mitchell <tmitchel@bbn.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://trac.gpolab.bbn.com/shib
+
+Package: geni-ar
+Architecture: all
+Depends: ${misc:Depends}
+Recommends: apache2, php5
+Description: GENI account request management
+ Manages GENI IdP account requests.
