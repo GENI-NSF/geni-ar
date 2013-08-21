@@ -64,5 +64,8 @@ ldap_close($ldapconn);
 $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
 print $sql;
 $result = db_execute_statement($sql);
+$sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
+print $sql;
+$result = db_execute_statement($sql);
 
 ?>

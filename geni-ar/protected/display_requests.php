@@ -26,7 +26,7 @@ require_once('ar_constants.php');
 include_once('/etc/geni-ar/settings.php');
 
 $conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE created_ts IS NULL";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE state='REQUESTED'";
 $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
@@ -75,7 +75,7 @@ foreach ($rows as $row) {
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE created_ts IS NOT NULL";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE state='APPROVED'";
 $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
@@ -104,4 +104,34 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 print '</table>';
+
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE state='DENIED'";
+$result = db_fetch_rows($sql);
+
+$rows = $result['value'];
+
+print '<h1>';
+print '<p>Denied Account Requests</p>';
+print '</h1>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
+foreach ($rows as $row) {
+  $firstname = $row['first_name'];
+  $lastname = $row['last_name'];
+  $email = $row['email'];
+  $uname = $row['username_requested'];
+  $phone = $row['phone'];
+  $pw = $row['password_hash'];
+  $requested = $row['request_ts'];
+  $org = $row['organization'];
+  $title = $row['title'];
+  $reason = $row['reason'];
+  print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$org</td><td>$title</td><td>$reason</td>";
+  print '</tr>';
+}
+print '</table>';
+
 ?>

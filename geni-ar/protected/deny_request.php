@@ -28,7 +28,7 @@ require_once('ar_constants.php');
 print "DENIED!!";
 // Now set created timestamp in postgres db
 $uid = $_REQUEST['username'];
-$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts="0:0:0" where username_requested =\'' . $uid . '\'';
+$sql = "UPDATE " . $AR_TABLENAME . " SET state='DENIED' where username_requested ='" . $uid . '\'';
 print $sql;
 $result = db_execute_statement($sql);
 
