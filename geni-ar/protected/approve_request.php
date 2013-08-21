@@ -32,7 +32,6 @@ global $user_dn;
 $ldapconn = ldap_setup();
 
 $uid = $_REQUEST['username'];
-print $uid;
 $sn =  $_REQUEST['lastname'];
 $givenName =  $_REQUEST['firstname'];
 $sn =  $_REQUEST['lastname'];
@@ -57,15 +56,14 @@ $attrs['telephoneNumber'] = $phone;
 $attrs['o'] = $org;
 
 $ret = ldap_add($ldapconn, $new_dn, $attrs);
-//print $ret;
 ldap_close($ldapconn);
 
 // Now set created timestamp in postgres db
 $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
-print $sql;
 $result = db_execute_statement($sql);
 $sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
-print $sql;
 $result = db_execute_statement($sql);
+
+header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
 
 ?>
