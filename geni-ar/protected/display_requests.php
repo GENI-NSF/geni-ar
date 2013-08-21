@@ -39,23 +39,22 @@ print '</h1>';
 
 print '<table border="1">';
 print '<tr>';
-print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
-print '<th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
+print '<th> </th><th> </th>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
 foreach ($rows as $row) {
-  $firstname = $row['first_name'];
-  $lastname = $row['last_name'];
-  $email = $row['email'];
-  $uname = $row['username_requested'];
-  $phone = $row['phone'];
-  $pw = $row['password_hash'];
-  $requested = $row['request_ts'];
-  //$created = $row['created_ts'];
   $org = $row['organization'];
   $title = $row['title'];
   $reason = $row['reason'];
+  $firstname = $row['first_name'];
+  $lastname = $row['last_name'];
+  $email = $row['email'];
+  $phone = $row['phone'];
+  $uname = $row['username_requested'];
+  $requested = $row['request_ts'];
+  $requested = substr($requested,0,16);
   print "<tr>";
-  print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$org</td><td>$title</td><td>$reason</td>";
-  print'<td>';
+  print'<td align="center">';
   print '<form method="POST" action="approve_request.php">';
   print '<input type="submit" value="APPROVE"/>';
   print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
@@ -63,14 +62,16 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"lastname\" value=\"$lastname\"/>";
   print "<input type=\"hidden\" name=\"email\" value=\"$email\"/>";
   print "<input type=\"hidden\" name=\"phone\" value=\"$phone\"/>";
-  print "<input type=\"hidden\" name=\"pw\" value=\"$pw\"/>";
   print "<input type=\"hidden\" name=\"org\" value=\"$org\"/>";
   print "</form>";
+  print "</td>";
+  print'<td align="center">';
   print '<form method="POST" action="deny_request.php">';
   print '<input type="submit" value="DENY"/>';
   print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
   print '</form>';	
   print '</td>';
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$firstname</td><td>$lastname</td><td>$email</td><td>$phone</td><td>$uname</td><td>$requested</td>";
   print '</tr>';
 }
 print '</table>';
@@ -86,21 +87,22 @@ print '</h1>';
 
 print '<table border="1">';
 print '<tr>';
-print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
-print '<th>Account Created</th><th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Account Created</th></tr>';
 foreach ($rows as $row) {
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
   $email = $row['email'];
   $uname = $row['username_requested'];
   $phone = $row['phone'];
-  $pw = $row['password_hash'];
   $requested = $row['request_ts'];
+  $requested = substr($requested,0,16);
   $created = $row['created_ts'];
+  $created = substr($created,0,16);
   $org = $row['organization'];
   $title = $row['title'];
   $reason = $row['reason'];
-  print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$created</td><td>$org</td><td>$title</td><td>$reason</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$firstname</td><td>$lastname</td><td>$email</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$created</td>";
   print '</tr>';
 }
 print '</table>';
@@ -116,20 +118,20 @@ print '</h1>';
 
 print '<table border="1">';
 print '<tr>';
-print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Username</th><th>Phone Number</th><th>PW Hash</th><th>Asked for Account</th>';
-print '<th>Institution</th><th>Job Title</th><th>Account Reason</th></tr>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>First Name</th><th>Last Name</th><th>Email Address</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
 foreach ($rows as $row) {
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
   $email = $row['email'];
   $uname = $row['username_requested'];
   $phone = $row['phone'];
-  $pw = $row['password_hash'];
   $requested = $row['request_ts'];
+  $requested = substr($requested,0,16);
   $org = $row['organization'];
   $title = $row['title'];
   $reason = $row['reason'];
-  print "<td>$firstname</td><td>$lastname</td><td>$email</td><td>$uname</td><td>$phone</td><td>$pw</td><td>$requested</td><td>$org</td><td>$title</td><td>$reason</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$firstname</td><td>$lastname</td><td>$email</td><td>$phone</td><td>$uname</td><td>$requested</td>";
   print '</tr>';
 }
 print '</table>';
