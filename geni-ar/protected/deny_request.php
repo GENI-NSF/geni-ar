@@ -25,11 +25,9 @@ include_once('/etc/geni-ar/settings.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 
-print "DENIED!!";
 // Now set created timestamp in postgres db
 $uid = $_REQUEST['username'];
 $sql = "UPDATE " . $AR_TABLENAME . " SET state='DENIED' where username_requested ='" . $uid . '\'';
-print $sql;
 $result = db_execute_statement($sql);
-
+header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
 ?>
