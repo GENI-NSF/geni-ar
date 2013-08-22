@@ -49,6 +49,7 @@ foreach ($rows as $row) {
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
   $email = $row['email'];
+  $pw = $row['password_hash'];
   $phone = $row['phone'];
   $uname = $row['username_requested'];
   $requested = $row['request_ts'];
@@ -61,6 +62,7 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"firstname\" value=\"$firstname\"/>";
   print "<input type=\"hidden\" name=\"lastname\" value=\"$lastname\"/>";
   print "<input type=\"hidden\" name=\"email\" value=\"$email\"/>";
+  print "<input type=\"hidden\" name=\"pw\" value=\"$pw\"/>";
   print "<input type=\"hidden\" name=\"phone\" value=\"$phone\"/>";
   print "<input type=\"hidden\" name=\"org\" value=\"$org\"/>";
   print "</form>";

@@ -37,9 +37,10 @@ function ldap_setup()
     or die("Could not connect to LDAP server.");
 
   if (ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3)) {
-    echo "Using LDAPv3";
+    //echo "Using LDAPv3";
   } else {
     echo "Failed to set protocol version to 3";
+    return -1;
   }
 
   // This is necessary -- without it, bind fails
@@ -51,11 +52,31 @@ function ldap_setup()
 
   // verify binding
   if ($ldapbind) {
-    echo "LDAP bind successful...";
+    //echo "LDAP bind successful...";
   } else {
     echo "LDAP bind failed...";
+    return -1;
   }
   return $ldapconn;
+}
+
+function ldap_check_account($ldapconn, $uid) 
+{
+  global $base_dn;
+
+  $filter = "(uid=" . $uid . ")";
+  $ret = ldap_search($ldapconn, $base_dn, $filter);
+  $acc = ldap_get_entries($ldapconn,$ret);
+  if ($acc["count"] > 0)
+    {
+      return true;
+    }
+  else
+    {
+      return false;
+    }
+  
+
 }
 
 ?>
