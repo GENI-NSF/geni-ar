@@ -41,6 +41,12 @@ $mail =  $_REQUEST['email'];
 $phone =  $_REQUEST['phone'];
 $pw =  $_REQUEST['pw'];
 $org =  $_REQUEST['org'];
+$action = $_REQUEST['action'];
+
+//$array = $_REQUEST;
+//foreach ($array as $var => $value) {
+//    print "$var = $value<br/>";
+//   }
 
 $new_dn = "uid=" . $uid . $user_dn;
 $attrs['objectClass'][] = "inetOrgPerson";
@@ -63,14 +69,27 @@ if (ldap_check_account($ldapconn,$uid))
     print("Account for uid=" . $uid . " exists.");
   }
 else 
-  { 
-    $ret = ldap_add($ldapconn, $new_dn, $attrs);
-
-    // Now set created timestamp in postgres db
-    $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
-    $result = db_execute_statement($sql);
-    $sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
+  {
+    if ($action==="approve")
+      {
+	$ret = ldap_add($ldapconn, $new_dn, $attrs);
+	
+	// Now set created timestamp in postgres db
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
+	$result = db_execute_statement($sql);
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
+    else if ($action === 'deny')
+      {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
+    else if ($action === "hold")
+      {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='HOLD' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
 
     header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
   }
