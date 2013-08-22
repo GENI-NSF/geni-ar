@@ -30,6 +30,8 @@ global $user_dn;
 
 //Add account to ldap database
 $ldapconn = ldap_setup();
+if ($ldapconn === -1)
+  exit();
 
 $uid = $_REQUEST['username'];
 $sn =  $_REQUEST['lastname'];
@@ -55,15 +57,24 @@ $attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $phone;
 $attrs['o'] = $org;
 
-$ret = ldap_add($ldapconn, $new_dn, $attrs);
+//First check if account exists
+if (ldap_check_account($ldapconn,$uid))
+  {
+    print("Account for uid=" . $uid . " exists.");
+  }
+else 
+  { 
+    $ret = ldap_add($ldapconn, $new_dn, $attrs);
+
+    // Now set created timestamp in postgres db
+    $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
+    $result = db_execute_statement($sql);
+    $sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
+    $result = db_execute_statement($sql);
+
+    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+  }
 ldap_close($ldapconn);
 
-// Now set created timestamp in postgres db
-$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
-$result = db_execute_statement($sql);
-$sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
-$result = db_execute_statement($sql);
-
-header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
 
 ?>
