@@ -24,5 +24,5 @@ CREATE TABLE idp_account_request (
   request_ts timestamp DEFAULT NOW(),
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
-  state VARCHAR DEFAULT 'REQUESTED'
+  request_state VARCHAR DEFAULT 'REQUESTED'
 );

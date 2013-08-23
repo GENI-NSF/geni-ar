@@ -33,29 +33,31 @@ $ldapconn = ldap_setup();
 if ($ldapconn === -1)
   exit();
 
-$uid = $_REQUEST['username'];
-$sn =  $_REQUEST['lastname'];
-$givenName =  $_REQUEST['firstname'];
-$sn =  $_REQUEST['lastname'];
-$mail =  $_REQUEST['email'];
-$phone =  $_REQUEST['phone'];
-$pw =  $_REQUEST['pw'];
-$org =  $_REQUEST['org'];
+$id = $_REQUEST['id'];
+$action = $_REQUEST['action'];
+
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE id=" . $id;
+$result = db_fetch_rows($sql);
+$row = $result['value'][0];
+
+$uid = $row['username_requested']; 
 
 $new_dn = "uid=" . $uid . $user_dn;
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
 $attrs['uid'] = $uid;
-$attrs['sn'] = $sn;
-$attrs['givenName'] = $givenName;
-$attrs['cn'] = $givenName . " " . $sn;
-$attrs['displayName'] = $givenName . " " . $sn;
-$attrs['userPassword'] = $pw;
-$attrs['mail'] = $mail;
+$lastname = $row['last_name'];
+$attrs['sn'] = $lastname;
+$firstname = $row['first_name'];
+$attrs['givenName'] = $firstname;
+$attrs['cn'] = $firstname . " " . $lastname;
+$attrs['displayName'] = $firstname . " " . $lastname;
+$attrs['userPassword'] = $row['password_hash'];
+$attrs['mail'] = $row['email'];
 $attrs['eduPersonAffiliation'][] = "member";
 $attrs['eduPersonAffiliation'] []= "staff";
-$attrs['telephoneNumber'] = $phone;
-$attrs['o'] = $org;
+$attrs['telephoneNumber'] = $row['phone'];
+$attrs['o'] = $row['organization'];
 
 //First check if account exists
 if (ldap_check_account($ldapconn,$uid))
@@ -63,18 +65,42 @@ if (ldap_check_account($ldapconn,$uid))
     print("Account for uid=" . $uid . " exists.");
   }
 else 
-  { 
-    $ret = ldap_add($ldapconn, $new_dn, $attrs);
+  {
+    if ($action==="approve")
+      {
+	$ret = ldap_add($ldapconn, $new_dn, $attrs);
 
-    // Now set created timestamp in postgres db
-    $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
-    $result = db_execute_statement($sql);
-    $sql = "UPDATE " . $AR_TABLENAME . " SET state='APPROVED' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
+	// notify in email
+	$subject = "New IdP Account Created";
+	$body = 'A new IdP account has been created for ';
+	$body .= "$uid.\n\n";
+	$email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
+	foreach ($email_vars as $var) {
+	  $val = $row[$var];
+	  $body .= "$var: $val\n";
+	}
+	$body .= "\nSee table idp_account_request for complete details.\n";
+	mail($portal_admin_email, $subject, $body);
+
+	// Now set created timestamp in postgres db
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
+	$result = db_execute_statement($sql);
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
+    else if ($action === 'deny')
+      {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
+    else if ($action === "hold")
+      {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='HOLD' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+      }
 
     header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
   }
 ldap_close($ldapconn);
-
 
 ?>
