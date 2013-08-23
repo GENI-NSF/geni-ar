@@ -69,7 +69,19 @@ else
     if ($action==="approve")
       {
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
-	
+
+	// notify in email
+	$subject = "New IdP Account Created";
+	$body = 'A new IdP account has been created for ';
+	$body .= "$uid.\n\n";
+	$email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
+	foreach ($email_vars as $var) {
+	  $val = $row[$var];
+	  $body .= "$var: $val\n";
+	}
+	$body .= "\nSee table idp_account_request for complete details.\n";
+	mail($portal_admin_email, $subject, $body);
+
 	// Now set created timestamp in postgres db
 	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
 	$result = db_execute_statement($sql);
