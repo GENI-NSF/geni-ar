@@ -64,7 +64,7 @@ foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
   print'<td align="center">';
-  print '<form method="POST" action="handle_request.php">';
+  print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="hold">HOLD</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
@@ -94,7 +94,7 @@ foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
   print'<td align="center">';
-  print '<form method="POST" action="handle_request.php">';
+  print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
