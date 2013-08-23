@@ -28,117 +28,13 @@ include_once('/etc/geni-ar/settings.php');
 $conn = db_conn();
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='REQUESTED'";
 $result = db_fetch_rows($sql);
-
-$rows = $result['value'];
-$array = $_REQUEST;
-foreach ($array as $var => $value) {
-    print "$var = $value<br/>";
-    }
-//print 'user: ' . $_SERVER['PHP_AUTH_USER']. "<br/>";
-
-print '<h1>';
-print '<p>Current Account Requests</p>';
-print '</h1>';
-
-print '<table border="1">';
-print '<tr>';
-print '<th> </th>';
-print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
-foreach ($rows as $row) {
-  $org = $row['organization'];
-  $title = $row['title'];
-  $reason = $row['reason'];
-  $firstname = $row['first_name'];
-  $lastname = $row['last_name'];
-  $email = $row['email'];
-  $pw = $row['password_hash'];
-  $phone = $row['phone'];
-  $uname = $row['username_requested'];
-  $requested = $row['request_ts'];
-  $requested = substr($requested,0,16);
-  print "<tr>";
-  print'<td align="center">';
-  print '<form method="POST" action="handle_request.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="hold">HOLD</option></select>';
-  print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
-  print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
-  print "<input type=\"hidden\" name=\"firstname\" value=\"$firstname\"/>";
-  print "<input type=\"hidden\" name=\"lastname\" value=\"$lastname\"/>";
-  print "<input type=\"hidden\" name=\"email\" value=\"$email\"/>";
-  print "<input type=\"hidden\" name=\"pw\" value=\"$pw\"/>";
-  print "<input type=\"hidden\" name=\"phone\" value=\"$phone\"/>";
-  print "<input type=\"hidden\" name=\"org\" value=\"$org\"/>";
-  print "</form>";
-  print "</td>";
-
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
-  print '</tr>';
-}
-print '</table>';
-
-
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='HOLD'";
-$result = db_fetch_rows($sql);
-
 $rows = $result['value'];
 
-print '<h1>';
-print '<p>Account Requests On-Hold</p>';
-print '</h1>';
+function get_values($row)
+{
+  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason;
 
-print '<table border="1">';
-print '<tr>';
-print '<th> </th>';
-print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
-foreach ($rows as $row) {
-  $firstname = $row['first_name'];
-  $lastname = $row['last_name'];
-  $email = $row['email'];
-  $uname = $row['username_requested'];
-  $phone = $row['phone'];
-  $requested = $row['request_ts'];
-  $requested = substr($requested,0,16);
-  $org = $row['organization'];
-  $title = $row['title'];
-  $reason = $row['reason'];
-  print "<tr>";
-  print'<td align="center">';
-  print '<form method="POST" action="handle_request.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option></select>';
-  print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
-  print "<input type=\"hidden\" name=\"username\" value=\"$uname\"/>";
-  print "<input type=\"hidden\" name=\"firstname\" value=\"$firstname\"/>";
-  print "<input type=\"hidden\" name=\"lastname\" value=\"$lastname\"/>";
-  print "<input type=\"hidden\" name=\"email\" value=\"$email\"/>";
-  print "<input type=\"hidden\" name=\"pw\" value=\"$pw\"/>";
-  print "<input type=\"hidden\" name=\"phone\" value=\"$phone\"/>";
-  print "<input type=\"hidden\" name=\"org\" value=\"$org\"/>";
-  print "</form>";
-  print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
-  print '</tr>';
-}
-print '</table>';
-
-
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='APPROVED'";
-$result = db_fetch_rows($sql);
-
-$rows = $result['value'];
-
-print '<h1>';
-print '<p>Approved Account Requests</p>';
-print '</h1>';
-
-print '<table border="1">';
-print '<tr>';
-print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Account Created</th></tr>';
-foreach ($rows as $row) {
+  $id = $row['id'];
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
   $email = $row['email'];
@@ -151,6 +47,80 @@ foreach ($rows as $row) {
   $org = $row['organization'];
   $title = $row['title'];
   $reason = $row['reason'];
+}
+
+//print 'user: ' . $_SERVER['PHP_AUTH_USER']. "<br/>";
+
+print '<h1>';
+print '<p>Current Account Requests</p>';
+print '</h1>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th> </th>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+foreach ($rows as $row) {
+  get_values($row);
+  print "<tr>";
+  print'<td align="center">';
+  print '<form method="POST" action="handle_request.php">';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="hold">HOLD</option></select>';
+  print $actions;
+  print '<input type="submit" value="SUBMIT"/>';
+  print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
+  print "</form>";
+  print "</td>";
+
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  print '</tr>';
+}
+print '</table>';
+
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='HOLD'";
+$result = db_fetch_rows($sql);
+$rows = $result['value'];
+
+print '<h1>';
+print '<p>Account Requests On-Hold</p>';
+print '</h1>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th> </th>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+foreach ($rows as $row) {
+  get_values($row);
+  print "<tr>";
+  print'<td align="center">';
+  print '<form method="POST" action="handle_request.php">';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option></select>';
+  print $actions;
+  print '<input type="submit" value="SUBMIT"/>';
+  print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
+  print "</form>";
+  print "</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  print '</tr>';
+}
+print '</table>';
+
+
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='APPROVED'";
+$result = db_fetch_rows($sql);
+$rows = $result['value'];
+
+print '<h1>';
+print '<p>Approved Account Requests</p>';
+print '</h1>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Account Created</th></tr>';
+foreach ($rows as $row) {
+  get_values($row);
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$created</td>";
   print '</tr>';
 }
@@ -170,18 +140,10 @@ print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
 print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
 foreach ($rows as $row) {
-  $firstname = $row['first_name'];
-  $lastname = $row['last_name'];
-  $email = $row['email'];
-  $uname = $row['username_requested'];
-  $phone = $row['phone'];
-  $requested = $row['request_ts'];
-  $requested = substr($requested,0,16);
-  $org = $row['organization'];
-  $title = $row['title'];
-  $reason = $row['reason'];
+  get_values($row);
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
   print '</tr>';
 }
 print '</table>';
+
 ?>

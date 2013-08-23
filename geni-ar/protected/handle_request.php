@@ -33,35 +33,31 @@ $ldapconn = ldap_setup();
 if ($ldapconn === -1)
   exit();
 
-$uid = $_REQUEST['username'];
-$sn =  $_REQUEST['lastname'];
-$givenName =  $_REQUEST['firstname'];
-$sn =  $_REQUEST['lastname'];
-$mail =  $_REQUEST['email'];
-$phone =  $_REQUEST['phone'];
-$pw =  $_REQUEST['pw'];
-$org =  $_REQUEST['org'];
+$id = $_REQUEST['id'];
 $action = $_REQUEST['action'];
 
-//$array = $_REQUEST;
-//foreach ($array as $var => $value) {
-//    print "$var = $value<br/>";
-//   }
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE id=" . $id;
+$result = db_fetch_rows($sql);
+$row = $result['value'][0];
+
+$uid = $row['username_requested']; 
 
 $new_dn = "uid=" . $uid . $user_dn;
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
 $attrs['uid'] = $uid;
-$attrs['sn'] = $sn;
-$attrs['givenName'] = $givenName;
-$attrs['cn'] = $givenName . " " . $sn;
-$attrs['displayName'] = $givenName . " " . $sn;
-$attrs['userPassword'] = $pw;
-$attrs['mail'] = $mail;
+$lastname = $row['last_name'];
+$attrs['sn'] = $lastname;
+$firstname = $row['first_name'];
+$attrs['givenName'] = $firstname;
+$attrs['cn'] = $firstname . " " . $lastname;
+$attrs['displayName'] = $firstname . " " . $lastname;
+$attrs['userPassword'] = $row['password_hash'];
+$attrs['mail'] = $row['email'];
 $attrs['eduPersonAffiliation'][] = "member";
 $attrs['eduPersonAffiliation'] []= "staff";
-$attrs['telephoneNumber'] = $phone;
-$attrs['o'] = $org;
+$attrs['telephoneNumber'] = $row['phone'];
+$attrs['o'] = $row['organization'];
 
 //First check if account exists
 if (ldap_check_account($ldapconn,$uid))
@@ -94,6 +90,5 @@ else
     header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
   }
 ldap_close($ldapconn);
-
 
 ?>
