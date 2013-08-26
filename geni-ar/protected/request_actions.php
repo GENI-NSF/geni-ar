@@ -51,7 +51,8 @@ $attrs['givenName'] = $firstname;
 $attrs['cn'] = $firstname . " " . $lastname;
 $attrs['displayName'] = $firstname . " " . $lastname;
 $attrs['userPassword'] = $row['password_hash'];
-$attrs['mail'] = $row['email'];
+$user_email = $row['email'];
+$attrs['mail'] = $user_email;
 $attrs['eduPersonAffiliation'][] = "member";
 $attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $row['phone'];
@@ -85,6 +86,23 @@ else
 	$result = db_execute_statement($sql);
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
+
+	// Notify user
+	$filename = "/etc/geni-ar/notification-email.txt";
+	$file = fopen( $filename, "r" );
+	if( $file == false )
+	  {
+	    echo ( "Error in opening file" );
+	    exit();
+	  }
+	$filesize = filesize( $filename );
+	$filetext = fread( $file, $filesize );
+	fclose( $file );
+
+	$filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
+	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
+	mail($user_email, "GENI IdP Account Created", $filetext);
+
       }
     else if ($action === 'deny')
       {
