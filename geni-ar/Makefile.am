@@ -46,4 +46,6 @@ nobase_dist_pkgdata_DATA = \
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 dist_pkgsysconf_DATA = \
-	etc/example-settings.php
+	etc/example-settings.php \
+	etc/notification-email.txt
+
