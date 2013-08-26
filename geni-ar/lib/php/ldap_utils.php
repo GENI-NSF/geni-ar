@@ -75,8 +75,12 @@ function ldap_check_account($ldapconn, $uid)
     {
       return false;
     }
-  
-
 }
 
+function get_userdn($uid)
+{
+  global $user_dn;
+  $newdn = "uid=" . $uid . $user_dn; 
+  return $newdn;
+}
 ?>

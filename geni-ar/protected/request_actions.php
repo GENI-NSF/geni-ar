@@ -26,8 +26,6 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 
-global $user_dn;
-
 //Add account to ldap database
 $ldapconn = ldap_setup();
 if ($ldapconn === -1)
@@ -42,7 +40,7 @@ $row = $result['value'][0];
 
 $uid = $row['username_requested']; 
 
-$new_dn = "uid=" . $uid . $user_dn;
+$new_dn = get_userdn($uid);
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
 $attrs['uid'] = $uid;
