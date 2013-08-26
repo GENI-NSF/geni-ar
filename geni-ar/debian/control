@@ -3,7 +3,7 @@ Section: contrib/misc
 Priority: extra
 Maintainer: Tom Mitchell <tmitchel@bbn.com>
 Build-Depends: debhelper (>= 8.0.0)
-Standards-Version: 3.9.2
+Standards-Version: 3.9.3
 Homepage: http://trac.gpolab.bbn.com/shib
 
 Package: geni-ar
@@ -11,4 +11,6 @@ Architecture: all
 Depends: ${misc:Depends}
 Recommends: apache2, php5
 Description: GENI account request management
- Manages GENI IdP account requests.
+ Manages GENI IdP account requests. Account requests can be viewed and
+ handled via a web interface. Current LDAP accounts can also be
+ managed via web pages.

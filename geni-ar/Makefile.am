@@ -43,10 +43,6 @@ nobase_dist_pkgdata_DATA = \
 	lib/php/ar_constants.php \
 	db/postgresql/schema.sql
 
-dist_sbin_SCRIPTS = \
-	bin/idp_user_created.sh \
-	bin/shib_idp_users
-
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 dist_pkgsysconf_DATA = \
