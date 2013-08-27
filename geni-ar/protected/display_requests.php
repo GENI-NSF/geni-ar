@@ -49,8 +49,6 @@ function get_values($row)
   $reason = $row['reason'];
 }
 
-//print 'user: ' . $_SERVER['PHP_AUTH_USER']. "<br/>";
-
 print '<h1>';
 print '<p>Current Account Requests</p>';
 print '</h1>';

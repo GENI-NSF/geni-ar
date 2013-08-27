@@ -26,3 +26,16 @@ CREATE TABLE idp_account_request (
   created_ts timestamp DEFAULT NULL,
   request_state VARCHAR DEFAULT 'REQUESTED'
 );
+
+DROP TABLE IF EXISTS idp_account_actions;
+
+CREATE TABLE idp_account_actions (
+     id SERIAL PRIMARY KEY,
+     uid VARCHAR NOT NULL,
+     action_ts timestamp DEFAULT NOW(),
+     performer VARCHAR,
+     action_performed VARCHAR NOT NULL,
+     comment VARCHAR
+);
+     
+     

@@ -25,6 +25,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('action_log.php');
 
 //Add account to ldap database
 $ldapconn = ldap_setup();
@@ -103,16 +104,20 @@ else
 	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
 	mail($user_email, "GENI IdP Account Created", $filetext);
 
+	//Add log to action table
+	add_log($$uid, "Account Created");
       }
     else if ($action === 'deny')
       {
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
+	add_log($uid, "Account Denied");
       }
     else if ($action === "hold")
       {
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='HOLD' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
+	add_log($uid, "Account On Hold");
       }
 
     header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
