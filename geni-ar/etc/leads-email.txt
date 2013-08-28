@@ -1,0 +1,12 @@
+Dear GENI Project Leads,
+
+The following account request has been received.  Please advise how to handle this request.
+
+Institution: INSTITUTION
+Title: TITLE
+Reason: REASON
+Email: EMAIL
+Name: NAME
+
+Thanks,
+The GENI Project Staff
