@@ -28,6 +28,10 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
+	etc/example-settings.php \
+	etc/notification-email.txt \
+	etc/leads-email.txt \
+	etc/user-email.txt \
 	www/request.html \
 	www/handlerequest.php \
 	protected/display_requests.php \
@@ -47,9 +51,5 @@ nobase_dist_pkgdata_DATA = \
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
-dist_pkgsysconf_DATA = \
-	etc/example-settings.php \
-	etc/notification-email.txt \
-	etc/leads-email.txt \
-	etc/user-email.txt
-
+install-data-local:
+	$(MKDIR_P) $(DESTDIR)$(pkgsysconfdir)
