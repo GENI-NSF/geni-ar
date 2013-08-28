@@ -27,6 +27,7 @@ require_once('db_utils.php');
 require_once('ar_constants.php');
 
 global $leads_email;
+global $acct_manager_url;
 
 //Add account to ldap database
 $ldapconn = ldap_setup();
@@ -67,16 +68,24 @@ $reason = $row['reason'];
 
 if ($action === "passwd")
   {
-    add_log($$uid, "Passwd Changed");
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
-    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+    if (ldap_check_account($ldapconn,$uid) == false) {
+      print ("Cannot change password for uid=" . $uid . ". Account does not exist.");
+      print ('<br><br>');
+      print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+    } else {
+      add_log($uid, "Passwd Changed");
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+      $result = db_execute_statement($sql);
+      header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+    }
   }
     
 //First check if account exists
 else if (ldap_check_account($ldapconn,$uid))
   {
-    print("Account for uid=" . $uid . " exists.");
+    print("Account for uid=" . $uid . " already exists.");
+    print ('<br><br>');
+    print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
   }
 else 
   {
@@ -151,6 +160,9 @@ else
 	$filetext = str_replace("EMAIL",$user_email,$filetext);
 	$filetext = str_replace("NAME",$fullname,$filetext);
 	
+	print '<head><title>Email Leads</title></head>';
+	print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+
 	print '<form method="POST" action="send_email.php">';
 	print 'To: <input type="text" name="sendto" value="' . $leads_email . '">';
 	print '<br><br>';
@@ -179,7 +191,10 @@ else
 	fclose( $file );
 
 	$filetext = str_replace("REQUESTER",$firstname,$filetext);
-	
+
+	print '<head><title>Email Requester</title></head>';
+	print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+
 	print '<form method="POST" action="send_email.php">';
 	print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
 	print '<br><br>';

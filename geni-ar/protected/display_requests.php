@@ -25,6 +25,11 @@ require_once('db_utils.php');
 require_once('ar_constants.php');
 include_once('/etc/geni-ar/settings.php');
 
+global $acct_manager_url;
+
+print '<head><title>Account Request Management</title></head>';
+print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+
 print '<h1>';
 print '<p>Account Request Management</p>';
 print '</h1>';

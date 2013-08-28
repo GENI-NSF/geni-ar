@@ -47,8 +47,12 @@ if ($action === "delete") {
       
     } else
       print "COULD NOT CHANGE STATUS OF REQUEST FOR DELETED ACCOUNT WITH USERNAME=" . $id;
+      print ('<br><br>');
+      print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
   } else {
     print "DELETE OF ACCT " . $id . " FAILED";
+      print ('<br><br>');
+      print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
   }
 } else {
   header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_accounts.php");
