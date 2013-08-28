@@ -347,4 +347,30 @@ function add_log($uid, $action)
   $result = db_execute_statement($sql);
 }
 
+/**
+ *  Add log entry to action log table
+ * 
+ */
+function add_log_with_comment($uid, $action, $comment)
+{
+  $query_vars[] = 'uid';
+  $query_vars[] = 'performer';
+  $query_vars[] = 'action_performed';
+  $query_vars[] = 'comment';
+  
+  $performer = $_SERVER['PHP_AUTH_USER'];
+  
+  $query_values[] = "'$uid'";
+  $query_values[] = "'$performer'";
+  $query_values[] = "'$action'";
+  $query_values[] = "'$comment'";
+  
+  $sql = "INSERT INTO idp_account_actions (";
+  $sql .= implode (',',$query_vars);
+  $sql .= ') VALUES (';
+  $sql .= implode(',',$query_values);
+  $sql .= ')';
+  $result = db_execute_statement($sql);
+}
+
 ?>

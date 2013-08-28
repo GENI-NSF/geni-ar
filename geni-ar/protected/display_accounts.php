@@ -23,6 +23,8 @@
 //----------------------------------------------------------------------
 include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
+require_once('db_utils.php');
+require_once('ar_constants.php');
 
 global $base_dn;
 global $acct_manager_url;
@@ -78,3 +80,34 @@ foreach ($accts as $acct) {
 }
 print '</table>';
 
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DELETED'";
+$result = db_fetch_rows($sql);
+$rows = $result['value'];
+
+print '<h2>';
+print '<p>Deleted Accounts</p>';
+print '</h2>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Performer</th><th>Account Deleted</th></tr>';
+foreach ($rows as $row) {
+  $firstname = $row['first_name'];
+  $lastname = $row['last_name'];
+  $email = $row['email'];
+  $uname = $row['username_requested'];
+  $org = $row['organization'];
+  $performer="";
+  $action_ts="";
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Deleted' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  $logs = $action_result['value'];
+  if ($logs) {
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
+  }
+  print "<td>$org</td><td>$uname</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$performer</td><td>$action_ts</td>";
+  print '</tr>';
+}
+print '</table>';

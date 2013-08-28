@@ -102,9 +102,15 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
-  $performer = $logs[0]['performer'];
-  $action_ts = $logs[0]['action_ts'];
-  $action_ts = substr($action_ts,0,16);
+  if ($logs) {
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
+  }
+  else {
+    $performer = "";
+    $action_ts = "";
+  }
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
@@ -171,10 +177,11 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
+  if ($logs) {
   $performer = $logs[0]['performer'];
   $action_ts = $logs[0]['action_ts'];
   $action_ts = substr($action_ts,0,16);
-
+  }
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
@@ -198,10 +205,11 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
-  $performer = $logs[0]['performer'];
-  $action_ts = $logs[0]['action_ts'];
-  $action_ts = substr($action_ts,0,16);
-
+  if ($logs) {
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
+  }
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }

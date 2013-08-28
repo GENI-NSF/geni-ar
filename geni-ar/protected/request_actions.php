@@ -79,27 +79,26 @@ if ($action === "passwd")
       header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
     }
   }
-    
-//First check if account exists
-else if (ldap_check_account($ldapconn,$uid))
+else if ($action === "approve") 
   {
-    print("Account for uid=" . $uid . " already exists.");
-    print ('<br><br>');
-    print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
-  }
-//Next check if email exists
-else if (ldap_check_email($ldapconn,$user_email))
-  {
-    print("Account with email address=" . $user_email . " already exists.");
-    print ('<br><br>');
-    print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
-  }
-else 
-  {
-    if ($action==="approve")
+    //First check if account exists
+    if (ldap_check_account($ldapconn,$uid))
+      {
+	print("Account for uid=" . $uid . " already exists.");
+	print ('<br><br>');
+	print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+      }
+    //Next check if email exists
+    else if (ldap_check_email($ldapconn,$user_email))
+      {
+	print("Account with email address=" . $user_email . " already exists.");
+	print ('<br><br>');
+	print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+      }
+    else 
       {
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
-
+	
 	// notify in email
 	$subject = "New IdP Account Created";
 	$body = 'A new IdP account has been created for ';
@@ -135,84 +134,87 @@ else
 	mail($user_email, "GENI IdP Account Created", $filetext);
 
 	//Add log to action table
-	add_log($$uid, "Account Created");
+	add_log($uid, "Account Created");
 	header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
       }
-    else if ($action === 'deny')
-      {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
-	$result = db_execute_statement($sql);
-	add_log($uid, "Account Denied");
-	header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
-      }
-    else if ($action === "leads")
-      {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
-	$result = db_execute_statement($sql);
-	add_log($uid, "Emailed Leads");
-	$filename = "/etc/geni-ar/leads-email.txt";
-	$file = fopen( $filename, "r" );
-	if( $file == false )
-	  {
-	    echo ( "Error in opening file" );
-	    exit();
-	  }
-	$filesize = filesize( $filename );
-	$filetext = fread( $file, $filesize );
-	fclose( $file );
-	
-	$filetext = str_replace("INSTITUTION",$org,$filetext);
-	$filetext = str_replace("TITLE",$title,$filetext);
-	$filetext = str_replace("REASON",$reason,$filetext);
-	$filetext = str_replace("EMAIL",$user_email,$filetext);
-	$filetext = str_replace("NAME",$fullname,$filetext);
-	
-	print '<head><title>Email Leads</title></head>';
-	print '<a href="' . $acct_manager_url . '">Return to main page</a>';
-
-	print '<form method="POST" action="send_email.php">';
-	print 'To: <input type="text" name="sendto" value="' . $leads_email . '">';
-	print '<br><br>';
-	$email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
-	print $email_body;
-	print '<br><br>';
-	print '<input type="submit" value="SEND"/>';
-	print "</form>";
-
-      }
-    else if ($action === "requester")
-      {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
-	$result = db_execute_statement($sql);
-	add_log($uid, "Emailed Requester");
-
-	$filename = "/etc/geni-ar/user-email.txt";
-	$file = fopen( $filename, "r" );
-	if( $file == false )
-	  {
-	    echo ( "Error in opening file" );
-	    exit();
-	  }
-	$filesize = filesize( $filename );
-	$filetext = fread( $file, $filesize );
-	fclose( $file );
-
-	$filetext = str_replace("REQUESTER",$firstname,$filetext);
-
-	print '<head><title>Email Requester</title></head>';
-	print '<a href="' . $acct_manager_url . '">Return to main page</a>';
-
-	print '<form method="POST" action="send_email.php">';
-	print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
-	print '<br><br>';
-	$email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
-	print $email_body;
-	print '<br><br>';
-	print '<input type="submit" value="SEND"/>';
-	print "</form>";
-
-      }    
+  } 
+else if ($action === 'deny')
+  {
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
+    $result = db_execute_statement($sql);
+    add_log($uid, "Account Denied");
+    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
   }
+else if ($action === "leads")
+  {
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
+    $result = db_execute_statement($sql);
+    $filename = "/etc/geni-ar/leads-email.txt";
+    $file = fopen( $filename, "r" );
+    if( $file == false )
+      {
+	echo ( "Error in opening file" );
+	exit();
+      }
+    $filesize = filesize( $filename );
+    $filetext = fread( $file, $filesize );
+    fclose( $file );
+	
+    $filetext = str_replace("INSTITUTION",$org,$filetext);
+    $filetext = str_replace("TITLE",$title,$filetext);
+    $filetext = str_replace("REASON",$reason,$filetext);
+    $filetext = str_replace("EMAIL",$user_email,$filetext);
+    $filetext = str_replace("NAME",$fullname,$filetext);
+    
+    print '<head><title>Email Leads</title></head>';
+    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+    
+    print '<form method="POST" action="send_email.php">';
+    print 'To: <input type="text" name="sendto" value="' . $leads_email . '">';
+    print '<br><br>';
+    $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
+    print $email_body;
+    print '<br><br>';
+    print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
+    print "<input type=\"hidden\" name=\"log\" value=\"Emailed Lead\"/>";
+    print '<input type="submit" value="SEND"/>';
+    print "</form>";
+    
+  }
+else if ($action === "requester")
+  {
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
+    $result = db_execute_statement($sql);
+    
+    $filename = "/etc/geni-ar/user-email.txt";
+    $file = fopen( $filename, "r" );
+    if( $file == false )
+      {
+	echo ( "Error in opening file" );
+	exit();
+      }
+    $filesize = filesize( $filename );
+    $filetext = fread( $file, $filesize );
+    fclose( $file );
+    
+    $filetext = str_replace("REQUESTER",$firstname,$filetext);
+    
+    print '<head><title>Email Requester</title></head>';
+    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+    
+    print '<form method="POST" action="send_email.php">';
+    print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
+    print '<br><br>';
+    $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
+    print $email_body;
+    print '<br><br>';
+    print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
+    print "<input type=\"hidden\" name=\"log\" value=\"Emailed Requester\"/>";
+    print '<input type="submit" value="SEND"/>';
+    print "</form>";
+    
+  }    
+
 ldap_close($ldapconn);
 
 ?>
