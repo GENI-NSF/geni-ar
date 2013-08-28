@@ -96,9 +96,15 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Action Performer</th><th>Email Sent</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  $logs = $action_result['value'];
+  $performer = $logs[0]['performer'];
+  $action_ts = $logs[0]['action_ts'];
+  $action_ts = substr($action_ts,0,16);
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
@@ -108,7 +114,7 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
 print '</table>';
@@ -125,19 +131,25 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Action Performer</th><th>Email Sent</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  $logs = $action_result['value'];
+  $performer = $logs[0]['performer'];
+  $action_ts = $logs[0]['action_ts'];
+  $action_ts = substr($action_ts,0,16);
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
 print '</table>';
@@ -153,10 +165,17 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Account Created</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Performer</th><th>Account Created</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$created</td>";
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  $logs = $action_result['value'];
+  $performer = $logs[0]['performer'];
+  $action_ts = $logs[0]['action_ts'];
+  $action_ts = substr($action_ts,0,16);
+
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
 print '</table>';
@@ -173,10 +192,17 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Performer</th><th>Account Denied</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  $logs = $action_result['value'];
+  $performer = $logs[0]['performer'];
+  $action_ts = $logs[0]['action_ts'];
+  $action_ts = substr($action_ts,0,16);
+
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
 print '</table>';
