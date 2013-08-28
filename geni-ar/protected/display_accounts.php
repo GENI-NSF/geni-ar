@@ -71,10 +71,7 @@ foreach ($accts as $acct) {
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$uid\"/>";
   print "</form>";
-  //  print '<form method="POST" action="action_log.php">';
-  //print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
-  print '<a href="' . $acct_manager_url . '/action_log.php">View account logs</a>';
-  //print "</form>";
+  print '<a href="' . $acct_manager_url . '/action_log.php?uid=' . $uid . '">View account logs</a>';
   print "</td>";
   print "<td>$org</td><td>$uid</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td>";
   print '</tr>';

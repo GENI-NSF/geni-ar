@@ -26,8 +26,18 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 
+global $acct_manager_url;
+
+$user = $_GET["uid"];
+
 $conn = db_conn();
-$sql = "SELECT * FROM idp_account_actions";
+if ($user === null)
+  {
+    $sql = "SELECT * FROM idp_account_actions";
+  } else
+  {
+    $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\'';
+  }
 $result = db_fetch_rows($sql);
 $rows = $result['value'];
 
@@ -41,6 +51,14 @@ function get_values($row)
   $performer = $row['performer'];
   $action = $row['action_performed'];
 }
+if ($user == null) {
+  print '<head><title>Account Request Action Logs</title></head>';
+  print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+} else {
+  print '<head><title>Account Request Action Logs for ' . $user . '</title></head>';
+  print '<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>';
+}
+
 
 print '<h1>';
 print '<p>Account Request Action Logs</p>';
