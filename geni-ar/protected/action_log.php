@@ -31,7 +31,7 @@ global $acct_manager_url;
 $user = $_GET["uid"];
 
 $conn = db_conn();
-if ($user === null)
+if ($user === "ALL")
   {
     $sql = "SELECT * FROM idp_account_actions";
   } else
@@ -43,15 +43,16 @@ $rows = $result['value'];
 
 function get_values($row)
 {
-  global $uid, $action_time, $performer, $action;
+  global $uid, $action_time, $performer, $action, $comment;
 
   $uid = $row['uid'];
   $action_time = $row['action_ts'];
   $action_time = substr($action_time,0,16);
   $performer = $row['performer'];
   $action = $row['action_performed'];
+  $comment = $row['comment'];
 }
-if ($user == null) {
+if ($user == "ALL") {
   print '<head><title>Account Request Action Logs</title></head>';
   print '<a href="' . $acct_manager_url . '">Return to main page</a>';
 } else {
@@ -66,11 +67,11 @@ print '</h1>';
 
 print '<table border="1">';
 print '<tr>';
-print '<th>Username</th><th>Action</th><th>Date</th><th>Performer</th></tr>';
+print '<th>Username</th><th>Action</th><th>Date</th><th>Performer</th><th>Comment</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
-  print "<td>$uid</td><td>$action</td><td>$action_time</td><td>$performer</td>";
+  print "<td>$uid</td><td>$action</td><td>$action_time</td><td>$performer</td><td>$comment</td>";
   print '</tr>';
 }
 print '</table>';

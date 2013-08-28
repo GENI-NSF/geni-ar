@@ -21,9 +21,14 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
+require_once('db_utils.php');
 
 $email_body = $_REQUEST['email_body'];
 $sendto = $_REQUEST['sendto'];
+$uid = $_REQUEST['uid'];
+$log = $_REQUEST['log'];
 
 mail($sendto, "GENI IdP Account Request", $email_body);
+add_log_with_comment($uid, $log,$email_body);
+
 header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");

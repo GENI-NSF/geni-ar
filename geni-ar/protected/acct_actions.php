@@ -25,7 +25,6 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
-require_once('action_log.php');
 
 $id = $_REQUEST['id'];
 $action = $_REQUEST['action'];
