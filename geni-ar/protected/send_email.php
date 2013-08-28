@@ -16,45 +16,14 @@
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,ldapsearch -xLLL -b "dc=shib-idp2,dc=gpolab,dc=bbn,dc=com" uid=* sn givenName cn
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-include_once('/etc/geni-ar/settings.php');
-require_once('ldap_utils.php');
-require_once('db_utils.php');
-require_once('ar_constants.php');
 
-$conn = db_conn();
-$sql = "SELECT * FROM idp_account_actions";
-$result = db_fetch_rows($sql);
-$rows = $result['value'];
+$email_body = $_REQUEST['email_body'];
+$sendto = $_REQUEST['sendto'];
 
-function get_values($row)
-{
-  global $uid, $action_time, $performer, $action;
-
-  $uid = $row['uid'];
-  $action_time = $row['action_ts'];
-  $action_time = substr($action_time,0,16);
-  $performer = $row['performer'];
-  $action = $row['action_performed'];
-}
-
-print '<h1>';
-print '<p>Account Request Action Logs</p>';
-print '</h1>';
-
-print '<table border="1">';
-print '<tr>';
-print '<th>Username</th><th>Action</th><th>Date</th><th>Performer</th></tr>';
-foreach ($rows as $row) {
-  get_values($row);
-  print "<tr>";
-  print "<td>$uid</td><td>$action</td><td>$action_time</td><td>$performer</td>";
-  print '</tr>';
-}
-print '</table>';
-
-?>
+mail($sendto, "GENI IdP Account Request", $email_body);
+header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");

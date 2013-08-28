@@ -35,6 +35,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/display_accounts.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
+	protected/send_email.php \
 	protected/index.html \
 	protected/ldap.php \
 	lib/php/db_utils.php \
@@ -48,5 +49,7 @@ pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
 dist_pkgsysconf_DATA = \
 	etc/example-settings.php \
-	etc/notification-email.txt
+	etc/notification-email.txt \
+	etc/leads-email.txt \
+	etc/user-email.txt
 

@@ -16,7 +16,7 @@
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,ldapsearch -xLLL -b "dc=shib-idp2,dc=gpolab,dc=bbn,dc=com" uid=* sn givenName cn
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
@@ -25,7 +25,8 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
-require_once('action_log.php');
+
+global $leads_email;
 
 //Add account to ldap database
 $ldapconn = ldap_setup();
@@ -49,18 +50,31 @@ $lastname = $row['last_name'];
 $attrs['sn'] = $lastname;
 $firstname = $row['first_name'];
 $attrs['givenName'] = $firstname;
-$attrs['cn'] = $firstname . " " . $lastname;
-$attrs['displayName'] = $firstname . " " . $lastname;
+$fullname = $firstname . " " . $lastname;
+$attrs['cn'] = $fullname;
+$attrs['displayName'] = $fullname;
 $attrs['userPassword'] = $row['password_hash'];
 $user_email = $row['email'];
 $attrs['mail'] = $user_email;
 $attrs['eduPersonAffiliation'][] = "member";
 $attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $row['phone'];
-$attrs['o'] = $row['organization'];
+$org = $row['organization'];
+$attrs['o'] = $org;
 
+$title = $row['title'];
+$reason = $row['reason'];
+
+if ($action === "passwd")
+  {
+    add_log($$uid, "Passwd Changed");
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+    $result = db_execute_statement($sql);
+    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+  }
+    
 //First check if account exists
-if (ldap_check_account($ldapconn,$uid))
+else if (ldap_check_account($ldapconn,$uid))
   {
     print("Account for uid=" . $uid . " exists.");
   }
@@ -106,21 +120,76 @@ else
 
 	//Add log to action table
 	add_log($$uid, "Account Created");
+	header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
       }
     else if ($action === 'deny')
       {
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
 	add_log($uid, "Account Denied");
+	header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
       }
-    else if ($action === "hold")
+    else if ($action === "leads")
       {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='HOLD' where username_requested ='" . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
-	add_log($uid, "Account On Hold");
-      }
+	add_log($uid, "Emailed Leads");
+	$filename = "/etc/geni-ar/leads-email.txt";
+	$file = fopen( $filename, "r" );
+	if( $file == false )
+	  {
+	    echo ( "Error in opening file" );
+	    exit();
+	  }
+	$filesize = filesize( $filename );
+	$filetext = fread( $file, $filesize );
+	fclose( $file );
+	
+	$filetext = str_replace("INSTITUTION",$org,$filetext);
+	$filetext = str_replace("TITLE",$title,$filetext);
+	$filetext = str_replace("REASON",$reason,$filetext);
+	$filetext = str_replace("EMAIL",$user_email,$filetext);
+	$filetext = str_replace("NAME",$fullname,$filetext);
+	
+	print '<form method="POST" action="send_email.php">';
+	print 'To: <input type="text" name="sendto" value="' . $leads_email . '">';
+	print '<br><br>';
+	$email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
+	print $email_body;
+	print '<br><br>';
+	print '<input type="submit" value="SEND"/>';
+	print "</form>";
 
-    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+      }
+    else if ($action === "requester")
+      {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+	add_log($uid, "Emailed Requester");
+
+	$filename = "/etc/geni-ar/user-email.txt";
+	$file = fopen( $filename, "r" );
+	if( $file == false )
+	  {
+	    echo ( "Error in opening file" );
+	    exit();
+	  }
+	$filesize = filesize( $filename );
+	$filetext = fread( $file, $filesize );
+	fclose( $file );
+
+	$filetext = str_replace("REQUESTER",$firstname,$filetext);
+	
+	print '<form method="POST" action="send_email.php">';
+	print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
+	print '<br><br>';
+	$email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
+	print $email_body;
+	print '<br><br>';
+	print '<input type="submit" value="SEND"/>';
+	print "</form>";
+
+      }    
   }
 ldap_close($ldapconn);
 
