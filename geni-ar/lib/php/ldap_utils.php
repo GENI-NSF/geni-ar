@@ -77,6 +77,23 @@ function ldap_check_account($ldapconn, $uid)
     }
 }
 
+function ldap_check_email($ldapconn, $email) 
+{
+  global $base_dn;
+
+  $filter = "(mail=" . $email . ")";
+  $ret = ldap_search($ldapconn, $base_dn, $filter);
+  $acc = ldap_get_entries($ldapconn,$ret);
+  if ($acc["count"] > 0)
+    {
+      return true;
+    }
+  else
+    {
+      return false;
+    }
+}
+
 function get_userdn($uid)
 {
   global $user_dn;

@@ -87,6 +87,13 @@ else if (ldap_check_account($ldapconn,$uid))
     print ('<br><br>');
     print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
   }
+//Next check if email exists
+else if (ldap_check_email($ldapconn,$user_email))
+  {
+    print("Account with email address=" . $user_email . " already exists.");
+    print ('<br><br>');
+    print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+  }
 else 
   {
     if ($action==="approve")
