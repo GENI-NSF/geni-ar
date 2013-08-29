@@ -28,7 +28,7 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
-	etc/example-settings.php \
+	etc/settings.php \
 	etc/notification-email.txt \
 	etc/leads-email.txt \
 	etc/user-email.txt \

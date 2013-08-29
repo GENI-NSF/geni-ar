@@ -4,8 +4,9 @@
    psql -U <USER> [-h <HOST>] <DBNAME> \
         -f /usr/share/geni-ar/db/postgresql/schema.sql
 
-2. Copy /etc/geni-ar/example-settings.php to /etc/geni-ar/settings.php
-and edit it to reflect the local configuration.
+2. If /etc/geni-ar/settings.php does not exist copy it from
+   /usr/share/geni-ch/etc/settings.php. Edit /etc/geni-ar/settings.php
+   to reflect the local configuration.
 
 3. Optionally create a password file for the protected area using
    htpasswd.
