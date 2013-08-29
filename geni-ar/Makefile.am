@@ -28,26 +28,26 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
-	etc/settings.php \
-	etc/notification-email.txt \
+	db/postgresql/schema.sql \
 	etc/leads-email.txt \
+	etc/notification-email.txt \
+	etc/settings.php \
 	etc/user-email.txt \
-	www/request.html \
-	www/handlerequest.php \
-	protected/display_requests.php \
-	protected/request_actions.php \
-	protected/display_accounts.php \
+	lib/php/ar_constants.php \
+	lib/php/db_utils.php \
+	lib/php/geni_syslog.php \
+	lib/php/ldap_utils.php \
+	lib/php/response_format.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
-	protected/send_email.php \
+	protected/display_accounts.php \
+	protected/display_requests.php \
 	protected/index.html \
 	protected/ldap.php \
-	lib/php/db_utils.php \
-	lib/php/ldap_utils.php \
-	lib/php/geni_syslog.php \
-	lib/php/response_format.php \
-	lib/php/ar_constants.php \
-	db/postgresql/schema.sql
+	protected/request_actions.php \
+	protected/send_email.php \
+	www/handlerequest.php \
+	www/request.html
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
