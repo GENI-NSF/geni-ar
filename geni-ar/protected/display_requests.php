@@ -143,9 +143,14 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
-  $performer = $logs[0]['performer'];
-  $action_ts = $logs[0]['action_ts'];
-  $action_ts = substr($action_ts,0,16);
+  if ($logs) {
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
+  } else {
+    $performer = "";
+    $action_ts = "";
+  }
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';

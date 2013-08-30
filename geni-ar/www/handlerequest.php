@@ -21,14 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-
-$mypath = '/usr/share/geni-ar/lib/php' . PATH_SEPARATOR . '/etc/geni-ar';
-set_include_path($mypath . PATH_SEPARATOR . get_include_path());
-
 require_once('db_utils.php');
+require_once('ldap_utils.php');
 require_once('geni_syslog.php');
 require_once('response_format.php');
-require_once('settings.php');
+include_once('/etc/geni-ar/settings.php');
 
 /**
  * A class to create a Salted SHA password hash.
@@ -70,6 +67,7 @@ $errors = array();
 /* ---------------- */
 /* Transform inputs */
 /* ---------------- */
+//
 // We'll get 'username', but the column is 'username_requested'
 if (array_key_exists('username', $_REQUEST) && $_REQUEST['username']) {
   $_REQUEST['username_requested'] = $_REQUEST['username'];
@@ -83,6 +81,35 @@ if (array_key_exists('username', $_REQUEST) && $_REQUEST['username']) {
 
 $p1 = null;
 $p2 = null;
+$email = null;
+$ldapconn = ldap_setup();
+if ($ldapconn === -1) {
+  print "Failed to connect to ldap server";
+  exit();
+}
+//sanity checks - does username exist, does email exist
+//is username properly formed (1-8 characters, lower case letters and numbers only)
+
+//check if there is already an account for this email
+if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
+  $email = $_REQUEST['email'];
+  if (ldap_check_email($ldapconn,$email)) {
+    $errors[] = "An account for this email address already exists.";
+  }
+}
+$uid = $_REQUEST['username_requested'];
+
+if (ldap_check_account($ldapconn,$uid)) {
+  $errors[] = "This username is already in use.";
+} else {
+  if (strlen($uid) > 8) {
+    $errors[] = "username cannot be longer than 8 characters.";
+  }
+  if (!preg_match('/^[a-z0-9]{1,8}$/', $uid)) {
+    $errors[] = "username must consist of lowercase letters and numbers only.";
+  }
+  
+}
 if (array_key_exists('password1', $_REQUEST) && $_REQUEST['password1']) {
   $p1 = $_REQUEST['password1'];
 } else {
@@ -148,6 +175,7 @@ foreach ($optional_vars as $name => $db_type) {
 
 if ($errors) {
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -189,6 +217,7 @@ if ($errors) {
 ?>
 
 <?php
+
 $sql = 'INSERT INTO idp_account_request (';
 $sql .= implode(',', $query_vars);
 $sql .= ') VALUES (';
@@ -220,6 +249,13 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   }
   $body .= "\nSee table idp_account_request for complete details.\n";
   mail($portal_admin_email, $subject, $body);
+
+  //Now email the requester
+  $subject = "GENI Identity Provider Account Request Received";
+  $body = 'Thank you for requesting an Identity Provider account with GENI.';
+  $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+  mail($email, $subject, $body);
+  
 }
 
 ?>
