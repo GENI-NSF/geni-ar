@@ -4,6 +4,8 @@ set client_min_messages='WARNING';
 -- Tell psql to stop on an error. Default behavior is to proceed.
 \set ON_ERROR_STOP 1
 
+set TIME ZONE 'utc';
+
 -- Tables for IdP accounts
 
 -- ----------------------------------------------------------------------
@@ -32,7 +34,7 @@ DROP TABLE IF EXISTS idp_account_actions;
 CREATE TABLE idp_account_actions (
      id SERIAL PRIMARY KEY,
      uid VARCHAR NOT NULL,
-     action_ts timestamp DEFAULT NOW(),
+     action_ts timestamp DEFAULT NOW() at time zone 'utc',
      performer VARCHAR,
      action_performed VARCHAR NOT NULL,
      comment VARCHAR

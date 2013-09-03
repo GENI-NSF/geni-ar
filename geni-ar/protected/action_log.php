@@ -67,7 +67,7 @@ print '</h1>';
 
 print '<table border="1">';
 print '<tr>';
-print '<th>Username</th><th>Action</th><th>Date</th><th>Performer</th><th>Comment</th></tr>';
+print '<th>Username</th><th>Action</th><th>Date/Time (UTC)</th><th>Performer</th><th>Comment</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
