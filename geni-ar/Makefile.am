@@ -47,7 +47,10 @@ nobase_dist_pkgdata_DATA = \
 	protected/request_actions.php \
 	protected/send_email.php \
 	www/handlerequest.php \
+	www/geni.png \
+	www/kmtool.css \
 	www/request.html
+	
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 

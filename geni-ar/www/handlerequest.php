@@ -180,12 +180,12 @@ if ($errors) {
 <html>
 <head>
 <title>GENI: Request an account</title>
-<link type="text/css" href="/common/css/kmtool.css" rel="Stylesheet"/>
+<link type="text/css" href="kmtool.css" rel="Stylesheet"/>
 </head>
 <body>
   <div id="header">
     <a href="http://www.geni.net" target="_blank">
-      <img src="/images/geni.png" width="88" height="75" alt="GENI"/>
+      <img src="geni.png" width="88" height="75" alt="GENI"/>
     </a>
     <h2>Problems with request</h2>
     <p>Please fix the following problems with your request:</p>
@@ -263,12 +263,12 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 <html>
 <head>
 <title>GENI: Request an account</title>
-<link type="text/css" href="/common/css/kmtool.css" rel="Stylesheet"/>
+<link type="text/css" href="kmtool.css" rel="Stylesheet"/>
 </head>
 <body>
   <div id="header">
     <a href="http://www.geni.net" target="_blank">
-      <img src="/images/geni.png" width="88" height="75" alt="GENI"/>
+      <img src="geni.png" width="88" height="75" alt="GENI"/>
     </a>
 <?php if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) { ?>
     <h1>ERROR</h1>
