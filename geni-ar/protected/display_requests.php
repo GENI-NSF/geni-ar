@@ -66,7 +66,7 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
@@ -96,7 +96,7 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Action Performer</th><th>Email Sent</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
@@ -137,7 +137,7 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Action Performer</th><th>Email Sent</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
@@ -176,7 +176,7 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Performer</th><th>Account Created</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Created (UTC)</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
@@ -204,7 +204,7 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Account Requested</th><th>Performer</th><th>Account Denied</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Denied (UTC)</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";

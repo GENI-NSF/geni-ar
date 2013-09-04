@@ -112,7 +112,7 @@ else if ($action === "approve")
 	mail($portal_admin_email, $subject, $body);
 
 	// Now set created timestamp in postgres db
-	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() where username_requested =\'' . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
 	$result = db_execute_statement($sql);
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
@@ -176,7 +176,7 @@ else if ($action === "leads")
     print $email_body;
     print '<br><br>';
     print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
-    print "<input type=\"hidden\" name=\"log\" value=\"Emailed Lead\"/>";
+    print "<input type=\"hidden\" name=\"log\" value=\"Emailed Leads\"/>";
     print '<input type="submit" value="SEND"/>';
     print "</form>";
     

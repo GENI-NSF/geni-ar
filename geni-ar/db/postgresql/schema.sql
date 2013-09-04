@@ -23,7 +23,7 @@ CREATE TABLE idp_account_request (
   title VARCHAR NOT NULL,
   url VARCHAR,
   reason VARCHAR NOT NULL,
-  request_ts timestamp DEFAULT NOW(),
+  request_ts timestamp DEFAULT NOW() at time zone 'utc',
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
   request_state VARCHAR DEFAULT 'REQUESTED'
