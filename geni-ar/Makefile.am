@@ -28,8 +28,6 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
-	bin/add_log.py \
-	bin/convert_ar_activity.py \
 	db/postgresql/schema.sql \
 	etc/leads-email.txt \
 	etc/notification-email.txt \
@@ -52,7 +50,10 @@ nobase_dist_pkgdata_DATA = \
 	www/geni.png \
 	www/kmtool.css \
 	www/request.html
-	
+
+dist_bin_SCRIPTS = \
+	bin/geni-add-log \
+	bin/geni-convert-logs
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
 
