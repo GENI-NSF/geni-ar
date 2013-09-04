@@ -28,6 +28,8 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
+	bin/add_log.py \
+	bin/convert_ar_activity.py \
 	db/postgresql/schema.sql \
 	etc/leads-email.txt \
 	etc/notification-email.txt \
