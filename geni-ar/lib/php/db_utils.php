@@ -45,20 +45,15 @@ include_once('/etc/geni-ar/settings.php');
 require_once 'MDB2.php';
 
 // Singleton global DB connection instance
-$portal_db = null;
+$acctreq_db = null;
 
 //--------------------------------------------------
 // Create the database connection.
 //--------------------------------------------------
-function portal_conn()
-{
-  // This is here only for backward compatibility.
-  return db_conn();
-}
 
 function db_conn()
 {
-  global $portal_db;
+  global $acctreq_db;
   global $db_dsn;
   if (! isset($db_dsn)) {
     $db_dsn = 'pgsql://portal:portal@localhost/portal';
@@ -66,14 +61,14 @@ function db_conn()
   $db_options = array('debug' => 5,
                       'result_buffering' => false,
                       );
-  if ($portal_db == null) {
-    $portal_db =& MDB2::singleton($db_dsn, $db_options);
+  if ($acctreq_db == null) {
+    $acctreq_db =& MDB2::singleton($db_dsn, $db_options);
   }
-  if (PEAR::isError($portal_db)) {
-    error_log("DB ERROR: Error connecting: " . $portal_db);
-    die("Error connecting: " . $portal_db);
+  if (PEAR::isError($acctreq_db)) {
+    error_log("DB ERROR: Error connecting: " . $acctreq_db);
+    die("Error connecting: " . $acctreq_db);
   }
-  return $portal_db;
+  return $acctreq_db;
 }
 
 function db_execute_statement($stmt, $msg = "", $rollback_on_error = false)
@@ -320,57 +315,6 @@ function convert_list($list)
     $list_image = $list_image . quotify($elt, 'text');
   }
   return "(" . $list_image . ")";
-}
-
-
-/**
- *  Add log entry to action log table
- * 
- */
-function add_log($uid, $action)
-{
-  $query_vars[] = 'uid';
-  $query_vars[] = 'performer';
-  $query_vars[] = 'action_performed';
-  
-  $performer = $_SERVER['PHP_AUTH_USER'];
-  
-  $query_values[] = "'$uid'";
-  $query_values[] = "'$performer'";
-  $query_values[] = "'$action'";
-  
-  $sql = "INSERT INTO idp_account_actions (";
-  $sql .= implode (',',$query_vars);
-  $sql .= ') VALUES (';
-  $sql .= implode(',',$query_values);
-  $sql .= ')';
-  $result = db_execute_statement($sql);
-}
-
-/**
- *  Add log entry to action log table
- * 
- */
-function add_log_with_comment($uid, $action, $comment)
-{
-  $query_vars[] = 'uid';
-  $query_vars[] = 'performer';
-  $query_vars[] = 'action_performed';
-  $query_vars[] = 'comment';
-  
-  $performer = $_SERVER['PHP_AUTH_USER'];
-  
-  $query_values[] = "'$uid'";
-  $query_values[] = "'$performer'";
-  $query_values[] = "'$action'";
-  $query_values[] = "'$comment'";
-  
-  $sql = "INSERT INTO idp_account_actions (";
-  $sql .= implode (',',$query_vars);
-  $sql .= ') VALUES (';
-  $sql .= implode(',',$query_values);
-  $sql .= ')';
-  $result = db_execute_statement($sql);
 }
 
 ?>

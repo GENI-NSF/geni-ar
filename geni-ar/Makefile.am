@@ -44,6 +44,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/display_requests.php \
 	protected/index.html \
 	protected/ldap.php \
+	protected/log_actions.php \
 	protected/request_actions.php \
 	protected/send_email.php \
 	www/handlerequest.php \

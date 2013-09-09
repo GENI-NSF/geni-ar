@@ -16,7 +16,7 @@
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,ldapsearch -xLLL -b "dc=shib-idp2,dc=gpolab,dc=bbn,dc=com" uid=* sn givenName cn
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
@@ -25,35 +25,54 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('log_actions.php');
+
+global $acct_manager_url;
 
 $id = $_REQUEST['id'];
 $action = $_REQUEST['action'];
 
 if ($action === "delete") {
   $ldapconn = ldap_setup();
-  if ($ldapconn === -1)
+  if ($ldapconn === -1) {
+    process_error("LDAP Connection Failed");
     exit();
+  }
 
   // Delete account
+  $res = add_log($id,"Account Deleted");
+  if ($res != 0) {
+    process_error ("ERROR: Logging failed.  Will not delete account");
+    exit();
+  }
   $ret = ldap_delete($ldapconn, get_userdn($id));
   if ($ret) {
     //change status in postgres database
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE username_requested='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['value'] === 1) {
-      add_log($id,"Account Deleted");
-      header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_accounts.php");
-      
-    } else
-      print "COULD NOT CHANGE STATUS OF REQUEST FOR DELETED ACCOUNT WITH USERNAME=" . $id;
+      header("Location: " . $acct_manager_url . "/display_accounts.php");
+    } else {
+      process_error("Failed to change request state for deleted account for " . $id);
       print ('<br><br>');
       print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
+    } 
   } else {
-    print "DELETE OF ACCT " . $id . " FAILED";
-      print ('<br><br>');
-      print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
+      add_log_comment($uid, "Account Deleted", "FAILED");
+      process_error( "Failed to delete account for " . $id);
+      exit();
   }
-} else {
-  header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_accounts.php");
 }
+header("Location: " . $acct_manager_url . "/display_accounts.php");
+
+function process_error($msg)
+{
+  global $acct_manager_url;
+
+  print "$msg";
+  print ('<br><br>');
+  print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
+  error_log($msg);
+}
+
 ?>
