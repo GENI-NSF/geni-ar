@@ -9,12 +9,21 @@ import optparse
 class ArImporter:
 
     def import_csv(self, activity_log):
-        psql_cmd = ['psql', '-U', 'accreq', '-h', 'localhost', 'accreq'];
-        psql = subprocess.Popen(psql_cmd, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        psql_cmd = ['psql', '-U', 'accreq', '-h', 'localhost', 'accreq']
+        try:
+            psql = subprocess.Popen(psql_cmd, stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
+        except:
+            print("Failed to connect to postgres database. Do you have a .pgpass file?")
+            exit()
+        
+        try:
+            infile =  open(activity_log, 'r')
+        except:
+            print("Failed to open file %s" %activity_log)
+            exit()
 
-        infile =  open(activity_log, 'r')
         sql = ('INSERT into idp_account_actions' 
                + "(action_ts,action_performed,uid,performer) values ('%s','%s','%s','%s');\n")
 
@@ -22,9 +31,16 @@ class ArImporter:
             line = line.strip()
             if (line.startswith("Time")):
                 continue;
-            (time,action,uid,performer) = line.split(",");
-            psql.stdin.write(sql %(time,action,uid,performer))
-
+            if line.find(",") < 0:
+                continue;
+            try:
+                (time,action,uid,performer) = line.split(",")
+            except:
+                print("Could not insert incorrectly formatted log: %s" %line)
+            try:
+                ret = psql.stdin.write(sql %(time,action,uid,performer))
+            except:
+                print ("ERROR writing to database: command = %s" %sql)
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
