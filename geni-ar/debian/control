@@ -8,7 +8,8 @@ Homepage: http://trac.gpolab.bbn.com/idp-tools
 
 Package: geni-ar
 Architecture: all
-Depends: php5, php5-pgsql, php-mdb2-driver-pgsql, php5-ldap, ${misc:Depends}
+Depends: php5, php5-pgsql, php-mdb2-driver-pgsql, php5-ldap,
+ ${misc:Depends}, ${python:Depends}
 Recommends: apache2
 Description: GENI account request management
  Manages GENI IdP account requests. Account requests can be viewed and
