@@ -22,13 +22,34 @@
 // IN THE WORK.
 //----------------------------------------------------------------------
 require_once('db_utils.php');
+require_once('log_actions.php');
+
+global $acct_manager_url;
 
 $email_body = $_REQUEST['email_body'];
 $sendto = $_REQUEST['sendto'];
 $uid = $_REQUEST['uid'];
 $log = $_REQUEST['log'];
 
-mail($sendto, "GENI IdP Account Request", $email_body);
-add_log_with_comment($uid, $log,$email_body);
+$res = mail($sendto, "GENI IdP Account Request", $email_body);
+if ($res === false) {
+  process_error("Failed to send email to " . $sendto . " for account " . $uid);
+  exit();
+}
+$res = add_log_with_comment($uid, $log,$email_body);
+if ($res != 0) {
+  process_error("Failed to log email to " . $sendto . " for account " . $uid); 
+} else {
+  header("Location: " . $acct_manager_url . "/display_requests.php");
+}
 
-header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+function process_error($msg)
+{
+  global $acct_manager_url;
+
+  print $msg;
+  print ('<br><br>');
+  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+  error_log($msg);
+}
+?>

@@ -25,14 +25,17 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('log_actions.php');
 
 global $leads_email;
 global $acct_manager_url;
 
 //Add account to ldap database
 $ldapconn = ldap_setup();
-if ($ldapconn === -1)
+if ($ldapconn === -1) {
+  process_error("LDAP Connection Failed");
   exit();
+}
 
 $id = $_REQUEST['id'];
 $action = $_REQUEST['action'];
@@ -69,14 +72,20 @@ $reason = $row['reason'];
 if ($action === "passwd")
   {
     if (ldap_check_account($ldapconn,$uid) == false) {
-      print ("Cannot change password for uid=" . $uid . ". Account does not exist.");
-      print ('<br><br>');
-      print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+      process_error("Cannot change password for uid=" . $uid . ". Account does not exist.");
     } else {
-      add_log($uid, "Passwd Changed");
-      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
-      $result = db_execute_statement($sql);
-      header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+      $res = add_log($uid, "Passwd Changed");
+      if ($res != 0) {
+	process_error ("Logging failed.  Will not change request status.");
+      } else {
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$res = db_execute_statement($sql);
+	if ($res['code'] != 0) {
+	  process_error ("Database action failed.  Could not change request status for " . $uid);
+	  exit();
+	}
+	header("Location: " . $acct_manager_url + "/display_requests.php");
+      }
     }
   }
 else if ($action === "approve") 
@@ -84,20 +93,34 @@ else if ($action === "approve")
     //First check if account exists
     if (ldap_check_account($ldapconn,$uid))
       {
-	print("Account for uid=" . $uid . " already exists.");
-	print ('<br><br>');
-	print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+	process_error("Account for uid=" . $uid . " already exists.");
       }
     //Next check if email exists
     else if (ldap_check_email($ldapconn,$user_email))
       {
-	print("Account with email address=" . $user_email . " already exists.");
-	print ('<br><br>');
-	print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+	process_error("Account with email address=" . $user_email . " already exists.");
       }
     else 
       {
+	//Add log to action table
+	$res = add_log($uid, "Account Created");
+	if ($res != 0) {
+	  process_error ("ERROR: Logging failed.  Will not create account for " . $uid);
+	  exit();
+	}
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
+	if ($ret === false) {
+	  process_error ("ERROR: Failed to create new ldap account");
+	  add_log_comment($uid, "Account Created", "FAILED");
+	  exit();
+	}
+
+	// Now set created timestamp in postgres db
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
+	$result = db_execute_statement($sql);
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$result = db_execute_statement($sql);
+
 	
 	// notify in email
 	$subject = "New IdP Account Created";
@@ -109,14 +132,8 @@ else if ($action === "approve")
 	  $body .= "$var: $val\n";
 	}
 	$body .= "\nSee table idp_account_request for complete details.\n";
-	mail($portal_admin_email, $subject, $body);
-
-	// Now set created timestamp in postgres db
-	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
-	$result = db_execute_statement($sql);
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
-	$result = db_execute_statement($sql);
-
+	$res_admin = mail($portal_admin_email, $subject, $body);
+	
 	// Notify user
 	$filename = "/etc/geni-ar/notification-email.txt";
 	$file = fopen( $filename, "r" );
@@ -131,19 +148,28 @@ else if ($action === "approve")
 
 	$filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
 	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
-	mail($user_email, "GENI IdP Account Created", $filetext);
-
-	//Add log to action table
-	add_log($uid, "Account Created");
-	header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+	$res_user = mail($user_email, "GENI IdP Account Created", $filetext);
+	//$res_user = true;
+	if (!($res_admin and $res_user)) {
+	  if (!$res_admin)
+	    process_error("Failed to send email to " . $portal_admin_email . " for account " . $uid);
+	  if (!$res_user)
+	    process_error("Failed to send email to " . $user_email . " for account " . $uid);
+	  exit();
+	}
+	header("Location: " . $acct_manager_url . "/display_requests.php");
       }
   } 
 else if ($action === 'deny')
   {
+    $res = add_log($uid, "Account Denied");
+    if ($res != 0) {
+      process_error ("ERROR: Logging failed.  Will not deny account");
+      exit();
+    }
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
     $result = db_execute_statement($sql);
-    add_log($uid, "Account Denied");
-    header("Location: https://shib-idp2.gpolab.bbn.com/manage/display_requests.php");
+    header("Location: " . $acct_manager_url . "/display_requests.php");
   }
 else if ($action === "leads")
   {
@@ -153,7 +179,7 @@ else if ($action === "leads")
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	echo ( "Error in opening file" );
+	process_error ( "Error in opening file " . $filename);
 	exit();
       }
     $filesize = filesize( $filename );
@@ -190,7 +216,7 @@ else if ($action === "requester")
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	echo ( "Error in opening file" );
+	process_error ( "Error in opening file " . $filename );
 	exit();
       }
     $filesize = filesize( $filename );
@@ -217,4 +243,13 @@ else if ($action === "requester")
 
 ldap_close($ldapconn);
 
+function process_error($msg)
+{
+  global $acct_manager_url;
+
+  print "$msg";
+  print ('<br><br>');
+  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+  error_log($msg);
+}
 ?>
