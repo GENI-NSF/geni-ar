@@ -47,6 +47,8 @@ nobase_dist_pkgdata_DATA = \
 	protected/log_actions.php \
 	protected/request_actions.php \
 	protected/send_email.php \
+	protected/tutorial_requests.php \
+	protected/tutorial_actions.php \
 	www/handlerequest.php \
 	www/geni.png \
 	www/kmtool.css \
