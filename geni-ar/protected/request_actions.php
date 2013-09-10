@@ -132,7 +132,7 @@ else if ($action === "approve")
 	  $body .= "$var: $val\n";
 	}
 	$body .= "\nSee table idp_account_request for complete details.\n";
-	$res_admin = mail($portal_admin_email, $subject, $body);
+	$res_admin = mail($idp_audit_email, $subject, $body);
 	
 	// Notify user
 	$filename = "/etc/geni-ar/notification-email.txt";
@@ -196,7 +196,7 @@ else if ($action === "leads")
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
     print '<form method="POST" action="send_email.php">';
-    print 'To: <input type="text" name="sendto" value="' . $leads_email . '">';
+    print 'To: <input type="text" name="sendto" value="' . $idp_leads_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
     print $email_body;
