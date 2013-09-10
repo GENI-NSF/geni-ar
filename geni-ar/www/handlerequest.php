@@ -232,7 +232,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   geni_syslog("IDP request query", $sql);
   geni_syslog("IDP request result", print_r($result, true));
   // Next send an email about the error
-  mail($portal_admin_email,
+  mail($idp_approval_email,
     "IdP Account Request Failure $server_host",
    'An error occurred on IdP account request. See /var/log/user.log for details.');
   // Finally pop up an error page
@@ -248,7 +248,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     $body .= "$var: $val\n";
   }
   $body .= "\nSee table idp_account_request for complete details.\n";
-  mail($portal_admin_email, $subject, $body);
+  mail($idp_approval_email, $subject, $body);
 
   //Now email the requester
   $subject = "GENI Identity Provider Account Request Received";

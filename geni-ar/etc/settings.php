@@ -29,10 +29,40 @@
  *
  * See http://pear.php.net/manual/en/package.database.mdb2.intro-dsn.php
  */
-$db_dsn = 'pgsql://scott:tiger@localhost/portal';
+$db_dsn = 'pgsql://scott:tiger@localhost/accreq';
 
 /*
- * Where to send administrative email.
+ * People who should be notified that there are new accounts waiting
+ * to be approved
  */
-$portal_admin_email = 'portal-admin@example.com';
+$idp_approval_email = 'approval@idp.net';
+
+/*
+ * People who should be notified when someone clicks a button like
+ * "e-mail leads"
+ */
+$idp_leads_email = 'leads@idp.net'; 
+
+/*
+ * People who should be notified when an action has been taken
+ */
+$idp_audit_email = 'audit@idp.net';
+
+/*
+ * base url for acct mgmt tool
+ */
+$acct_manager_url = 'https://arsystem.idplab.idp.com/mainpage';
+
+/*
+ * LDAP variables
+ */
+
+$base_dn = "dc=arsystem,dc=testlab,dc=idp,dc=com"; //for searches
+$user_dn = ",ou=people,dc=arsystem,dc=testlab,dc=idp,dc=com"; //append to uid
+$ldaprdn  = 'cn=admin,dc=arsystem,dc=testlab,dc=idp,dc=com'; //for adding/modifying accounts
+$ldappass = 'XyZaBc'; //for adding/modifying accounts
+
+$ldap_host = 'localhost';
+$ldap_port = 111;
+
 ?>
