@@ -1,6 +1,12 @@
+geni-ar (0.3) precise; urgency=low
+
+  * Change help email to "help@geni.net"
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
+
 geni-ar (0.2) precise; urgency=low
 
-  *
+  * Too many upates to enumerate.
 
  -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
 
