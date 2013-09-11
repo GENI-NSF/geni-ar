@@ -195,7 +195,7 @@ if ($errors) {
 <?php } ?>
     </ul>
   <p>Please use the browser back button to try again.</p>
-  <p>If you have any questions, please send email to <a href="mailto:portal-help@geni.net">portal-help@geni.net</a>.
+  <p>If you have any questions, please send email to <a href="mailto:help@geni.net">help@geni.net</a>.
   </div> <!-- header -->
   <hr/>
   <div id="footer">
@@ -282,7 +282,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     Congratulations, your account request has been received. We will be in touch with you about the status of your request.
     </p>
 <?php } ?>
-  <p>If you have any questions, please send email to <a href="mailto:portal-help@geni.net">portal-help@geni.net</a>.
+  <p>If you have any questions, please send email to <a href="mailto:help@geni.net">help@geni.net</a>.
   </div> <!-- header -->
   <hr/>
   <div id="footer">
