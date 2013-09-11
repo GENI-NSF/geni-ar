@@ -27,4 +27,53 @@ require_once('db_utils.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
 
-print $_REQUEST['desc'];
+//First make sure we can connect to ldap
+$ldapconn = ldap_setup();
+if ($ldapconn === -1) {
+  process_error("LDAP Connection Failed");
+  exit();
+}
+
+//get request data
+$num = $_REQUEST['num'];
+$user_prefix = $_REQUEST['userprefix'];
+$pw_prefix =  $_REQUEST['pwprefix'];
+$org_email =  $_REQUEST['email'];                            
+$org_phone =  $_REQUEST['phone'];
+$desc = $_REQUEST['desc'];   
+
+//check for valid username
+if (strlen($uid) > 6) {
+  process_error("username prefix cannot be longer than 6 characters.");
+  exit();
+  }
+  if (!preg_match('/^[a-z0-9]{1,6}$/', $uid)) {
+    process_error("username must consist of lowercase letters and numbers only.");
+    exit();
+  }
+
+//now for each username, check that an account doesn't already exist
+//then create an "APPROVED" request in db
+for ($x=1; $x<=$num; $x++)
+  {
+    $usernum = strval($x);
+    if (strlen($usernum) == 1)
+      {
+	$usernum = "0" . $usernum;
+      }
+    $uid = $user_prefix . $user_num;
+    if (ldap_check_account($ldapconn,$uid)) {
+      print ("ERROR: username " . $uid . " is already in use");
+      exit();
+    }
+  }
+    
+function process_error($msg)
+{
+  global $acct_manager_url;
+
+  print ("$msg");
+  print ('<br><br>');
+  print ('<a href="' . $acct_manager_url . '/tutorial_requests.php">Back</a>'); 
+  print ('<a href="' . $acct_manager_url ."'>Cancel</a>'); 
+}

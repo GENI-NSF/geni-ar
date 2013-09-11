@@ -43,7 +43,7 @@ function add_log($uid, $action)
   $query_values[] = "'$performer'";
   $query_values[] = "'$action'";
   
-  $res =  create_log($query_vars,$query_values);
+  return create_log($query_vars,$query_values);
 }
 
 /**
@@ -67,7 +67,7 @@ function add_log_with_comment($uid, $action, $comment)
 
 function create_log($query_vars,$query_values)
 {
-  $sql = "INSERT INTO idp_account_actions (";
+  $sql = "INSERT INTO idp_account_actions ("; 
   $sql .= implode (',',$query_vars);
   $sql .= ') VALUES (';
   $sql .= implode(',',$query_values);

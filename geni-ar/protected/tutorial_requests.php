@@ -32,13 +32,20 @@ print '<h1>';
 print '<p>Tutorial Account Creation</p>';
 print '</h1>';
 
+print '<h3>';
+print '<p>Reminder: Open a ticket with infra and verify that it\'s approved before creating tutorial accounts</p>';
+print '</h3>';
+
 print '<form method="POST" action="tutorial_actions.php">';
-print '<p>Tutorial Description: <input type="text" name="desc"></p>';
-print '<p>User Prefix: <input type="text" name="userprefix"></p>';
-print '<p>Password Prefix: <input type="text" name="pwprefix"></p>';
-print '<p>Organizer Email: <input type="text" name="email"></p>';
-print '<p>Organizer Phone: <input type="text" name="phone"></p>';
-print '<p>Number of Accounts: <input type="text" name="num"></p>';
+print '<p>Tutorial Description: <input type="text" name="desc" required></p>';
+print '<p>User Prefix: <input type="text" name="userprefix" required></p>';
+print '<p>Password Prefix: <input type="text" name="pwprefix" required></p>';
+print '<p>Organizer Email: <input type="text" name="email" required></p>';
+print '<p>Organizer Phone: <input type="text" name="phone" required></p>';
+print '<p>Number of Accounts: <input type="text" name="num" required></p>';
 print '<br><br>';
 print '<input type="submit" value="CREATE ACCOUNTS"/>';
+print "</form>";
+print '<form method="POST" action="index.html">';
+print '<input type="submit" value="CANCEL"/>';
 print "</form>";
