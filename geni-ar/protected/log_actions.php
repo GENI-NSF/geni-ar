@@ -43,7 +43,7 @@ function add_log($uid, $action)
   $query_values[] = "'$performer'";
   $query_values[] = "'$action'";
   
-  $res =  create_log($query_vars,$query_values);
+  return create_log($query_vars,$query_values);
 }
 
 /**
