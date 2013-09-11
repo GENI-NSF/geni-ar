@@ -1,0 +1,11 @@
+geni-ar (0.2) precise; urgency=low
+
+  *
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
+
+geni-ar (0.1.0) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Thu, 15 Aug 2013 01:05:09 +0000

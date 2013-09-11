@@ -1,0 +1,9 @@
+Dear REQUESTER,
+
+Your request for a GENI IdP account cannot be fulfilled because...
+
+Please...
+
+Thanks,
+The GENI Project Office
+

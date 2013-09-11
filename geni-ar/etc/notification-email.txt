@@ -1,0 +1,21 @@
+Hi EXPERIMENTER_NAME_HERE,
+
+Your identity provider account has been created, so please give it a try.
+
+1. Go to https://portal.geni.net
+2. Click the big orange "Use GENI" button
+3. In the text entry widget on the IdP choose page, type in "geni"
+4. Select "GENI Project Office"
+5. Click "Continue"
+6. Type in your Username ("USER_NAME_GOES_HERE") 
+7. Type in your Password (the plain text that you entered in the web form)
+8. You should be redirected to an agreement page. You'll need to check the unchecked box (leave the other one checked), and submit the page.
+9. You're done! You should now be at the portal home page.
+
+At this point, you will need to become a member of a project.  To do this, continue with the instructions found here: 
+http://groups.geni.net/geni/wiki/SignMeUp#a2.BecomeamemberofaGENIProject
+
+If you have any problems, questions, or suggestions for improvement, please contact help@geni.net.
+
+Thanks,
+The GENI Project Office
