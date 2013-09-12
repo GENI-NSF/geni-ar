@@ -1,0 +1,9 @@
+The temporary tutorial accounts for the <description> tutorial have been created.
+They are:
+
+  username: <username_prefix>NN
+  password: <password_prefix>NN
+
+where NN is the tutorial user number, from 01-<numaccounts>.
+
+Each user has the e-mail address <username_prefix>NN@gpolab.bbn.com, which forwards to gpo-ops and to you.

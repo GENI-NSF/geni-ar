@@ -4,6 +4,8 @@ geni-ar (0.3) precise; urgency=low
 
  -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
 
+  * Fix to tkt22: when geni-ar can't talk to database, LDAP actions can still be taken
+
 geni-ar (0.2) precise; urgency=low
 
   * Too many upates to enumerate.
