@@ -161,6 +161,11 @@ for ($x=1; $x<=intval($num); $x++)
     // Now set created timestamp in postgres db
     $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
     $result = db_execute_statement($sql);
+    if ($result['code'] != 0) {
+      process_error("Couldn't update created timestamp. Postgres database update failed");
+      exit();
+    }
+
   }
 
 ldap_close($ldapconn);

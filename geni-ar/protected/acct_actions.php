@@ -50,6 +50,11 @@ if ($action === "delete") {
     //change status in postgres database
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE username_requested='" . $id . '\'';
     $result = db_execute_statement($sql);
+    if ($result['code'] != 0) {
+      process_error("Postgres database update failed");
+      exit();
+    }
+
     if ($result['value'] === 1) {
       header("Location: " . $acct_manager_url . "/display_accounts.php");
     } else {

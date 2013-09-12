@@ -39,6 +39,11 @@ if ($user === "ALL")
     $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\'';
   }
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
+
 $rows = $result['value'];
 
 function get_values($row)
