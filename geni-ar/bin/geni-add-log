@@ -1,24 +1,34 @@
 #! /usr/bin/env python
 
 import os
-import sys
-import subprocess
-import time
 import optparse
+import psycopg2
+import psycopg2.extras
 
 class ActionLogger:
 
     def add_entry(self,uid,action_performed,comment):
-        psql_cmd = ['psql', '-U', 'accreq', '-h', 'localhost', 'accreq']
-        psql = subprocess.Popen(psql_cmd, stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        try:
+            conn = psycopg2.connect(database='accreq',
+                                    user='accreq',
+                                    host='localhost')
+        except Exception,e:
+            print "database connection failed"
+            exit(-1)
 
         performer = os.getlogin()
-        sql = ('INSERT into idp_account_actions ' 
-               + "(uid,action_performed,comment,performer) values ('%s','%s','%s','%s');\n")
 
-        psql.stdin.write(sql %(uid,action_performed,comment,performer))
+        cur = conn.cursor()
+        sql = "INSERT into idp_account_actions (uid,action_performed,comment,performer) values (%s,%s,%s,%s)"
+        data = (uid,action_performed,comment,performer,)
+        try:
+            cur.execute(sql,data)
+        except Exception,e:
+            print cur.query
+            print "Error: Query: %s Got %s %s" %(sql,e.pgcode,e.pgerror)
+        conn.commit()
+        cur.close()
+        conn.close()
             
 
 if __name__ == "__main__":
