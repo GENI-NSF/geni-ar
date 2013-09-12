@@ -42,6 +42,11 @@ $action = $_REQUEST['action'];
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE id=" . $id;
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
+
 $row = $result['value'][0];
 
 $uid = $row['username_requested']; 
@@ -118,10 +123,18 @@ else if ($action === "approve")
 	// Now set created timestamp in postgres db
 	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
 	$result = db_execute_statement($sql);
+	if ($result['code'] != 0) {
+	  process_error("Postgres database update failed");
+	  exit();
+	}
+
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
 	$result = db_execute_statement($sql);
+	if ($result['code'] != 0) {
+	  process_error("Postgres database update failed");
+	  exit();
+	}
 
-	
 	// notify in email
 	$subject = "New IdP Account Created";
 	$body = 'A new IdP account has been created for ';
@@ -169,12 +182,21 @@ else if ($action === 'deny')
     }
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
     $result = db_execute_statement($sql);
+    if ($result['code'] != 0) {
+      process_error("Postgres database update failed");
+      exit();
+    }
+
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }
 else if ($action === "leads")
   {
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
     $result = db_execute_statement($sql);
+    if ($result['code'] != 0) {
+      process_error("Postgres database update failed");
+      exit();
+    }
     $filename = "/etc/geni-ar/leads-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
@@ -211,7 +233,10 @@ else if ($action === "requester")
   {
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
     $result = db_execute_statement($sql);
-    
+    if ($result['code'] != 0) {
+      process_error("Postgres database update failed");
+      exit();
+    }
     $filename = "/etc/geni-ar/user-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )

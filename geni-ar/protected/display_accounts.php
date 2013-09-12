@@ -82,6 +82,11 @@ print '</table>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DELETED'";
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
+
 $rows = $result['value'];
 
 print '<h2>';
@@ -101,6 +106,11 @@ foreach ($rows as $row) {
   $action_ts="";
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Deleted' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
+  if ($result['code'] != 0) {
+    process_error("Postgres database query failed");
+    exit();
+  }
+
   $logs = $action_result['value'];
   if ($logs) {
     $performer = $logs[0]['performer'];
@@ -111,3 +121,9 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 print '</table>';
+
+function process_error($msg)
+{
+  print "$msg";
+  error_log($msg);
+}
