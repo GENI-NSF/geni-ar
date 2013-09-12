@@ -39,6 +39,7 @@ nobase_dist_pkgdata_DATA = \
 	lib/php/geni_syslog.php \
 	lib/php/ldap_utils.php \
 	lib/php/response_format.php \
+	lib/php/ssha.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
 	protected/display_accounts.php \

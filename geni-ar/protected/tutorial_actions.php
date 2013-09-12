@@ -26,42 +26,7 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
-
-/**
- * A class to create a Salted SHA password hash.
- *
- * From http://ten-fingers-and-a-brain.com/2009/08/ssha-php/
- */
-class SSHA
-{
-
-  public static function newSalt()
-  {
-    return chr(rand(0,255)).chr(rand(0,255)).chr(rand(0,255)).chr(rand(0,255));
-  }
-
-  public static function hash($pass,$salt)
-  {
-    return '{SSHA}'.base64_encode(sha1($pass.$salt,true).$salt);
-  }
-
-  public static function getSalt($hash)
-  {
-    return substr(base64_decode(substr($hash,-32)),-4);
-  }
-
-  public static function newHash($pass)
-  {
-    return self::hash($pass,self::newSalt());
-  }
-
-  public static function verifyPassword($pass,$hash)
-  {
-    return $hash == self::hash($pass,self::getSalt($hash));
-  }
-
-}
-
+require_once('ssha.php');
 
 //First make sure we can connect to ldap
 $ldapconn = ldap_setup();
@@ -152,9 +117,6 @@ for ($x=1; $x<=intval($num); $x++)
     $query_vals[] = $conn->quote($desc,"text");
     $query_vals[] = $conn->quote("APPROVED","text");
 
-    error_log(print_r($query_vars,true));
-    error_log(print_r($query_vals,true));
-
     $sql = 'INSERT INTO idp_account_request (';
 
     $sql .= implode(',', $query_vars);
@@ -162,10 +124,7 @@ for ($x=1; $x<=intval($num); $x++)
     $sql .= implode (',', $query_vals);
     $sql .= ')';
 
-    error_log($sql);
-
     $result = db_execute_statement($sql, 'insert idp account request');
-    error_log(print_r($result,true));
 	    
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
