@@ -70,7 +70,7 @@ for ($x=1; $x<=$num; $x++)
   }
 
 //Ready to create requests and accounts, First log
-$comment = "Created " . $num . "tutorial accounts for Tutorial: " . $desc . " for " . $org_email;
+$comment = "Created " . $num . " tutorial accounts for Tutorial: " . $desc . " for " . $org_email;
 $ret = add_log_with_comment($user_prefix,"Created Tutorial Accounts",$comment);
 if ($ret != 0) {
   process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
@@ -105,17 +105,11 @@ for ($x=1; $x<=intval($num); $x++)
 
     $conn = db_conn();
 
+    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,"APPROVED");
     $query_vals = array();
-    $query_vals[] = $conn->quote($desc,"text");
-    $query_vals[] = $conn->quote($lastname,"text");
-    $query_vals[] = $conn->quote($email,"text");
-    $query_vals[] = $conn->quote($uid,"text");
-    $query_vals[] = $conn->quote($org_phone,"text");
-    $query_vals[] = $conn->quote($pw_hash,"text");
-    $query_vals[] = $conn->quote("BBN","text");
-    $query_vals[] = $conn->quote("Tutorial User","text");
-    $query_vals[] = $conn->quote($desc,"text");
-    $query_vals[] = $conn->quote("APPROVED","text");
+    foreach ($values as $val) {
+      $query_vals[] = $conn->quote($val,"text");
+    }
 
     $sql = 'INSERT INTO idp_account_request (';
 
