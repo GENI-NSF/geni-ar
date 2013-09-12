@@ -1,3 +1,9 @@
+geni-ar (0.3)
+
+  * Fix to tkt22: when geni-ar can't talk to database, LDAP actions can still be taken
+
+
+
 geni-ar (0.2) precise; urgency=low
 
   *
