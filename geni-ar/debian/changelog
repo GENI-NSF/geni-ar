@@ -1,5 +1,8 @@
 geni-ar (0.3) precise; urgency=low
 
+  * New versions of geni-add-log and geni-convert-logs
+ -- Pam Helinek <phelinek@bbn.com>  Thu, 012 Sep 2013 18:21:25 -0600	
+
   * Improved error messages when postgres actions fail
  -- Pam Helinek <phelinek@bbn.com>  Thu, 012 Sep 2013 16:50:25 -0600	
 
