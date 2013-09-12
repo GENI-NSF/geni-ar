@@ -37,6 +37,11 @@ if ($ldapconn === -1) {
 
 //get request data
 $num = $_REQUEST['num'];
+if (!is_numeric($num)) {
+  process_error("ERROR: number of accounts must be a number");
+  exit();
+}
+
 $user_prefix = $_REQUEST['userprefix'];
 $pw_prefix =  $_REQUEST['pwprefix'];
 $org_email =  $_REQUEST['email'];                            
@@ -186,6 +191,8 @@ function process_error($msg)
   global $acct_manager_url;
 
   print ($msg);
+  print ('<br><br>');
+  print ('<a href="#" onclick="history.go(-1)">Edit request</a>');
   print ('<br><br>');
   print ('<a href="' . $acct_manager_url . '">Cancel</a>'); 
 }
