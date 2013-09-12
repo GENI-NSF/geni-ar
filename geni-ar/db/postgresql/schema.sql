@@ -23,7 +23,7 @@ CREATE TABLE idp_account_request (
   title VARCHAR NOT NULL,
   url VARCHAR,
   reason VARCHAR NOT NULL,
-  request_ts timestamp DEFAULT NOW() at time zone 'utc',
+  request_ts timestamp DEFAULT (NOW() at time zone 'utc'),
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
   request_state VARCHAR DEFAULT 'REQUESTED'
@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS idp_account_actions;
 CREATE TABLE idp_account_actions (
      id SERIAL PRIMARY KEY,
      uid VARCHAR NOT NULL,
-     action_ts timestamp DEFAULT NOW() at time zone 'utc',
+     action_ts timestamp DEFAULT (NOW() at time zone 'utc'),
      performer VARCHAR,
      action_performed VARCHAR NOT NULL,
      comment VARCHAR
