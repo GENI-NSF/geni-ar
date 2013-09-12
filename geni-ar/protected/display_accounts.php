@@ -121,3 +121,9 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 print '</table>';
+
+function process_error($msg)
+{
+  print "$msg";
+  error_log($msg);
+}

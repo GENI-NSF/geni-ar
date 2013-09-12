@@ -91,7 +91,7 @@ print '</table>';
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_LEADS'";
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
-  process_error("Query failed to postgres database");
+  process_error("Postgres database query failed");
   exit();
 }
 $rows = $result['value'];
@@ -110,7 +110,7 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   if ($action_result['code'] != 0) {
-    process_error("Query failed to postgres database");
+    process_error("Postgres database query failed");
     exit();
   }
   $logs = $action_result['value'];
@@ -140,7 +140,7 @@ print '</table>';
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_REQUESTER'";
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
-  process_error("Query failed to postgres database");
+  process_error("Postgres database query failed");
   exit();
 }
 $rows = $result['value'];
@@ -160,7 +160,7 @@ foreach ($rows as $row) {
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
   if ($action_result['code'] != 0) {
-    process_error("Query failed to postgres database");
+    process_error("Postgres database query failed");
     exit();
   }
 
@@ -189,7 +189,7 @@ print '</table>';
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='APPROVED'";
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
-  process_error("Query failed to postgres database");
+  process_error("Postgres database query failed");
   exit();
 }
 $rows = $result['value'];
@@ -207,7 +207,7 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   if ($action_result['code'] != 0) {
-    process_error("Query failed to postgres database");
+    process_error("Postgres database query failed");
     exit();
   }
 
@@ -227,7 +227,7 @@ $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
 if ($result['code'] != 0) {
-  process_error("Query failed to postgres database");
+  process_error("Postgres database query failed");
   exit();
 }
 
@@ -256,11 +256,7 @@ print '</table>';
 
 function process_error($msg)
 {
-  global $acct_manager_url;
-
   print "$msg";
-  print ('<br><br>');
-  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
   error_log($msg);
 }
 

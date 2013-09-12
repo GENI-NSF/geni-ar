@@ -40,6 +40,8 @@ if ($user === "ALL")
   }
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
+  print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+  print '<br></br>';
   process_error("Postgres database query failed");
   exit();
 }
@@ -81,4 +83,9 @@ foreach ($rows as $row) {
 }
 print '</table>';
 
+function process_error($msg)
+{
+  print "$msg";
+  error_log($msg);
+}
 ?>
