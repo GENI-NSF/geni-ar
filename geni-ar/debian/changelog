@@ -5,9 +5,9 @@ geni-ar (0.3) precise; urgency=low
   * First pass at tutorial creation functionality
   * Change help email to "help@geni.net"
   * Fix to tkt22: when geni-ar can't talk to database, LDAP actions can
-	still be taken
+    still be taken
 
- -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
+ -- Tom Mitchell <tmitchel@bbn.com>  Fri, 13 Sep 2013 15:45:33 +0000
 
 geni-ar (0.2) precise; urgency=low
 
