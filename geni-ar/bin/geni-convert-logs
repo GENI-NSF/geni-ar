@@ -1,31 +1,19 @@
 #! /usr/bin/env python
 
 import os
-import sys
-import subprocess
 import time
 import optparse
+import psycopg2
+import psycopg2.extras
 
 class ArImporter:
 
-    def import_csv(self, activity_log):
-        psql_cmd = ['psql', '-U', 'accreq', '-h', 'localhost', 'accreq']
-        try:
-            psql = subprocess.Popen(psql_cmd, stdin=subprocess.PIPE,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        except:
-            print("Failed to connect to postgres database. Do you have a .pgpass file?")
-            exit()
-        
+    def print_sql(self, activity_log):
         try:
             infile =  open(activity_log, 'r')
         except:
             print("Failed to open file %s" %activity_log)
             exit()
-
-        sql = ('INSERT into idp_account_actions' 
-               + "(action_ts,action_performed,uid,performer) values ('%s','%s','%s','%s');\n")
 
         for line in infile:
             line = line.strip()
@@ -37,17 +25,60 @@ class ArImporter:
                 (time,action,uid,performer) = line.split(",")
             except:
                 print("Could not insert incorrectly formatted log: %s" %line)
+
+
+            sql = "INSERT into idp_account_actions (action_ts,action_performed,uid,performer) values ('%s','%s','%s','%s');" %(time,action,uid,performer)
+            print sql
+        
+
+    def import_csv(self, activity_log):
+        try:
+            conn = psycopg2.connect(database='accreq',
+                                    user='accreq',
+                                    host='localhost')
+        except Exception,e:
+            print "database connection failed"
+            exit(-1)
+        
+        try:
+            infile =  open(activity_log, 'r')
+        except:
+            print("Failed to open file %s" %activity_log)
+            exit()
+
+        for line in infile:
+            line = line.strip()
+            if (line.startswith("Time")):
+                continue;
+            if line.find(",") < 0:
+                continue;
             try:
-                ret = psql.stdin.write(sql %(time,action,uid,performer))
+                (time,action,uid,performer) = line.split(",")
             except:
-                print ("ERROR writing to database: command = %s" %sql)
+                print("Could not insert incorrectly formatted log: %s" %line)
+
+            cur = conn.cursor()
+            sql = "INSERT into idp_account_actions (action_ts,action_performed,uid,performer) values (%s,%s,%s,%s)"
+            data = (time,action,uid,performer,)
+            try:
+                cur.execute(sql,data)
+            except Exception,e:
+                print cur.query
+                print "Error: Query: %s Got %s %s" %(sql,e.pgcode,e.pgerror)
+        conn.commit()
+        cur.close()
+        conn.close()
 
 if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option("-f","--file", dest="activity_log");
+    parser.add_option("-i","--insert", dest="insert",action="store_true",default=False);
 
     (options, args) = parser.parse_args();
 
     converter = ArImporter()
-    converter.import_csv(options.activity_log)
+    if (options.insert):
+        converter.import_csv(options.activity_log)
+    else:
+        converter.print_sql(options.activity_log)
                               

@@ -37,6 +37,10 @@ print '</h1>';
 $conn = db_conn();
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='REQUESTED'";
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Query failed to postgres database");
+  exit();
+}
 $rows = $result['value'];
 
 function get_values($row)
@@ -86,6 +90,10 @@ print '</table>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_LEADS'";
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
 $rows = $result['value'];
 
 print '<h2>';
@@ -101,6 +109,10 @@ foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
+  if ($action_result['code'] != 0) {
+    process_error("Postgres database query failed");
+    exit();
+  }
   $logs = $action_result['value'];
   if ($logs) {
     $performer = $logs[0]['performer'];
@@ -127,6 +139,10 @@ print '</table>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_REQUESTER'";
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
 $rows = $result['value'];
 
 print '<h2>';
@@ -143,6 +159,11 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
+  if ($action_result['code'] != 0) {
+    process_error("Postgres database query failed");
+    exit();
+  }
+
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
@@ -167,6 +188,10 @@ print '</table>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='APPROVED'";
 $result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
 $rows = $result['value'];
 
 print '<h2>';
@@ -181,6 +206,11 @@ foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
+  if ($action_result['code'] != 0) {
+    process_error("Postgres database query failed");
+    exit();
+  }
+
   $logs = $action_result['value'];
   if ($logs) {
   $performer = $logs[0]['performer'];
@@ -196,6 +226,10 @@ $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DENIED'";
 $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
 
 print '<h2>';
 print '<p>Denied Account Requests</p>';
@@ -219,5 +253,11 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 print '</table>';
+
+function process_error($msg)
+{
+  print "$msg";
+  error_log($msg);
+}
 
 ?>

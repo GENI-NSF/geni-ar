@@ -43,7 +43,7 @@ function add_log($uid, $action)
   $query_values[] = "'$performer'";
   $query_values[] = "'$action'";
   
-  $res =  create_log($query_vars,$query_values);
+  return create_log($query_vars,$query_values);
 }
 
 /**
@@ -67,12 +67,17 @@ function add_log_with_comment($uid, $action, $comment)
 
 function create_log($query_vars,$query_values)
 {
-  $sql = "INSERT INTO idp_account_actions (";
+  $sql = "INSERT INTO idp_account_actions ("; 
   $sql .= implode (',',$query_vars);
   $sql .= ') VALUES (';
   $sql .= implode(',',$query_values);
   $sql .= ')';
   $result = db_execute_statement($sql);
+  if ($result['code'] != 0) {
+    process_error("Couldn't create log. Postgres database insert failed");
+    exit();
+}
+
   return $result['code'];
 }
 
@@ -84,6 +89,11 @@ function add_log_comment($uid, $log, $comment)
   $id = $rows[0]['id'];
   $sql = "UPDATE idp_account_actions SET comment='" . $comment ."' WHERE id=" . $id;
   $result = db_execute_statement($sql);
+  if ($result['code'] != 0) {
+    process_error("Couldn't add comment to log. Postgres database update failed");
+    exit();
+  }
+
   return $result['code'];
 }
 ?>

@@ -33,11 +33,13 @@ nobase_dist_pkgdata_DATA = \
 	etc/notification-email.txt \
 	etc/settings.php \
 	etc/user-email.txt \
+	etc/tutorial-email.txt \
 	lib/php/ar_constants.php \
 	lib/php/db_utils.php \
 	lib/php/geni_syslog.php \
 	lib/php/ldap_utils.php \
 	lib/php/response_format.php \
+	lib/php/ssha.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
 	protected/display_accounts.php \
@@ -47,6 +49,9 @@ nobase_dist_pkgdata_DATA = \
 	protected/log_actions.php \
 	protected/request_actions.php \
 	protected/send_email.php \
+	protected/tutorial_requests.php \
+	protected/tutorial_actions.php \
+	protected/tutorial_confirmation.php \
 	www/handlerequest.php \
 	www/geni.png \
 	www/kmtool.css \

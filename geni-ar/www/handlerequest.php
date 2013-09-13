@@ -25,42 +25,8 @@ require_once('db_utils.php');
 require_once('ldap_utils.php');
 require_once('geni_syslog.php');
 require_once('response_format.php');
+require_once('ssha.php');
 include_once('/etc/geni-ar/settings.php');
-
-/**
- * A class to create a Salted SHA password hash.
- *
- * From http://ten-fingers-and-a-brain.com/2009/08/ssha-php/
- */
-class SSHA
-{
-
-  public static function newSalt()
-  {
-    return chr(rand(0,255)).chr(rand(0,255)).chr(rand(0,255)).chr(rand(0,255));
-  }
-
-  public static function hash($pass,$salt)
-  {
-    return '{SSHA}'.base64_encode(sha1($pass.$salt,true).$salt);
-  }
-
-  public static function getSalt($hash)
-  {
-    return substr(base64_decode(substr($hash,-32)),-4);
-  }
-
-  public static function newHash($pass)
-  {
-    return self::hash($pass,self::newSalt());
-  }
-
-  public static function verifyPassword($pass,$hash)
-  {
-    return $hash == self::hash($pass,self::getSalt($hash));
-  }
-
-}
 
 $errors = array();
 
@@ -195,7 +161,7 @@ if ($errors) {
 <?php } ?>
     </ul>
   <p>Please use the browser back button to try again.</p>
-  <p>If you have any questions, please send email to <a href="mailto:portal-help@geni.net">portal-help@geni.net</a>.
+  <p>If you have any questions, please send email to <a href="mailto:help@geni.net">help@geni.net</a>.
   </div> <!-- header -->
   <hr/>
   <div id="footer">
@@ -282,7 +248,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     Congratulations, your account request has been received. We will be in touch with you about the status of your request.
     </p>
 <?php } ?>
-  <p>If you have any questions, please send email to <a href="mailto:portal-help@geni.net">portal-help@geni.net</a>.
+  <p>If you have any questions, please send email to <a href="mailto:help@geni.net">help@geni.net</a>.
   </div> <!-- header -->
   <hr/>
   <div id="footer">

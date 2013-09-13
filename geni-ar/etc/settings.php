@@ -63,6 +63,6 @@ $ldaprdn  = 'cn=admin,dc=arsystem,dc=testlab,dc=idp,dc=com'; //for adding/modify
 $ldappass = 'XyZaBc'; //for adding/modifying accounts
 
 $ldap_host = 'localhost';
-$ldap_port = 111;
+$ldap_port = 389;
 
 ?>
