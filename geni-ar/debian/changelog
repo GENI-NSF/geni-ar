@@ -1,26 +1,17 @@
 geni-ar (0.3) precise; urgency=low
 
   * New versions of geni-add-log and geni-convert-logs
- -- Pam Helinek <phelinek@bbn.com>  Thu, 012 Sep 2013 18:21:25 -0600	
-
   * Improved error messages when postgres actions fail
- -- Pam Helinek <phelinek@bbn.com>  Thu, 012 Sep 2013 16:50:25 -0600	
-
   * First pass at tutorial creation functionality
- -- Pam Helinek <phelinek@bbn.com>  Thu, 012 Sep 2013 15:42:25 -0600	
-	
-	
-
   * Change help email to "help@geni.net"
+  * Fix to tkt22: when geni-ar can't talk to database, LDAP actions can
+	still be taken
 
  -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
 
-  * Fix to tkt22: when geni-ar can't talk to database, LDAP actions can still be taken
- -- Pam Helinek <phelinek@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600	
-
 geni-ar (0.2) precise; urgency=low
 
-  * Too many upates to enumerate.
+  * Too many updates to enumerate.
 
  -- Tom Mitchell <tmitchel@bbn.com>  Mon, 09 Sep 2013 07:25:25 -0600
 
