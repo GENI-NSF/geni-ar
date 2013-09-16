@@ -1,3 +1,9 @@
+geni-ar (0.5) unstable; urgency=low
+
+  * REPLACE_ME
+
+ -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
+
 geni-ar (0.4) unstable; urgency=low
 
   * Fix whitespace in autoresponder email for request confirmation (#31)
