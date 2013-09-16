@@ -53,29 +53,40 @@ if ($ldapconn === -1) {
   print "Failed to connect to ldap server";
   exit();
 }
+if (array_key_exists("pwchange",$_REQUEST)) {
+  $pwchange = true;
+} else {
+  $pwchange = false;
+}
+$uid = $_REQUEST['username_requested'];
+$acct_exists = ldap_check_account($ldapconn,$uid);
+  
 //sanity checks - does username exist, does email exist
 //is username properly formed (1-8 characters, lower case letters and numbers only)
+
+if ($pwchange && !$acct_exists)  {
+  $errors[] = "Cannot change password.  Account for username " . $uid . " does not exist";
+} else if (!$pwchange && $acct_exists) {
+  $errors[] = "The username " . $uid . " is already in use.";
+}
 
 //check if there is already an account for this email
 if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
   $email = $_REQUEST['email'];
-  if (ldap_check_email($ldapconn,$email)) {
-    $errors[] = "An account for this email address already exists.";
-  }
-}
-$uid = $_REQUEST['username_requested'];
 
-if (ldap_check_account($ldapconn,$uid)) {
-  $errors[] = "This username is already in use.";
-} else {
-  if (strlen($uid) > 8) {
-    $errors[] = "username cannot be longer than 8 characters.";
+  if (!$pwchange) {
+    if (ldap_check_email($ldapconn,$email)) {
+      $errors[] = "An account for this email address already exists.";
+    }
   }
-  if (!preg_match('/^[a-z0-9]{1,8}$/', $uid)) {
-    $errors[] = "username must consist of lowercase letters and numbers only.";
-  }
-  
 }
+if (strlen($uid) > 8) {
+  $errors[] = "username cannot be longer than 8 characters.";
+}
+if (!preg_match('/^[a-z0-9]{1,8}$/', $uid)) {
+  $errors[] = "username must consist of lowercase letters and numbers only.";
+}
+  
 if (array_key_exists('password1', $_REQUEST) && $_REQUEST['password1']) {
   $p1 = $_REQUEST['password1'];
 } else {
@@ -204,22 +215,33 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   // Finally pop up an error page
 } else {
   // Success
-  $subject = "New IdP Account Request on $server_host";
-  $body = 'A new IdP account request has been submitted on host ';
+  if ($pwchange) {
+    $subject = "New IdP Password Change Request on $server_host";
+    $body = 'A new IdP password change request has been submitted on host ';
+  } else {
+    $subject = "New IdP Account Request on $server_host";
+    $body = 'A new IdP account request has been submitted on host ';
+  }
   $body .= "$server_host.\n\n";
   $email_vars = array('first_name', 'last_name', 'email',
-          'organization', 'title', 'reason');
+		      'organization', 'title', 'reason');
   foreach ($email_vars as $var) {
     $val = $_REQUEST[$var];
     $body .= "$var: $val\n";
-  }
+  } 
   $body .= "\nSee table idp_account_request for complete details.\n";
   mail($idp_approval_email, $subject, $body);
 
   //Now email the requester
-  $subject = "GENI Identity Provider Account Request Received";
-  $body = 'Thank you for requesting an Identity Provider account with GENI.';
-  $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+  if ($pwchange) {
+    $subject = "GENI Identity Provider Account Password Change Request Received";
+    $body = 'Your password change request has been received.  ';
+    $body .= "You will be contacted if there are any questions about your request and notified when the change has been made.";
+  } else {
+    $subject = "GENI Identity Provider Account Request Received";
+    $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
+    $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+  }
   mail($email, $subject, $body);
   
 }
@@ -241,6 +263,11 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     <h2>Account request failed</h2>
     <p>
     We're sorry, your account request failed. An email has been sent to the operators and they will be in touch with you shortly.
+    </p>
+<?php } else if ($pwchange){ ?>
+    <h2>Password Change request received.</h2>
+    <p>
+    Congratulations, your password change request has been received. We will be in touch with you about the status of your request.
     </p>
 <?php } else { ?>
     <h2>Account request received.</h2>

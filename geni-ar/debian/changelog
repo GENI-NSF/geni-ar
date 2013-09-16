@@ -1,3 +1,18 @@
+geni-ar (0.4) unstable; urgency=low
+
+  * Fix whitespace in autoresponder email for request confirmation (#31)
+  * Add "lowercase letters and numbers only" to label for username on
+    request form (#32)
+  * Display action log in reverse chronological order (#33)
+  * Add checkbox on request form for Password Change Requests and check to
+    be sure account exists (#36)
+  * Differentiate between account requests and password change requests in
+    confirmation messages and emails
+  * Send automated email to user to confirm password change (#34)
+  * Include dependency on python-psycopg (#28)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 16 Sep 2013 17:57:00 +0000
+
 geni-ar (0.3) precise; urgency=low
 
   * New versions of geni-add-log and geni-convert-logs
