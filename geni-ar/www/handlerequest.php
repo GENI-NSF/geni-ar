@@ -218,7 +218,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 
   //Now email the requester
   $subject = "GENI Identity Provider Account Request Received";
-  $body = 'Thank you for requesting an Identity Provider account with GENI.';
+  $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
   mail($email, $subject, $body);
   
