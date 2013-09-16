@@ -1,15 +1,16 @@
 geni-ar (0.4) unstable; urgency=low
 
   * Fix whitespace in autoresponder email for request confirmation (tkt31)
-  * Add "lowercase letters and numbers only" to label for username on request form (tkt32)
+  * Add "lowercase letters and numbers only" to label for username on
+    request form (tkt32)
   * Display action log in reverse chronological order (tkt33)
-  * Add checkbox on request form for Password Change Requests and check to be sure account 
-	exists (tkt36)
-  * Differentiate between account requests and password change requests in confirmation 
-	messages and emails 
+  * Add checkbox on request form for Password Change Requests and check to
+    be sure account exists (tkt36)
+  * Differentiate between account requests and password change requests in
+    confirmation messages and emails
   * Send automated email to user to confirm password change
 
- -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 16 Sep 2013 17:57:00 +0000
 
 geni-ar (0.3) precise; urgency=low
 
