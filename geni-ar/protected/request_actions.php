@@ -79,6 +79,12 @@ if ($action === "passwd")
     if (ldap_check_account($ldapconn,$uid) == false) {
       process_error("Cannot change password for uid=" . $uid . ". Account does not exist.");
     } else {
+      //notify the user
+      $subject = "GENI Identity Provider Account Password Changed";
+      $body = 'The password for the account with username=' . $uid . 'has been changed as requested. ';
+      $body .= 'If you have any questions please contact the geni project office: portal-help@geni.net.';
+      mail($user_email, $subject, $body);
+
       $res = add_log($uid, "Passwd Changed");
       if ($res != 0) {
 	process_error ("Logging failed.  Will not change request status.");
