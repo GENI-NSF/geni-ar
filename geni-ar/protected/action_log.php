@@ -33,10 +33,10 @@ $user = $_GET["uid"];
 $conn = db_conn();
 if ($user === "ALL")
   {
-    $sql = "SELECT * FROM idp_account_actions";
+    $sql = "SELECT * FROM idp_account_actions order by action_ts desc";
   } else
   {
-    $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\'';
+    $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\' order by action_ts desc';
   }
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
