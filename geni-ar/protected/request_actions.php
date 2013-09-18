@@ -143,7 +143,7 @@ else if ($action === "approve")
 
 	// notify in email
 	$subject = "New IdP Account Created";
-	$body = 'A new IdP account has been created for ';
+	$body = 'A new IdP account has been created by ' . $_SERVER['PHP_AUTH_USER'] . ' for ';
 	$body .= "$uid.\n\n";
 	$email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
 	foreach ($email_vars as $var) {
@@ -158,7 +158,7 @@ else if ($action === "approve")
 	$file = fopen( $filename, "r" );
 	if( $file == false )
 	  {
-	    echo ( "Error in opening file" );
+	    echo ( "Error in opening file");
 	    exit();
 	  }
 	$filesize = filesize( $filename );
@@ -192,6 +192,10 @@ else if ($action === 'deny')
       process_error("Postgres database update failed");
       exit();
     }
+    //send email to audit address
+    $subject = "GENI Identity Provider Account Request Denied";
+    $body = 'The account request for username=' . $uid . ' has been denied by ' . $_SERVER['PHP_AUTH_USER'] . '.';
+    mail($idp_audit_email, $subject, $body);
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }

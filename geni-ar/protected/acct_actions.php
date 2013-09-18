@@ -47,6 +47,11 @@ if ($action === "delete") {
   }
   $ret = ldap_delete($ldapconn, get_userdn($id));
   if ($ret) {
+    //send email to audit address
+    $subject = "GENI Identity Provider Account Deleted";
+    $body = 'The account with username=' . $id . ' has been deleted by ' . $_SERVER['PHP_AUTH_USER'] . '.';
+    mail($idp_audit_email, $subject, $body);
+
     //change status in postgres database
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE username_requested='" . $id . '\'';
     $result = db_execute_statement($sql);
@@ -59,8 +64,7 @@ if ($action === "delete") {
       header("Location: " . $acct_manager_url . "/display_accounts.php");
     } else {
       process_error("Failed to change request state for deleted account for " . $id);
-      print ('<br><br>');
-      print ('<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>'); 
+      exit();
     } 
   } else {
       add_log_comment($uid, "Account Deleted", "FAILED");
