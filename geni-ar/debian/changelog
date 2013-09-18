@@ -3,6 +3,7 @@ geni-ar (0.5) unstable; urgency=low
   * Send email when request is denied (#37)
   * Add performer to "New IdP Account Created" email (#38)
   * Send email when request is deleted (#38)	 
+  * Don't change state if email to leads or requester isn't sent (#41)
 
  -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
 

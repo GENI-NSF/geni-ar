@@ -23,9 +23,12 @@
 //----------------------------------------------------------------------
 require_once('db_utils.php');
 require_once('log_actions.php');
+require_once('ar_constants.php');
+include_once('/etc/geni-ar/settings.php');
 
 global $acct_manager_url;
 
+$arstate = $_GET['arstate'];
 $email_body = $_REQUEST['email_body'];
 $sendto = $_REQUEST['sendto'];
 $uid = $_REQUEST['uid'];
@@ -36,6 +39,13 @@ if ($res === false) {
   process_error("Failed to send email to " . $sendto . " for account " . $uid);
   exit();
 }
+
+$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . $arstate . "' where username_requested ='" . $uid . '\'';
+$result = db_execute_statement($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database update failed");
+}
+
 $res = add_log_with_comment($uid, $log,$email_body);
 if ($res != 0) {
   process_error("Failed to log email to " . $sendto . " for account " . $uid); 
