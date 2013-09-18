@@ -1,6 +1,8 @@
 geni-ar (0.5) unstable; urgency=low
 
-  * REPLACE_ME
+  * Send email when request is denied (#37)
+  * Add performer to "New IdP Account Created" email (#38)
+  * Send email when request is deleted (#38)	 
 
  -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
 
