@@ -46,9 +46,17 @@ if ($result['code'] != 0) {
   process_error("Postgres database update failed");
 }
 
+// check for single quotes and backslashes in body before logging
+$email_body = str_replace("'","''",$email_body);
+$email_body = str_replace("\\","\\\\",$email_body);
+
+
 $res = add_log_with_comment($uid, $log,$email_body);
 if ($res != 0) {
-  process_error("Failed to log email to " . $sendto . " for account " . $uid); 
+  //try again without the comment
+  $res = add_log($uid,$log);
+  if ($res != 0)
+    process_error("Failed to log email to " . $sendto . " for account " . $uid); 
 } else {
   header("Location: " . $acct_manager_url . "/display_requests.php");
 }
