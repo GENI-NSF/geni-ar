@@ -194,19 +194,13 @@ else if ($action === 'deny')
     }
     //send email to audit address
     $subject = "GENI Identity Provider Account Request Denied";
-    $body = 'The account request for username=' . $uid . ' has been denied by ' . $_SERVER['PHP_AUTH_USER'] . '.';
+    $body = 'The account request for username=' . $uid . ' has been denied by ' . $_SERVER['PHP_AUTH_USER'] . ".";
     mail($idp_audit_email, $subject, $body);
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }
 else if ($action === "leads")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
-      process_error("Postgres database update failed");
-      exit();
-    }
     $filename = "/etc/geni-ar/leads-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
@@ -227,7 +221,7 @@ else if ($action === "leads")
     print '<head><title>Email Leads</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php">';
+    print '<form method="POST" action="send_email.php?arstate=EMAILED_LEADS">';
     print 'To: <input type="text" name="sendto" value="' . $idp_leads_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
@@ -241,12 +235,6 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
-      process_error("Postgres database update failed");
-      exit();
-    }
     $filename = "/etc/geni-ar/user-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
@@ -263,7 +251,7 @@ else if ($action === "requester")
     print '<head><title>Email Requester</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php">';
+    print '<form method="POST" action="send_email.php?arstate=EMAILED_REQUESTER">';
     print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
