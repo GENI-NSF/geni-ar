@@ -28,6 +28,7 @@ require_once('ar_constants.php');
 require_once('log_actions.php');
 
 global $acct_manager_url;
+global $base_dn;
 
 $id = $_REQUEST['id'];
 $action = $_REQUEST['action'];
@@ -45,6 +46,14 @@ if ($action === "delete") {
     process_error ("ERROR: Logging failed.  Will not delete account");
     exit();
   }
+  //get the request id if there is one
+  $filter = "(uid=" . $id . ")";
+  $ret = ldap_search($ldapconn, $base_dn, $filter);
+  $entry = ldap_first_entry($ldapconn,$ret);
+  $attrs = ldap_get_attributes($ldapconn,$entry);
+  $accts = ldap_get_entries($ldapconn,$ret);
+
+  
   $ret = ldap_delete($ldapconn, get_userdn($id));
   if ($ret) {
     //send email to audit address
@@ -53,23 +62,27 @@ if ($action === "delete") {
     mail($idp_audit_email, $subject, $body);
 
     //change status in postgres database
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE username_requested='" . $id . '\'';
-    $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
-      process_error("Postgres database update failed");
-      exit();
-    }
+    if (array_key_exists('uidNumber',$attrs)) {
+      $acct = $accts[0];
+      $req_id = $acct['uidnumber'][0];
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE id='" . $req_id . '\'';
+      $result = db_execute_statement($sql);
+      if ($result['code'] != 0) {
+	process_error("Postgres database update failed");
+	exit();
+      }
 
-    if ($result['value'] === 1) {
-      header("Location: " . $acct_manager_url . "/display_accounts.php");
-    } else {
-      process_error("Failed to change request state for deleted account for " . $id);
-      exit();
-    } 
+      if ($result['value'] === 1) {
+	header("Location: " . $acct_manager_url . "/display_accounts.php");
+      } else {
+	process_error("Failed to change request state for deleted account for " . $id);
+	exit();
+      } 
+    }
   } else {
-      add_log_comment($uid, "Account Deleted", "FAILED");
-      process_error( "Failed to delete account for " . $id);
-      exit();
+    add_log_comment($uid, "Account Deleted", "FAILED");
+    process_error( "Failed to delete account for " . $id);
+    exit();
   }
 }
 header("Location: " . $acct_manager_url . "/display_accounts.php");

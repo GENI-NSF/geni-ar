@@ -124,7 +124,6 @@ for ($x=1; $x<=intval($num); $x++)
     $sql .= ')';
 
     $result = db_execute_statement($sql, 'insert idp account request');
-	    
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
       process_error($msg);
@@ -132,11 +131,22 @@ for ($x=1; $x<=intval($num); $x++)
       exit();
     }
 
+    //get request id
+    $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' order by id desc";
+    $result = db_fetch_rows($sql);
+    if ($result['code'] != 0) {
+      process_error("Postgres database query failed");
+      exit();
+    }
+    $row = $result['value'][0];
+    $id = $row['id'];
+
     //Now create ldap accounts
     $new_dn = get_userdn($uid);
     $attrs = array();
     $attrs['objectClass'][] = "inetOrgPerson";
     $attrs['objectClass'][] = "eduPerson";
+    $attrs['objectClass'][] = "posixAccount";
     $attrs['uid'] = $uid;
     $attrs['sn'] = $lastname;
     $attrs['givenName'] = $desc;
@@ -149,6 +159,10 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['eduPersonAffiliation'] []= "staff";
     $attrs['telephoneNumber'] = $org_phone;
     $attrs['o'] = "BBN";
+    $attrs['uidNumber'] = $id;
+    //posixAccount requires these fields although we don't need them
+    $attrs['gidNumber'] = $id;
+    $attrs['homeDirectory'] = "";
 
     $ret = ldap_add($ldapconn, $new_dn, $attrs);
     if ($ret === false) {
@@ -159,7 +173,7 @@ for ($x=1; $x<=intval($num); $x++)
     }
     
     // Now set created timestamp in postgres db
-    $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Couldn't update created timestamp. Postgres database update failed");

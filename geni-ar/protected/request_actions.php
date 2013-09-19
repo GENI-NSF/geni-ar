@@ -54,6 +54,7 @@ $uid = $row['username_requested'];
 $new_dn = get_userdn($uid);
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
+$attrs['objectClass'][] = "posixAccount";
 $attrs['uid'] = $uid;
 $lastname = $row['last_name'];
 $attrs['sn'] = $lastname;
@@ -70,6 +71,10 @@ $attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $row['phone'];
 $org = $row['organization'];
 $attrs['o'] = $org;
+$attrs['uidNumber'] = $id;
+//posixAccount requires these fields although we don't need them
+$attrs['gidNumber'] = $id;
+$attrs['homeDirectory'] = "";
 
 $title = $row['title'];
 $reason = $row['reason'];
@@ -89,7 +94,7 @@ if ($action === "passwd")
       if ($res != 0) {
 	process_error ("Logging failed.  Will not change request status.");
       } else {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
 	$res = db_execute_statement($sql);
 	if ($res['code'] != 0) {
 	  process_error ("Database action failed.  Could not change request status for " . $uid);
@@ -127,14 +132,14 @@ else if ($action === "approve")
 	}
 
 	// Now set created timestamp in postgres db
-	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
 	$result = db_execute_statement($sql);
 	if ($result['code'] != 0) {
 	  process_error("Postgres database update failed");
 	  exit();
 	}
 
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
 	$result = db_execute_statement($sql);
 	if ($result['code'] != 0) {
 	  process_error("Postgres database update failed");
@@ -186,7 +191,7 @@ else if ($action === 'deny')
       process_error ("ERROR: Logging failed.  Will not deny account");
       exit();
     }
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Postgres database update failed");
@@ -201,7 +206,7 @@ else if ($action === 'deny')
   }
 else if ($action === "leads")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Postgres database update failed");
@@ -241,7 +246,7 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Postgres database update failed");
