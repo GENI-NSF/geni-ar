@@ -80,6 +80,42 @@ if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
     }
   }
 }
+
+//check if there is a pending request for this username
+$sql = "SELECT * from idp_account_request where username_requested='" . $uid . '\'';
+$result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  print("Postgres database query failed");
+  error_log("Postgres database query failed");
+  exit();
+}
+if (count($result['value']) != 0) {
+  foreach ($result['value'] as $row) {
+    $state = $row['request_state'];
+    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state==="EMAILED_REQUESTER") {
+      $errors[] = "An account request for this username is pending approval";
+    }
+  }
+}
+
+//check if there is a pending request for this email
+$sql = "SELECT * from idp_account_request where email='" . $email . '\'';
+$result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  print("Postgres database query failed");
+  error_log("Postgres database query failed");
+  exit();
+}
+if (count($result['value']) != 0) {
+  foreach ($result['value'] as $row) {
+    $state = $row['request_state'];
+    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state==="EMAILED_REQUESTER") {
+      $errors[] = "An account request for this email address is pending approval";
+    }
+  }
+}
+
+
 if (strlen($uid) > 8) {
   $errors[] = "username cannot be longer than 8 characters.";
 }
