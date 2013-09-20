@@ -44,6 +44,8 @@ nobase_dist_pkgdata_DATA = \
 	protected/action_log.php \
 	protected/display_accounts.php \
 	protected/display_requests.php \
+	protected/fix_accounts.html \
+	protected/fix_actions.php \
 	protected/index.html \
 	protected/ldap.php \
 	protected/log_actions.php \
