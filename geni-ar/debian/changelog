@@ -13,7 +13,7 @@ geni-ar (0.5) unstable; urgency=low
     -add missing account requests
     -add new ldap attributes to link with request id
 
- -- Tom Mitchell <tmitchel@bbn.com>  Mon, 23 Sep 2013
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 23 Sep 2013 15:02:00 +0000
 
 geni-ar (0.4) unstable; urgency=low
 
