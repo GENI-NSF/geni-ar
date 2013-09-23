@@ -54,6 +54,7 @@ $uid = $row['username_requested'];
 $new_dn = get_userdn($uid);
 $attrs['objectClass'][] = "inetOrgPerson";
 $attrs['objectClass'][] = "eduPerson";
+$attrs['objectClass'][] = "posixAccount";
 $attrs['uid'] = $uid;
 $lastname = $row['last_name'];
 $attrs['sn'] = $lastname;
@@ -70,6 +71,10 @@ $attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $row['phone'];
 $org = $row['organization'];
 $attrs['o'] = $org;
+$attrs['uidNumber'] = $id;
+//posixAccount requires these fields although we don't need them
+$attrs['gidNumber'] = $id;
+$attrs['homeDirectory'] = "";
 
 $title = $row['title'];
 $reason = $row['reason'];
@@ -89,7 +94,7 @@ if ($action === "passwd")
       if ($res != 0) {
 	process_error ("Logging failed.  Will not change request status.");
       } else {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
 	$res = db_execute_statement($sql);
 	if ($res['code'] != 0) {
 	  process_error ("Database action failed.  Could not change request status for " . $uid);
@@ -127,14 +132,14 @@ else if ($action === "approve")
 	}
 
 	// Now set created timestamp in postgres db
-	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where username_requested =\'' . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
 	$result = db_execute_statement($sql);
 	if ($result['code'] != 0) {
 	  process_error("Postgres database update failed");
 	  exit();
 	}
 
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where username_requested ='" . $uid . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
 	$result = db_execute_statement($sql);
 	if ($result['code'] != 0) {
 	  process_error("Postgres database update failed");
@@ -143,7 +148,7 @@ else if ($action === "approve")
 
 	// notify in email
 	$subject = "New IdP Account Created";
-	$body = 'A new IdP account has been created for ';
+	$body = 'A new IdP account has been created by ' . $_SERVER['PHP_AUTH_USER'] . ' for ';
 	$body .= "$uid.\n\n";
 	$email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
 	foreach ($email_vars as $var) {
@@ -158,7 +163,7 @@ else if ($action === "approve")
 	$file = fopen( $filename, "r" );
 	if( $file == false )
 	  {
-	    echo ( "Error in opening file" );
+	    echo ( "Error in opening file");
 	    exit();
 	  }
 	$filesize = filesize( $filename );
@@ -186,23 +191,21 @@ else if ($action === 'deny')
       process_error ("ERROR: Logging failed.  Will not deny account");
       exit();
     }
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where username_requested ='" . $uid . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Postgres database update failed");
       exit();
     }
+    //send email to audit address
+    $subject = "GENI Identity Provider Account Request Denied";
+    $body = 'The account request for username=' . $uid . ' has been denied by ' . $_SERVER['PHP_AUTH_USER'] . ".";
+    mail($idp_audit_email, $subject, $body);
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }
 else if ($action === "leads")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_LEADS' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
-      process_error("Postgres database update failed");
-      exit();
-    }
     $filename = "/etc/geni-ar/leads-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
@@ -223,7 +226,7 @@ else if ($action === "leads")
     print '<head><title>Email Leads</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php">';
+    print '<form method="POST" action="send_email.php?arstate=EMAILED_LEADS">';
     print 'To: <input type="text" name="sendto" value="' . $idp_leads_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
@@ -237,12 +240,6 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='EMAILED_REQUESTER' where username_requested ='" . $uid . '\'';
-    $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
-      process_error("Postgres database update failed");
-      exit();
-    }
     $filename = "/etc/geni-ar/user-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
@@ -259,7 +256,7 @@ else if ($action === "requester")
     print '<head><title>Email Requester</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php">';
+    print '<form method="POST" action="send_email.php?arstate=EMAILED_REQUESTER">';
     print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
