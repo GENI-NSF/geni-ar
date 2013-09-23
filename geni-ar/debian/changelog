@@ -2,16 +2,18 @@ geni-ar (0.5) unstable; urgency=low
 
   * Send email when request is denied (#37)
   * Add performer to "New IdP Account Created" email (#38)
-  * Send email when request is deleted (#39)	 
+  * Send email when request is deleted (#39)
   * Don't change state if email to leads or requester isn't sent (#41)
-  * Process single quotes and backslashes in email body before including in log table (#42)
-  * Handle duplicate requests correctly (don't allow duplicate username or email if
-	request is pending), associate request id with ldap account (#40)
+  * Process single quotes and backslashes in email body before including
+    in log table (#42)
+  * Handle duplicate requests correctly (don't allow duplicate username or
+    email if request is pending), associate request id with ldap account
+    (#40)
   * Add new web interface to be run on existing database for initialization
-	-add missing account requests
-	-add new ldap attributes to link with request id
-	
- -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
+    -add missing account requests
+    -add new ldap attributes to link with request id
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 23 Sep 2013
 
 geni-ar (0.4) unstable; urgency=low
 
