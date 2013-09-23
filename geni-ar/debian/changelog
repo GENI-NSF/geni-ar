@@ -1,3 +1,9 @@
+geni-ar (0.6) unstable; urgency=low
+
+  * DUMMY_ENTRY
+
+ -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE_AND_TIME
+
 geni-ar (0.5) unstable; urgency=low
 
   * Send email when request is denied (#37)
