@@ -1,7 +1,10 @@
 geni-ar (0.6) unstable; urgency=low
 
-  * DUMMY_ENTRY
-
+  * Don't make duplicate requests when emailing leads or requestor (#40)
+  * Fix password change functionality (#43)
+  * Log each tutorial account created separately (#44)
+  * Use "Identity Provider" in emails rather than IdP (#45)
+	
  -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE_AND_TIME
 
 geni-ar (0.5) unstable; urgency=low

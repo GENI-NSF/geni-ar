@@ -75,12 +75,7 @@ for ($x=1; $x<=$num; $x++)
   }
 
 //Ready to create requests and accounts, First log
-$comment = "Created " . $num . " tutorial accounts for Tutorial: " . $desc . " for " . $org_email;
-$ret = add_log_with_comment($user_prefix,"Created Tutorial Accounts",$comment);
-if ($ret != 0) {
-  process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
-  exit();
-}
+$comment = "Created account for Tutorial: " . $desc . " for " . $org_email;
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
@@ -102,6 +97,11 @@ for ($x=1; $x<=intval($num); $x++)
       }
     $uid = $user_prefix . $usernum;
 
+    $ret = add_log_with_comment($uid,"Created Tutorial Account",$comment);
+    if ($ret != 0) {
+      process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
+      exit();
+    }
     //create the password hash
     $pw = $pw_prefix . $usernum;
     $pw_hash = SSHA::newHash($pw);
@@ -200,7 +200,7 @@ $filetext = str_replace("<username_prefix>",$user_prefix,$filetext);
 $filetext = str_replace("<password_prefix>",$pw_prefix,$filetext);
 $filetext = str_replace("<numaccounts>",$usernum,$filetext);
 
-$subject = "Accounts for " . $desc;
+$subject = "GENI Identity Provider Accounts for " . $desc;
 mail($org_email,$subject,$filetext);
 
 header("Location: " . $acct_manager_url);

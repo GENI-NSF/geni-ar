@@ -45,6 +45,8 @@ if (array_key_exists('username', $_REQUEST) && $_REQUEST['username']) {
   $_REQUEST['username_requested'] = ' ';
 }
 
+$server_host = $_SERVER['SERVER_NAME'];
+
 $p1 = null;
 $p2 = null;
 $email = null;
@@ -141,51 +143,83 @@ if ($p1 === $p2) {
   $errors[] = "Passwords do not match.";
 }
 
-
-
-/* ----------------- */
-/* Extract variables */
-/* ----------------- */
-// var => db_type
-$required_vars = array('first_name' => 'text',
-                       'last_name' => 'text',
-                       'email' => 'text',
-                       'username_requested' => 'text',
-                       'phone' => 'text',
-                       'password_hash' => 'text',
-                       'organization' => 'text',
-                       'title' => 'text',
-                       'reason' => 'text');
-
-$optional_vars = array('url' => 'text');
-
-// Write database row
-// Build the insert statement
-$query_vars = array();
-$query_values = array();
-
-/* open a database connection */
-$conn = db_conn();
-
-foreach ($required_vars as $name => $db_type) {
-  if (array_key_exists($name, $_REQUEST) && $_REQUEST[$name]) {
-    $value = $_REQUEST[$name];
-    $query_vars[] = $name;
-    $query_values[] = $conn->quote($value, $db_type);
+if ($pwchange) {
+  //if this is a password change, find the APPROVED account request and mark
+  //new state as "PW CHANGE REQUESTED"
+  $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='APPROVED' or request_state='PW CHANGE REQUESTED')";
+  $result = db_fetch_rows($sql);
+  if ($result['code'] != 0) {
+    print("Postgres database query failed");
+    error_log("Postgres database query failed");
+    exit();
+  }
+  if (count($result['value']) === 1) {
+      $id = $result['value'][0]['id'];
   } else {
-    $pretty_name = str_replace("_", " ", $name);
-    $errors[] = "No $pretty_name specified.";
+    print("Error retrieving account");
+    error_log("Error retrieving account");
+    exit();
+  }
+  $sql = "UPDATE idp_account_request SET request_state='PW CHANGE REQUESTED' where id='" . $id . '\''; 
+  $result = db_execute_statement($sql);
+  if ($result['code'] != 0) {
+    print ("Database action failed.  Could not change request status for password change request for" . $uid);
+    error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+    exit();
+  }
+  $sql = "UPDATE idp_account_request SET password_hash='" . $pw_hash . "' where id='" . $id . '\''; 
+  $result = db_execute_statement($sql);
+  if ($result['code'] != 0) {
+    print ("Database action failed.  Could not change request status for password change request for" . $uid);
+    error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+    exit();
+  }
+
+} else {
+  
+  /* ----------------- */
+  /* Extract variables */
+  /* ----------------- */
+  // var => db_type
+  $required_vars = array('first_name' => 'text',
+			 'last_name' => 'text',
+			 'email' => 'text',
+			 'username_requested' => 'text',
+			 'phone' => 'text',
+			 'password_hash' => 'text',
+			 'organization' => 'text',
+			 'title' => 'text',
+			 'reason' => 'text');
+
+  $optional_vars = array('url' => 'text');
+
+  // Write database row
+  // Build the insert statement
+  $query_vars = array();
+  $query_values = array();
+
+  /* open a database connection */
+  $conn = db_conn();
+
+  foreach ($required_vars as $name => $db_type) {
+    if (array_key_exists($name, $_REQUEST) && $_REQUEST[$name]) {
+      $value = $_REQUEST[$name];
+      $query_vars[] = $name;
+      $query_values[] = $conn->quote($value, $db_type);
+    } else {
+      $pretty_name = str_replace("_", " ", $name);
+      $errors[] = "No $pretty_name specified.";
+    }
+  }
+
+  foreach ($optional_vars as $name => $db_type) {
+    if (array_key_exists($name, $_REQUEST)) {
+      $value = $_REQUEST[$name];
+      $query_vars[] = $name;
+      $query_values[] = $conn->quote($value, $db_type);
+    }
   }
 }
-
-foreach ($optional_vars as $name => $db_type) {
-  if (array_key_exists($name, $_REQUEST)) {
-    $value = $_REQUEST[$name];
-    $query_vars[] = $name;
-    $query_values[] = $conn->quote($value, $db_type);
-  }
-}
-
 if ($errors) {
 ?>
 
@@ -225,63 +259,29 @@ if ($errors) {
 </body>
 </html>
 <?php
-  exit();
+exit();
 }
 ?>
 
 <?php
+if (!$pwchange) {
+  $sql = 'INSERT INTO idp_account_request (';
+  $sql .= implode(',', $query_vars);
+  $sql .= ') VALUES (';
+  $sql .= implode (',', $query_values);
+  $sql .= ')';
 
-$sql = 'INSERT INTO idp_account_request (';
-$sql .= implode(',', $query_vars);
-$sql .= ') VALUES (';
-$sql .= implode (',', $query_values);
-$sql .= ')';
 
-
-$result = db_execute_statement($sql, 'insert idp account request');
-$server_host = $_SERVER['SERVER_NAME'];
-if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-  // An error occurred. First, log the query and result for debugging
-  geni_syslog("IDP request query", $sql);
-  geni_syslog("IDP request result", print_r($result, true));
-  // Next send an email about the error
-  mail($idp_approval_email,
-    "IdP Account Request Failure $server_host",
-   'An error occurred on IdP account request. See /var/log/user.log for details.');
-  // Finally pop up an error page
-} else {
-  // Success
-  if ($pwchange) {
-    $subject = "New IdP Password Change Request on $server_host";
-    $body = 'A new IdP password change request has been submitted on host ';
-  } else {
-    $subject = "New IdP Account Request on $server_host";
-    $body = 'A new IdP account request has been submitted on host ';
-  }
-  $body .= "$server_host.\n\n";
-  $email_vars = array('first_name', 'last_name', 'email',
-		      'organization', 'title', 'reason');
-  foreach ($email_vars as $var) {
-    $val = $_REQUEST[$var];
-    $body .= "$var: $val\n";
-  } 
-  $body .= "\nSee table idp_account_request for complete details.\n";
-  mail($idp_approval_email, $subject, $body);
-
-  //Now email the requester
-  if ($pwchange) {
-    $subject = "GENI Identity Provider Account Password Change Request Received";
-    $body = 'Your password change request has been received.  ';
-    $body .= "You will be contacted if there are any questions about your request and notified when the change has been made.";
-  } else {
-    $subject = "GENI Identity Provider Account Request Received";
-    $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
-    $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
-  }
-  mail($email, $subject, $body);
-  
-}
-
+  $result = db_execute_statement($sql, 'insert idp account request');
+  if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+    // An error occurred. First, log the query and result for debugging
+    geni_syslog("IDP request query", $sql);
+    geni_syslog("IDP request result", print_r($result, true));
+    // Next send an email about the error
+    mail($idp_approval_email,
+	 "IdP Account Request Failure $server_host",
+	 'An error occurred on IdP account request. See /var/log/user.log for details.');
+    // Finally pop up an error page
 ?>
 <!DOCTYPE html>
 <html>
@@ -294,13 +294,17 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     <a href="http://www.geni.net" target="_blank">
       <img src="geni.png" width="88" height="75" alt="GENI"/>
     </a>
-<?php if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) { ?>
+   <?php if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) { ?>
     <h1>ERROR</h1>
     <h2>Account request failed</h2>
-    <p>
-    We're sorry, your account request failed. An email has been sent to the operators and they will be in touch with you shortly.
+    <p> We are sorry, your account request failed. An email has been sent to the operators and they will be in touch with you shortly.
     </p>
-<?php } else if ($pwchange){ ?>
+<?php
+      exit(); 
+  }
+  }
+}
+if ($pwchange){ ?>
     <h2>Password Change request received.</h2>
     <p>
     Congratulations, your password change request has been received. We will be in touch with you about the status of your request.
@@ -327,3 +331,40 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   </div> <!-- footer -->
 </body>
 </html>
+
+<?php
+
+  // Success
+if ($pwchange) {
+  $subject = "New GENI Identity Provider Password Change Request on $server_host";
+  $body = 'A new Identity Provider password change request has been submitted on host ';
+} else {
+  $subject = "New GENI Identity Provider Account Request on $server_host";
+  $body = 'A new IdP account request has been submitted on host ';
+}
+$body .= "$server_host.\n\n";
+$email_vars = array('first_name', 'last_name', 'email',
+		      'organization', 'title', 'reason');
+foreach ($email_vars as $var) {
+  $val = $_REQUEST[$var];
+  $body .= "$var: $val\n";
+} 
+$body .= "\nSee table idp_account_request for complete details.\n";
+mail($idp_approval_email, $subject, $body);
+
+  
+//Now email the requester
+if ($pwchange) {
+  $subject = "GENI Identity Provider Account Password Change Request Received";
+  $body = 'Your password change request has been received.  ';
+  $body .= "You will be contacted if there are any questions about your request and notified when the change has been made.";
+} else {
+  $subject = "GENI Identity Provider Account Request Received";
+  $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
+  $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+}
+mail($email, $subject, $body);
+
+  
+
+
