@@ -1,4 +1,4 @@
-geni-ar (0.5) unstable; urgency=low
+geni-ar (0.6) unstable; urgency=low
 
   * Don't make duplicate requests when emailing leads or requestor (#40)
   * Fix password change functionality (#43)
