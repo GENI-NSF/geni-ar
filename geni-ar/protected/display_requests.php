@@ -35,7 +35,7 @@ print '<p>Account Request Management</p>';
 print '</h1>';
 
 $conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='REQUESTED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='REQUESTED' or request_state='PW CHANGE REQUESTED'";
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Query failed to postgres database");
@@ -59,7 +59,11 @@ function get_values($row)
   $created = substr($created,0,16);
   $org = $row['organization'];
   $title = $row['title'];
-  $reason = $row['reason'];
+  if ($row['request_state']==="PW CHANGE REQUESTED") {
+    $reason = "Password Change Request";
+  } else {
+    $reason = $row['reason'];
+  }
 }
 
 print '<h2>';

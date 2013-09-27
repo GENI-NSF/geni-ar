@@ -33,14 +33,15 @@ $email_body = $_REQUEST['email_body'];
 $sendto = $_REQUEST['sendto'];
 $uid = $_REQUEST['uid'];
 $log = $_REQUEST['log'];
+$id = $_REQUEST['id'];
 
-$res = mail($sendto, "GENI IdP Account Request", $email_body);
+$res = mail($sendto, "GENI Identity Provider Account Request", $email_body);
 if ($res === false) {
   process_error("Failed to send email to " . $sendto . " for account " . $uid);
   exit();
 }
 
-$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . $arstate . "' where username_requested ='" . $uid . '\'';
+$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . $arstate . "' where id ='" . $id . '\'';
 $result = db_execute_statement($sql);
 if ($result['code'] != 0) {
   process_error("Postgres database update failed");
