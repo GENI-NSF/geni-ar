@@ -92,6 +92,24 @@ if ($action === "passwd")
     }
     if (ldap_check_account($ldapconn,$uid) == false) {
       process_error("Cannot change password for uid=" . $uid . ". Account does not exist.");
+      exit();
+    } 
+    $res = add_log($uid, "Passwd Changed");
+    if ($res != 0) {
+      process_error ("Logging failed.  Will not change request status.");
+      exit();
+    } 
+
+    $filter = "(uidNumber=" . $id . ")";
+    $result = ldap_search($ldapconn, $base_dn, $filter);
+    $entry = ldap_first_entry($ldapconn,$result);
+
+    $dn = ldap_get_dn($ldapconn,$entry);
+    $newattrs['userPassword'] = $row['password_hash'];
+    $ret = ldap_modify($ldapconn,$dn,$newattrs);
+    if ($ret === false) {
+      process_error ("ERROR: Failed to change password for ldap account for " . $uid);
+      exit();
     } else {
       //notify the user
       $subject = "GENI Identity Provider Account Password Changed";
@@ -99,18 +117,13 @@ if ($action === "passwd")
       $body .= 'If you have any questions please contact the geni project office: help@geni.net.';
       mail($user_email, $subject, $body);
 
-      $res = add_log($uid, "Passwd Changed");
-      if ($res != 0) {
-	process_error ("Logging failed.  Will not change request status.");
-      } else {
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
-	$res = db_execute_statement($sql);
-	if ($res['code'] != 0) {
-	  process_error ("Database action failed.  Could not change request status for " . $uid);
-	  exit();
-	}
-	header("Location: " . $acct_manager_url . "/display_requests.php");
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
+      $res = db_execute_statement($sql);
+      if ($res['code'] != 0) {
+	process_error ("Database action failed.  Could not change request status for " . $uid);
+	exit();
       }
+      header("Location: " . $acct_manager_url . "/display_requests.php");
     }
   }
 else if ($action === "approve") 

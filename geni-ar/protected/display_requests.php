@@ -80,7 +80,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">PASSWRD CHANGED</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
