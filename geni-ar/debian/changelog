@@ -1,3 +1,12 @@
+geni-ar (0.6) unstable; urgency=low
+
+  * Don't make duplicate requests when emailing leads or requestor (#40)
+  * Fix password change functionality (#43)
+  * Log each tutorial account created separately (#44)
+  * Use "Identity Provider" in emails rather than IdP (#45)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Mon, 30 Sep 2013 15:44:00 +0000
+
 geni-ar (0.5) unstable; urgency=low
 
   * Send email when request is denied (#37)

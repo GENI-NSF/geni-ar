@@ -79,8 +79,17 @@ $attrs['homeDirectory'] = "";
 $title = $row['title'];
 $reason = $row['reason'];
 
+if ($row['request_state'] === "PW CHANGE REQUESTED" and $action != "passwd") {
+  process_error("This a password change request");
+  exit();
+}
+
 if ($action === "passwd")
   {
+    if ($row['request_state'] != "PW CHANGE REQUESTED") {
+      process_error("This is not a password change request");
+      exit();
+    }
     if (ldap_check_account($ldapconn,$uid) == false) {
       process_error("Cannot change password for uid=" . $uid . ". Account does not exist.");
     } else {
@@ -100,7 +109,7 @@ if ($action === "passwd")
 	  process_error ("Database action failed.  Could not change request status for " . $uid);
 	  exit();
 	}
-	header("Location: " . $acct_manager_url + "/display_requests.php");
+	header("Location: " . $acct_manager_url . "/display_requests.php");
       }
     }
   }
@@ -147,8 +156,8 @@ else if ($action === "approve")
 	}
 
 	// notify in email
-	$subject = "New IdP Account Created";
-	$body = 'A new IdP account has been created by ' . $_SERVER['PHP_AUTH_USER'] . ' for ';
+	$subject = "New GENI Identity Provider Account Created";
+	$body = 'A new GENI Identity Provider account has been created by ' . $_SERVER['PHP_AUTH_USER'] . ' for ';
 	$body .= "$uid.\n\n";
 	$email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
 	foreach ($email_vars as $var) {
@@ -172,7 +181,7 @@ else if ($action === "approve")
 
 	$filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
 	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
-	$res_user = mail($user_email, "GENI IdP Account Created", $filetext);
+	$res_user = mail($user_email, "GENI Identity Provider Account Created", $filetext);
 	//$res_user = true;
 	if (!($res_admin and $res_user)) {
 	  if (!$res_admin)
@@ -232,6 +241,7 @@ else if ($action === "leads")
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
     print $email_body;
     print '<br><br>';
+    print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
     print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
     print "<input type=\"hidden\" name=\"log\" value=\"Emailed Leads\"/>";
     print '<input type="submit" value="SEND"/>';
@@ -262,6 +272,7 @@ else if ($action === "requester")
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
     print $email_body;
     print '<br><br>';
+    print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
     print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
     print "<input type=\"hidden\" name=\"log\" value=\"Emailed Requester\"/>";
     print '<input type="submit" value="SEND"/>';
