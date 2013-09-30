@@ -1,6 +1,6 @@
 geni-ar (0.7) unstable; urgency=low
 
-  * DELETE_ME
+  * Fix password change notification email (#46)
 
  -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
 
