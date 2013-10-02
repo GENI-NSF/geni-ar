@@ -1,8 +1,6 @@
 geni-ar (0.8) unstable; urgency=low
 
-  * Fix password change notification email (#46)
-  * Add automated password changes (#35)
-  * Remove url formatting check from request form
+  * Change wording of password change notification email (#49)
 
  -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
 
