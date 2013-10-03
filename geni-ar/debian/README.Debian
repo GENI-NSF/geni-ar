@@ -1,15 +1,33 @@
 For configuration on Debian systems:
 
-1. Load the database schema.
+1. Create a database user for the PostgreSQL database
+   *** Note: if you already have a user, skip this step
+
+   This example uses a database user named 'accreq', and a database of
+   the same name. The 'accreq' user will have read/write privilege on
+   the 'accreq' database.
+
+   # Create the user
+   sudo -u postgres /usr/bin/createuser -S -D -R accreq
+
+   # Set the password
+   sudo -u postgres /usr/bin/psql -c "\\password accreq"
+   Enter new password:
+   Enter it again:
+
+   # Create the database
+   /usr/bin/sudo -u postgres /usr/bin/createdb accreq
+
+2. Load the database schema.
 
    psql -U <USER> [-h <HOST>] <DBNAME> \
         -f /usr/share/geni-ar/db/postgresql/schema.sql
 
-2. If /etc/geni-ar/settings.php does not exist copy it from
+3. If /etc/geni-ar/settings.php does not exist copy it from
    /usr/share/geni-ch/etc/settings.php. Edit /etc/geni-ar/settings.php
    to reflect the local configuration.
 
-3. Optionally create a password file for the protected area using
+4. Optionally create a password file for the protected area using
    htpasswd.
 
    For example, to create a new password file:
