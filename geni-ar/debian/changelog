@@ -2,7 +2,7 @@ geni-ar (0.8) unstable; urgency=low
 
   * Change wording of password change notification email (#49)
 
- -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
+ -- Tom Mitchell <tmitchel@bbn.com>  Thu, 03 Oct 2013 13:09:00 +0000
 
 geni-ar (0.7) unstable; urgency=low
 
