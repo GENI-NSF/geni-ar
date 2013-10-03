@@ -1,3 +1,9 @@
+geni-ar (1.0) unstable; urgency=low
+
+  * Update README.Debian to include DB and DB user creation (#47)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  FUTURE_DATE
+
 geni-ar (0.8) unstable; urgency=low
 
   * Change wording of password change notification email (#49)
