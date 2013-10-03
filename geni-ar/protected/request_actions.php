@@ -114,7 +114,7 @@ if ($action === "passwd")
       //notify the user
       $subject = "GENI Identity Provider Account Password Changed";
       $body = 'The password for the account with username=' . $uid . ' has been changed as requested. ';
-      $body .= 'If you have any questions please contact the geni project office: help@geni.net.';
+      $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
       mail($user_email, $subject, $body);
 
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';

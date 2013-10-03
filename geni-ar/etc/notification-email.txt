@@ -1,6 +1,9 @@
 Hi EXPERIMENTER_NAME_HERE,
 
-Your identity provider account has been created, so please give it a try.
+Your account at the GPO identity provider has been created.
+If you did not request an account please contact us immediately at help@geni.net.
+
+You can use your account to access the GENI Portal, please give it a try.
 
 1. Go to https://portal.geni.net
 2. Click the big orange "Use GENI" button
