@@ -35,7 +35,7 @@ print '<p>Account Request Management</p>';
 print '</h1>';
 
 $conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='REQUESTED' or request_state='PW CHANGE REQUESTED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::REQUESTED . "' or request_state='" . AR_STATE::PASSWD . '\'';
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Query failed to postgres database");
@@ -45,7 +45,7 @@ $rows = $result['value'];
 
 function get_values($row)
 {
-  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason;
+  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason, $notes;
 
   $id = $row['id'];
   $firstname = $row['first_name'];
@@ -59,13 +59,14 @@ function get_values($row)
   $created = substr($created,0,16);
   $org = $row['organization'];
   $title = $row['title'];
-  if ($row['request_state']==="PW CHANGE REQUESTED") {
+  if ($row['request_state']=== AR_STATE::PASSWD ) {
     $reason = "Password Change Request";
   } else {
     $reason = $row['reason'];
   }
+  $notes = $row['notes'];
 }
-
+print '<a name="current"></a>';
 print '<h2>';
 print '<p>Current Account Requests</p>';
 print '</h2>';
@@ -74,25 +75,25 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
 
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_LEADS'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::LEADS . '\'';
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Postgres database query failed");
@@ -100,6 +101,7 @@ if ($result['code'] != 0) {
 }
 $rows = $result['value'];
 
+print '<a name="leads"></a>';
 print '<h2>';
 print '<p>Account Requests Waiting for Lead Response</p>';
 print '</h2>';
@@ -108,7 +110,7 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
@@ -130,18 +132,18 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAILED_REQUESTER'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::REQUESTER . '\'';
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Postgres database query failed");
@@ -149,6 +151,7 @@ if ($result['code'] != 0) {
 }
 $rows = $result['value'];
 
+print '<a name="requester"></a>';
 print '<h2>';
 print '<p>Account Requests Waiting for Requester Response</p>';
 print '</h2>';
@@ -157,7 +160,7 @@ print '<table border="1">';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
@@ -179,18 +182,18 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='APPROVED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::APPROVED . '\'';
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Postgres database query failed");
@@ -198,6 +201,7 @@ if ($result['code'] != 0) {
 }
 $rows = $result['value'];
 
+print '<a name="approved"></a>';
 print '<h2>';
 print '<p>Approved Account Requests</p>';
 print '</h2>';
@@ -205,7 +209,7 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Created (UTC)</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Created (UTC)</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
@@ -221,12 +225,12 @@ foreach ($rows as $row) {
   $action_ts = $logs[0]['action_ts'];
   $action_ts = substr($action_ts,0,16);
   }
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DENIED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::DENIED . '\'';
 $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
@@ -235,6 +239,7 @@ if ($result['code'] != 0) {
   exit();
 }
 
+print '<a name="denied"></a>';
 print '<h2>';
 print '<p>Denied Account Requests</p>';
 print '</h2>';
@@ -242,7 +247,7 @@ print '</h2>';
 print '<table border="1">';
 print '<tr>';
 print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
-print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Denied (UTC)</th></tr>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Denied (UTC)</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";
@@ -253,7 +258,7 @@ foreach ($rows as $row) {
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
   }
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
