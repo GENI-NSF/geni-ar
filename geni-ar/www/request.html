@@ -37,7 +37,7 @@ span.required {color:red;}
     </p>
   </div> <!-- header -->
   <div id="content">
-  <form>
+  <form action="handlerequest.php" method="POST">
     <p><label class="input">First name:<span class="required">*</span>
         <input name="first_name" size="50" required></label></p>
     <p><label class="input">Last name:<span class="required">*</span>
@@ -66,11 +66,9 @@ span.required {color:red;}
     </p>
     <p><label class="input">Reason for using GENI:<span class="required">*</span>
         <input name="reason" size="50" required></label></p>
-    <p><label><input type="checkbox" name="pwchange" value="pwchange">Password Change Request</lable></p>
+    <p><label><input type="checkbox" name="pwchange" value="pwchange">Password Change Request</label></p>
     <p><span class="required">*</span> = required</p>
-    <input type="submit"
-           formaction="handlerequest.php"
-           formmethod="POST"/>
+    <input type="submit"/>
   </form>
   </div> <!-- content -->
   <hr/>

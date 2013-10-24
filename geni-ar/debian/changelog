@@ -1,3 +1,11 @@
+geni-ar (1.0) unstable; urgency=low
+
+  * Update README.Debian to include DB and DB user creation (#47)
+  * Fix a form submission bug with Chrome (#61)
+  * Fix a typo in a button on the request page (#62)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Thu, 24 Oct 2013 17:42:00 +0000
+
 geni-ar (0.8) unstable; urgency=low
 
   * Change wording of password change notification email (#49)
