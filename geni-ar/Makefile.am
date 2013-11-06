@@ -28,6 +28,7 @@ CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
+	favicon.ico \
 	db/postgresql/schema.sql \
 	etc/leads-email.txt \
 	etc/notification-email.txt \
@@ -42,6 +43,7 @@ nobase_dist_pkgdata_DATA = \
 	lib/php/ssha.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
+	protected/add_note.php \
 	protected/display_accounts.php \
 	protected/display_requests.php \
 	protected/fix_accounts.html \
@@ -56,6 +58,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/tutorial_confirmation.php \
 	www/handlerequest.php \
 	www/geni.png \
+	www/favicon.ico \
 	www/kmtool.css \
 	www/request.html
 

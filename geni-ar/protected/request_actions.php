@@ -79,14 +79,14 @@ $attrs['homeDirectory'] = "";
 $title = $row['title'];
 $reason = $row['reason'];
 
-if ($row['request_state'] === "PW CHANGE REQUESTED" and $action != "passwd") {
+if ($row['request_state'] === AR_STATE::PASSWD and $action != "passwd") {
   process_error("This a password change request");
   exit();
 }
 
 if ($action === "passwd")
   {
-    if ($row['request_state'] != "PW CHANGE REQUESTED") {
+    if ($row['request_state'] != AR_STATE::PASSWD) {
       process_error("This is not a password change request");
       exit();
     }
@@ -117,7 +117,7 @@ if ($action === "passwd")
       $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
       mail($user_email, $subject, $body);
 
-      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
       $res = db_execute_statement($sql);
       if ($res['code'] != 0) {
 	process_error ("Database action failed.  Could not change request status for " . $uid);
@@ -161,7 +161,7 @@ else if ($action === "approve")
 	  exit();
 	}
 
-	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='APPROVED' where id ='" . $id . '\'';
+	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
 	$result = db_execute_statement($sql);
 	if ($result['code'] != 0) {
 	  process_error("Postgres database update failed");
@@ -213,7 +213,7 @@ else if ($action === 'deny')
       process_error ("ERROR: Logging failed.  Will not deny account");
       exit();
     }
-    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DENIED' where id ='" . $id . '\'';
+    $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::DENIED . "' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result['code'] != 0) {
       process_error("Postgres database update failed");
@@ -291,6 +291,26 @@ else if ($action === "requester")
     print '<input type="submit" value="SEND"/>';
     print "</form>";
     
+  } 
+else if ($action === "note") 
+  {
+    $oldnote = $row['notes'];
+    $state = $row['request_state'];
+    print '<head><title>Email Requester</title></head>';
+    print '<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>';
+    print '<br><br>';
+    print '<form method="POST" action="add_note.php">';
+    print '<textarea name="note" rows="8" cols="40"></textarea>';
+    print '<br><br>';
+    print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
+    print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
+    print "<input type=\"hidden\" name=\"oldnote\" value=\"$oldnote\"/>";    
+    print "<input type=\"hidden\" name=\"request_state\" value=\"$state\"/>";    
+    print '<input type="submit" value="ADD NOTE"/>';    
+    print "</form>";
+    print '<form method="POST" action="display_requests.php">';
+    print '<input type="submit" value="CANCEL"/>';    
+    print "</form>";
   }    
 
 ldap_close($ldapconn);

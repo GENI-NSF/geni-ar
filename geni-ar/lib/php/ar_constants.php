@@ -66,6 +66,19 @@ class AR_TABLE_FIELDNAME {
   const REQUEST_TS = "request_ts";
   const USERNAME_ASSIGNED = "username_assigned";
   const CREATED_TS = "created_ts";
+  const REQUEST_STATE = "request_state";
+  const NOTES = "notes";
+}
+
+class AR_STATE {
+  const REQUESTED = "REQUESTED";
+  const APPROVED = "APPROVED";
+  const LEADS = "EMAILED_LEADS";
+  const REQUESTER = "EMAILED_REQUESTER";
+  const DENIED = "DENIED";
+  const PASSWD = "PASSWD CHANGE REQUESTED";
+  const DELETED = "DELETED";
+
 }
 
 

@@ -1,3 +1,8 @@
+geni-ar (1.1) unstable; urgency=low
+
+  * Add note field to account requests (#51)
+  * 
+
 geni-ar (1.0) unstable; urgency=low
 
   * Update README.Debian to include DB and DB user creation (#47)
