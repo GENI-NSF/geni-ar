@@ -8,3 +8,5 @@ Release 1.1
 * Change EMAILED_REQUESTER status to DENIED and accept new request (#65)
 * Add email REQUESTER option to EMAILED_LEADS status (#67)
 * Point out use of non-standart port 8444 in notification email (#56)
+* Send audit email when creating tutorial accounts (#59)
+
