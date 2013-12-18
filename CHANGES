@@ -6,3 +6,4 @@ Release 1.1
 * Add Autosubmitted and Precedence headers to all emails(#63)
 * Allow adding note on account request (#51)
 * Change EMAILED_REQUESTER status to DENIED and accept new request (#65)
+* Add email REQUESTER option to EMAILED_LEADS status (#67)
