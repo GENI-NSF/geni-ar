@@ -34,8 +34,14 @@ $sendto = $_REQUEST['sendto'];
 $uid = $_REQUEST['uid'];
 $log = $_REQUEST['log'];
 $id = $_REQUEST['id'];
+$replyto = $_REQUEST['reply'];
 
-$res = mail($sendto, "GENI Identity Provider Account Request", $email_body);
+$headers = "Auto-Submitted: auto-generated\r\n";
+$headers .= "Precedence: bulk\r\n";
+$headers .= "Reply-To: $replyto" . "\r\n";
+$headers .= "Cc: $idp_approval_email";
+
+$res = mail($sendto, "GENI Identity Provider Account Request", $email_body, $headers);
 if ($res === false) {
   process_error("Failed to send email to " . $sendto . " for account " . $uid);
   exit();

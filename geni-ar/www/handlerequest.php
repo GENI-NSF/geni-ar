@@ -94,11 +94,16 @@ if ($result['code'] != 0) {
 if (count($result['value']) != 0) {
   foreach ($result['value'] as $row) {
     $state = $row['request_state'];
-    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state==="EMAILED_REQUESTER") {
+    if ($state === "REQUESTED" or $state==="EMAILED_LEADS") {
       $errors[] = "An account request for this username is pending approval";
+    }
+    if ($state == "EMAILED_REQUESTER") {
+      
     }
   }
 }
+
+
 
 //check if there is a pending request for this email
 $sql = "SELECT * from idp_account_request where email='" . $email . '\'';
@@ -278,9 +283,12 @@ if (!$pwchange) {
     geni_syslog("IDP request query", $sql);
     geni_syslog("IDP request result", print_r($result, true));
     // Next send an email about the error
+    $headers = "Auto-Submitted: auto-generated\r\n";
+    $headers .= "Precedence: bulk\r\n";
     mail($idp_approval_email,
 	 "IdP Account Request Failure $server_host",
-	 'An error occurred on IdP account request. See /var/log/user.log for details.');
+	 'An error occurred on IdP account request. See /var/log/user.log for details.',
+	 $headers);
     // Finally pop up an error page
 ?>
 <!DOCTYPE html>
@@ -349,10 +357,11 @@ foreach ($email_vars as $var) {
   $val = $_REQUEST[$var];
   $body .= "$var: $val\n";
 } 
-$body .= "\nSee table idp_account_request for complete details.\n";
-mail($idp_approval_email, $subject, $body);
+$body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
+$headers = "Auto-Submitted: auto-generated\r\n";
+$headers .= "Precedence: bulk\r\n";
+mail($idp_approval_email, $subject, $body,$headers);
 
-  
 //Now email the requester
 if ($pwchange) {
   $subject = "GENI Identity Provider Account Password Change Request Received";
@@ -363,7 +372,7 @@ if ($pwchange) {
   $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
 }
-mail($email, $subject, $body);
+mail($email, $subject, $body,$headers);
 
   
 
