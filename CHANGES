@@ -4,3 +4,4 @@ Release 1.1
 * Improvement to requester email - Cc and Reply-To portal-help (#58)
 * Improvement to lead email - CC and Reply-To portal-help, improve text (#54)
 * Add Autosubmitted and Precedence headers to all emails(#63)
+* Allow adding note on account request (#51)
