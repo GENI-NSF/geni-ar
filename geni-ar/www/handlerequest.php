@@ -98,12 +98,32 @@ if (count($result['value']) != 0) {
       $errors[] = "An account request for this username is pending approval";
     }
     if ($state == "EMAILED_REQUESTER") {
-      
+      //get the request id
+      $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='EMAILED_REQUESTER')";
+      $result = db_fetch_rows($sql);
+      if ($result['code'] != 0) {
+	print("Postgres database query failed");
+	error_log("Postgres database query failed");
+	exit();
+      }
+      if (count($result['value']) === 1) {
+	$id = $result['value'][0]['id'];
+      } else {
+	print("Error retrieving account");
+	error_log("Error retrieving account");
+	exit();
+      }
+      // deny original request and submit this one
+      $sql = "UPDATE idp_account_request SET request_state='DENIED' where id='" . $id . '\'';  $result = db_execute_statement($sql);
+      if ($result['code'] != 0) {
+	print ("Database action failed.  Could not change request status for password change request for" . $uid);
+	error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+	exit();
+      }
+ 
     }
   }
 }
-
-
 
 //check if there is a pending request for this email
 $sql = "SELECT * from idp_account_request where email='" . $email . '\'';
