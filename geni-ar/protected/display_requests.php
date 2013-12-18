@@ -193,13 +193,24 @@ foreach ($rows as $row) {
 }
 print '</table>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::APPROVED . '\'';
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::APPROVED . "' ORDER BY created_ts desc";
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   process_error("Postgres database query failed");
   exit();
 }
 $rows = $result['value'];
+
+// if created_ts is empty (historic entries), then move to the bottom of the list
+foreach ($rows as $row) {
+  get_values($row);
+  if ($created=="") {
+    $blankdate = array_shift($rows);
+    $rows[] = $blankdate;
+  } else {
+    break;
+  }
+}
 
 print '<a name="approved"></a>';
 print '<h2>';
@@ -225,7 +236,7 @@ foreach ($rows as $row) {
   $action_ts = $logs[0]['action_ts'];
   $action_ts = substr($action_ts,0,16);
   }
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
