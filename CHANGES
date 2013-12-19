@@ -9,4 +9,4 @@ Release 1.1
 * Add email REQUESTER option to EMAILED_LEADS status (#67)
 * Point out use of non-standart port 8444 in notification email (#56)
 * Send audit email when creating tutorial accounts (#59)
-
+* Sort approved account requests by creation date newest first (#53)
