@@ -21,5 +21,6 @@
 
    See the apache documentation for more info.
 
-4. Optionally, install /usr/share/geni-ar/www/favicon.ico to /var/www/favicon.ico
+4. Optionally set favicon for the web server to the geni-ar favicon.
 
+   ln -s /usr/share/geni-ar/www/favicon.ico /var/www/favicon.ico
