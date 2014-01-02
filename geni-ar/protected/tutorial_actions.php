@@ -201,7 +201,11 @@ $filetext = str_replace("<password_prefix>",$pw_prefix,$filetext);
 $filetext = str_replace("<numaccounts>",$usernum,$filetext);
 
 $subject = "GENI Identity Provider Accounts for " . $desc;
-mail($org_email,$subject,$filetext);
+
+$headers = "Auto-Submitted: auto-generated\r\n";
+$headers .= "Precedence: bulk\r\n";
+$headers .= "Cc: $idp_audit_email" . " \r\n";
+mail($org_email,$subject,$filetext,$headers);
 
 header("Location: " . $acct_manager_url);
     

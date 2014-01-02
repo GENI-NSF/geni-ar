@@ -1,12 +1,15 @@
 Dear GENI Project Leads,
 
-The following account request has been received.  Please advise how to handle this request.
+The following account request has been received:
 
 Institution: INSTITUTION
 Title: TITLE
 Reason: REASON
 Email: EMAIL
 Name: NAME
+
+Should we approve this account request?
+Should this institution be whitelisted?
 
 Thanks,
 The GENI Project Staff

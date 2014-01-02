@@ -26,7 +26,8 @@ CREATE TABLE idp_account_request (
   request_ts timestamp DEFAULT (NOW() at time zone 'utc'),
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
-  request_state VARCHAR DEFAULT 'REQUESTED'
+  request_state VARCHAR DEFAULT 'REQUESTED',
+  notes VARCHAR
 );
 
 DROP TABLE IF EXISTS idp_account_actions;

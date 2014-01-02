@@ -94,8 +94,33 @@ if ($result['code'] != 0) {
 if (count($result['value']) != 0) {
   foreach ($result['value'] as $row) {
     $state = $row['request_state'];
-    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state==="EMAILED_REQUESTER") {
+    if ($state === "REQUESTED" or $state==="EMAILED_LEADS") {
       $errors[] = "An account request for this username is pending approval";
+    }
+    if ($state == "EMAILED_REQUESTER") {
+      //get the request id
+      $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='EMAILED_REQUESTER')";
+      $result = db_fetch_rows($sql);
+      if ($result['code'] != 0) {
+	print("Postgres database query failed");
+	error_log("Postgres database query failed");
+	exit();
+      }
+      if (count($result['value']) === 1) {
+	$id = $result['value'][0]['id'];
+      } else {
+	print("Error retrieving account");
+	error_log("Error retrieving account");
+	exit();
+      }
+      // deny original request and submit this one
+      $sql = "UPDATE idp_account_request SET request_state='DENIED' where id='" . $id . '\'';  $result = db_execute_statement($sql);
+      if ($result['code'] != 0) {
+	print ("Database action failed.  Could not change request status for password change request for" . $uid);
+	error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+	exit();
+      }
+ 
     }
   }
 }
@@ -278,9 +303,12 @@ if (!$pwchange) {
     geni_syslog("IDP request query", $sql);
     geni_syslog("IDP request result", print_r($result, true));
     // Next send an email about the error
+    $headers = "Auto-Submitted: auto-generated\r\n";
+    $headers .= "Precedence: bulk\r\n";
     mail($idp_approval_email,
 	 "IdP Account Request Failure $server_host",
-	 'An error occurred on IdP account request. See /var/log/user.log for details.');
+	 'An error occurred on IdP account request. See /var/log/user.log for details.',
+	 $headers);
     // Finally pop up an error page
 ?>
 <!DOCTYPE html>
@@ -349,10 +377,11 @@ foreach ($email_vars as $var) {
   $val = $_REQUEST[$var];
   $body .= "$var: $val\n";
 } 
-$body .= "\nSee table idp_account_request for complete details.\n";
-mail($idp_approval_email, $subject, $body);
+$body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
+$headers = "Auto-Submitted: auto-generated\r\n";
+$headers .= "Precedence: bulk\r\n";
+mail($idp_approval_email, $subject, $body,$headers);
 
-  
 //Now email the requester
 if ($pwchange) {
   $subject = "GENI Identity Provider Account Password Change Request Received";
@@ -363,7 +392,7 @@ if ($pwchange) {
   $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
 }
-mail($email, $subject, $body);
+mail($email, $subject, $body,$headers);
 
   
 

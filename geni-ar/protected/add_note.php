@@ -21,52 +21,42 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-require_once('db_utils.php');
-require_once('log_actions.php');
-require_once('ar_constants.php');
 include_once('/etc/geni-ar/settings.php');
+require_once('db_utils.php');
+require_once('ar_constants.php');
+require_once('log_actions.php');
 
 global $acct_manager_url;
 
-$arstate = $_GET['arstate'];
-$email_body = $_REQUEST['email_body'];
-$sendto = $_REQUEST['sendto'];
-$uid = $_REQUEST['uid'];
-$log = $_REQUEST['log'];
 $id = $_REQUEST['id'];
-$replyto = $_REQUEST['reply'];
+$uid = $_REQUEST['uid'];
+$oldnote = $_REQUEST['oldnote'];
+$note = $_REQUEST['note'];
+$state = $_REQUEST['request_state'];
 
-$headers = "Auto-Submitted: auto-generated\r\n";
-$headers .= "Precedence: bulk\r\n";
-$headers .= "Reply-To: $replyto" . "\r\n";
-$headers .= "Cc: $idp_approval_email";
+$ts = gmdate("Y-m-d H:i");
+$newnote = $ts . " " . $note;
+$text = $oldnote . " " . $newnote;
 
-$res = mail($sendto, "GENI Identity Provider Account Request", $email_body, $headers);
-if ($res === false) {
-  process_error("Failed to send email to " . $sendto . " for account " . $uid);
-  exit();
-}
-
-$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . $arstate . "' where id ='" . $id . '\'';
+//add the note
+$sql = "UPDATE " . $AR_TABLENAME . " SET notes='" . $text . "' WHERE ID='". $id . '\'';
 $result = db_execute_statement($sql);
 if ($result['code'] != 0) {
-  process_error("Postgres database update failed");
+  process_error("Postgres datbase update failed. Could not add note.");
+} elseif ($state==="REQUESTED") {
+  header("Location: " . $acct_manager_url . "/display_requests.php#current");
+} elseif ($state==="EMAILED_LEADS") {
+  header("Location: " . $acct_manager_url . "/display_requests.php#leads");
+} elseif ($state==="EMAILED_REQUESTER") {
+  header("Location: " . $acct_manager_url . "/display_requests.php#requester");
 }
-
-// check for single quotes and backslashes in body before logging
-$email_body = str_replace("'","''",$email_body);
-$email_body = str_replace("\\","\\\\",$email_body);
-
-
-$res = add_log_with_comment($uid, $log,$email_body);
+//log the note
+$res = add_log_with_comment($uid, "Note",$note);
 if ($res != 0) {
-  //try again without the comment
-  $res = add_log($uid,$log);
-  if ($res != 0)
-    process_error("Failed to log email to " . $sendto . " for account " . $uid); 
-} else {
-  header("Location: " . $acct_manager_url . "/display_requests.php");
-}
+  process_error ("Failed to log note for " . $uid);
+} 
+
+
 
 function process_error($msg)
 {
@@ -77,4 +67,5 @@ function process_error($msg)
   print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
   error_log($msg);
 }
+
 ?>
