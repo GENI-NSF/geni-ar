@@ -20,3 +20,7 @@
        htpasswd /etc/geni-ar/passwords bob
 
    See the apache documentation for more info.
+
+4. Optionally set favicon for the web server to the geni-ar favicon.
+
+   ln -s /usr/share/geni-ar/www/favicon.ico /var/www/favicon.ico

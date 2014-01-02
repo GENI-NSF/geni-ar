@@ -1,4 +1,4 @@
-AC_INIT([geni-ar], [1.0], [help@geni.net])
+AC_INIT([geni-ar], [1.1], [help@geni.net])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AM_MAINTAINER_MODE([enable])
 AC_PROG_MKDIR_P
