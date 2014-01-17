@@ -1,7 +1,20 @@
 geni-ar (1.1) unstable; urgency=low
 
   * Add note field to account requests (#51)
-  * 
+  * Improvement to handle request email - include url to display_requests
+    page (#55,#57)
+  * Improvement to requester email - Cc and Reply-To portal-help (#58)
+  * Improvement to lead email - CC and Reply-To portal-help, improve text (#54)
+  * Add Autosubmitted and Precedence headers to all emails(#63)
+  * Allow adding note on account request (#51)
+  * Change EMAILED_REQUESTER status to DENIED and accept new request (#65)
+  * Add email REQUESTER option to EMAILED_LEADS status (#67)
+  * Point out use of non-standart port 8444 in notification email (#56)
+  * Send audit email when creating tutorial accounts (#59)
+  * Sort approved account requests by creation date newest first (#53)
+  * Change buttons on home page to links (#50)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Thu, 02 Jan 2014 16:11:00 +0000
 
 geni-ar (1.0) unstable; urgency=low
 
