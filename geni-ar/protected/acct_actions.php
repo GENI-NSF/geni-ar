@@ -52,8 +52,6 @@ if ($action === "delete") {
   $entry = ldap_first_entry($ldapconn,$ret);
   $attrs = ldap_get_attributes($ldapconn,$entry);
   $accts = ldap_get_entries($ldapconn,$ret);
-
-  
   $ret = ldap_delete($ldapconn, get_userdn($id));
   if ($ret) {
     //send email to audit address
@@ -61,6 +59,7 @@ if ($action === "delete") {
     $body = 'The account with username=' . $id . ' has been deleted by ' . $_SERVER['PHP_AUTH_USER'] . '.';
     $headers = "Auto-Submitted: auto-generated\r\n";
     $headers .= "Precedence: bulk\r\n";
+    $headers .= "Reply-to: portal-help@geni.net\r\n";
     mail($idp_audit_email, $subject, $body,$headers);
 
     //change status in postgres database
