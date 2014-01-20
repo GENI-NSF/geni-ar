@@ -78,7 +78,7 @@ class AR_STATE {
   const DENIED = "DENIED";
   const PASSWD = "PASSWD CHANGE REQUESTED";
   const DELETED = "DELETED";
-
+  const CONFIRM = "CONFIRM_REQUESTER";
 }
 
 
