@@ -1,0 +1,10 @@
+Dear REQUESTER,
+
+We received a request from you for an account at the GENI GPO Identity Provider, for use with GENI.
+
+If this request came from you and you indeed intend to use GENI, please Reply. We will then process your request.
+
+If you did not make this request or no longer want to use GENI, then you can simply ignore this request. 
+
+Thank you,
+GENI Operations

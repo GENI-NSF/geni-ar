@@ -81,7 +81,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
@@ -89,6 +89,56 @@ foreach ($rows as $row) {
   print "</td>";
 
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$notes</td>";
+  print '</tr>';
+}
+print '</table>';
+
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::CONFIRM . '\'';
+$result = db_fetch_rows($sql);
+if ($result['code'] != 0) {
+  process_error("Postgres database query failed");
+  exit();
+}
+$rows = $result['value'];
+
+print '<a name="confirm"></a>';
+print '<h2>';
+print '<p>Account Requests Waiting for Requester Confirmation</p>';
+print '</h2>';
+
+print '<table border="1">';
+print '<tr>';
+print '<th> </th>';
+print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
+print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>';
+foreach ($rows as $row) {
+  get_values($row);
+  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Requested Confirmation' ORDER BY id desc";
+  $action_result = db_fetch_rows($sql);
+  if ($action_result['code'] != 0) {
+    process_error("Postgres database query failed");
+    exit();
+  }
+  $logs = $action_result['value'];
+  if ($logs) {
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
+  }
+  else {
+    $performer = "";
+    $action_ts = "";
+  }
+  print "<tr>";
+  print'<td align="center">';
+  print '<form method="POST" action="request_actions.php">';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  print $actions;
+  print '<input type="submit" value="SUBMIT"/>';
+  print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
+  print "</form>";
+  print "</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
@@ -132,7 +182,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td align="center">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT"/>';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";

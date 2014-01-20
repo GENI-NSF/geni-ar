@@ -236,6 +236,38 @@ else if ($action === 'deny')
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }
+else if ($action === "confirm")
+  {
+    $filename = "/etc/geni-ar/confirm-email.txt";
+    $file = fopen( $filename, "r" );
+    if( $file == false )
+      {
+	process_error ( "Error in opening file " . $filename );
+	exit();
+      }
+    $filesize = filesize( $filename );
+    $filetext = fread( $file, $filesize );
+    fclose( $file );
+    
+    $filetext = str_replace("REQUESTER",$firstname,$filetext);
+    
+    print '<head><title>Confirm Requester</title></head>';
+    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+    
+    print '<form method="POST" action="send_email.php?arstate=CONFIRM_REQUESTER">';
+    print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
+    print '<br><br>';
+    $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
+    print $email_body;
+    print '<br><br>';
+    print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
+    print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
+    print "<input type=\"hidden\" name=\"log\" value=\"Requested Confirmation\"/>";
+    print "<input type=\"hidden\" name=\"reply\" value=\"$idp_approval_email\"/>";
+    print '<input type="submit" value="SEND"/>';
+    print "</form>";
+    
+  }
 else if ($action === "leads")
   {
     $filename = "/etc/geni-ar/leads-email.txt";
