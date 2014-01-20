@@ -2,6 +2,8 @@ Release 1.2
 
 * Add Reply-to: portal-help@geni.net on all emails (#73)
 * Add "Email Leads" option to requests waiting for lead response (#74)
+* Add support for email verification (#76)
+* CC portal_admins on account request confirmation emails (#75)
 
 Release 1.1
 

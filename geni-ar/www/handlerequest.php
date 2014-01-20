@@ -306,6 +306,7 @@ if (!$pwchange) {
     $headers = "Auto-Submitted: auto-generated\r\n";
     $headers .= "Precedence: bulk\r\n";
     $headers .= "Reply-to: portal-help@geni.net\r\n";
+    $headers .= "Cc: $portal_admin_email" . "\r\n";
     mail($idp_approval_email,
 	 "IdP Account Request Failure $server_host",
 	 'An error occurred on IdP account request. See /var/log/user.log for details.',
