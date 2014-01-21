@@ -1,6 +1,14 @@
+Release 1.2
+
+* Add Reply-to: portal-help@geni.net on all emails (#73)
+* Add "Email Leads" option to requests waiting for lead response (#74)
+* Add support for email verification (#76)
+* CC portal_admins on account request confirmation emails (#75)
+
 Release 1.1
 
-* Improvement to handle request email - include url to display_requests page (#55,#57)
+* Improvement to handle request email - include url to
+  display_requests page (#55,#57) 
 * Improvement to requester email - Cc and Reply-To portal-help (#58)
 * Improvement to lead email - CC and Reply-To portal-help, improve text (#54)
 * Add Autosubmitted and Precedence headers to all emails(#63)
@@ -11,3 +19,4 @@ Release 1.1
 * Send audit email when creating tutorial accounts (#59)
 * Sort approved account requests by creation date newest first (#53)
 * Change buttons on home page to links (#50)
+* Add favicon (#48)
