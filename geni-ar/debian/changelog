@@ -1,3 +1,12 @@
+geni-ar (1.2) unstable; urgency=low
+
+  * Add Reply-to: portal-help@geni.net on all emails (#73)
+  * Add "Email Leads" option to requests waiting for lead response (#74)
+  * Add support for email verification (#76)
+  * CC portal_admins on account request confirmation emails (#75)
+
+ -- Tom Mitchell <tmitchel@bbn.com>  Tue, 21 Jan 2014 16:21:00 +0000
+
 geni-ar (1.1) unstable; urgency=low
 
   * Add note field to account requests (#51)
