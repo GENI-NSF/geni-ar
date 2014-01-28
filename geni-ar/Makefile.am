@@ -29,6 +29,7 @@ CLEANFILES = apache2.conf
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
 	db/postgresql/schema.sql \
+	db/postgresql/update-1.sql \
 	etc/confirm-email.txt \
 	etc/leads-email.txt \
 	etc/notification-email.txt \
