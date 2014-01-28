@@ -94,7 +94,7 @@ if ($result['code'] != 0) {
 if (count($result['value']) != 0) {
   foreach ($result['value'] as $row) {
     $state = $row['request_state'];
-    if ($state === "REQUESTED" or $state==="EMAILED_LEADS") {
+    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state=="CONFIRM_REQUESTER") {
       $errors[] = "An account request for this username is pending approval";
     }
     if ($state == "EMAILED_REQUESTER") {
