@@ -49,6 +49,11 @@ $idp_leads_email = 'leads@idp.net';
 $idp_audit_email = 'audit@idp.net';
 
 /*
+ * Email for portal help
+ */
+$idp_help_email = 'help@idp.net';
+
+/*
  * base url for acct mgmt tool
  */
 $acct_manager_url = 'https://arsystem.idplab.idp.com/mainpage';

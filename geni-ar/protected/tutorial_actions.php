@@ -202,10 +202,8 @@ $filetext = str_replace("<numaccounts>",$usernum,$filetext);
 
 $subject = "GENI Identity Provider Accounts for " . $desc;
 
-$headers = "Auto-Submitted: auto-generated\r\n";
-$headers .= "Precedence: bulk\r\n";
+$headers = $AR_EMAIL_HEADERS;
 $headers .= "Cc: $idp_audit_email" . " \r\n";
-$headers .= "Reply-to: portal-help@geni.net\r\n";
 mail($org_email,$subject,$filetext,$headers);
 
 header("Location: " . $acct_manager_url);

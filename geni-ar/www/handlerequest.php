@@ -303,9 +303,7 @@ if (!$pwchange) {
     geni_syslog("IDP request query", $sql);
     geni_syslog("IDP request result", print_r($result, true));
     // Next send an email about the error
-    $headers = "Auto-Submitted: auto-generated\r\n";
-    $headers .= "Precedence: bulk\r\n";
-    $headers .= "Reply-to: portal-help@geni.net\r\n";
+    $headers = $AR_EMAIL_HEADERS;
     $headers .= "Cc: $portal_admin_email" . "\r\n";
     mail($idp_approval_email,
 	 "IdP Account Request Failure $server_host",
@@ -380,9 +378,7 @@ foreach ($email_vars as $var) {
   $body .= "$var: $val\n";
 } 
 $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
-$headers = "Auto-Submitted: auto-generated\r\n";
-$headers .= "Precedence: bulk\r\n";
-$headers .= "Reply-to: portal-help@geni.net\r\n";
+$headers = $AR_EMAIL_HEADERS;
 mail($idp_approval_email, $subject, $body,$headers);
 
 //Now email the requester

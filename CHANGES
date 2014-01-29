@@ -3,6 +3,7 @@ Release 1.2.1
 * Handle CONFIRM_REQUESTER state when receiving a new account request (#65)
 * Fix constant in new ar_state table to use correct PW CHANGE REQUEST text (#77)
 * Add notes column to idp_account_request table (#78)
+* Standardize email headers, make help email address a config variable (#80)
 
 Release 1.2
 

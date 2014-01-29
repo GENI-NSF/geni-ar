@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
+include_once('/etc/geni-ar/settings.php');
 
 /* Set of constants for managing attributes account requests
  */
@@ -81,6 +82,9 @@ class AR_STATE {
   const CONFIRM = "CONFIRM_REQUESTER";
 }
 
+$AR_EMAIL_HEADERS = "Auto-Submitted: auto-generated\r\n";
+$AR_EMAIL_HEADERS .= "Precedence: bulk\r\n";
+$AR_EMAIL_HEADERS .= "Reply-to: $idp_help_email\r\n";
 
 
 ?>
