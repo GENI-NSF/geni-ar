@@ -188,8 +188,13 @@ else if ($action === "approve")
 	$file = fopen( $filename, "r" );
 	if( $file == false )
 	  {
-	    echo ( "Error in opening file");
-	    exit();
+	    $filename = "/usr/share/geni-ar/etc/notification-email.txt";
+	    $file = fopen( $filename, "r");
+	    if ($file == false)
+	      {
+		echo ( "Error in opening file");
+		exit();
+	      }
 	  }
 	$filesize = filesize( $filename );
 	$filetext = fread( $file, $filesize );
@@ -236,8 +241,13 @@ else if ($action === "confirm")
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename );
-	exit();
+	$filename = "/usr/share/geni-ar/etc/confirm-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );
@@ -268,8 +278,13 @@ else if ($action === "leads")
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename);
-	exit();
+	$filename = "/usr/share/geni-ar/etc/leads-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );
@@ -306,8 +321,13 @@ else if ($action === "requester")
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename );
-	exit();
+	$filename = "/usr/share/geni-ar/etc/user-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );

@@ -189,7 +189,12 @@ $filename = "/etc/geni-ar/tutorial-email.txt";
 $file = fopen( $filename, "r" );
 if( $file == false )
   {
-    process_error ( "Error in opening file " . $filename . " Did not send email.");
+    $filename = "/usr/share/geni-ar/etc/tutorial-email.txt";
+    $file = fopen( $filename, "r");
+    if ($file == false)
+      {
+	process_error ( "Error in opening file " . $filename . " Did not send email.");
+      }
   }
 $filesize = filesize( $filename );
 $filetext = fread( $file, $filesize );
