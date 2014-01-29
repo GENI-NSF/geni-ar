@@ -84,7 +84,7 @@ class AR_STATE {
 
 $AR_EMAIL_HEADERS = "Auto-Submitted: auto-generated\r\n";
 $AR_EMAIL_HEADERS .= "Precedence: bulk\r\n";
-$AR_EMAIL_HEADERS .= "Reply-to: $idp_help_email\r\n";
+$AR_EMAIL_HEADERS .= "Reply-to: $idp_approval_email\r\n";
 
 
 ?>
