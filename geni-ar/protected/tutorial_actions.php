@@ -185,11 +185,11 @@ for ($x=1; $x<=intval($num); $x++)
 ldap_close($ldapconn);
 
 //send email to organizer
-$filename = "/etc/geni-ar/tutorial-email.txt";
+$filename = $AR_TEMPLATE_PATH . "tutorial-email.txt";
 $file = fopen( $filename, "r" );
 if( $file == false )
   {
-    $filename = "/usr/share/geni-ar/etc/tutorial-email.txt";
+    $filename = $AR_ALT_TEMPLATE_PATH . "tutorial-email.txt";
     $file = fopen( $filename, "r");
     if ($file == false)
       {

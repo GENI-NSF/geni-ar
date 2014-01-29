@@ -86,5 +86,7 @@ $AR_EMAIL_HEADERS = "Auto-Submitted: auto-generated\r\n";
 $AR_EMAIL_HEADERS .= "Precedence: bulk\r\n";
 $AR_EMAIL_HEADERS .= "Reply-To: $idp_approval_email\r\n";
 
+$AR_TEMPLATE_PATH = "/etc/geni-ar/";
+$AR_ALT_TEMPLATE_PATH = "/usr/share/geni-ar/etc/";
 
 ?>

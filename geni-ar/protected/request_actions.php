@@ -184,11 +184,11 @@ else if ($action === "approve")
 	$res_admin = mail($idp_audit_email, $subject, $body,$headers);
 	
 	// Notify user
-	$filename = "/etc/geni-ar/notification-email.txt";
+	$filename = $AR_TEMPLATE_PATH . "notification-email.txt";
 	$file = fopen( $filename, "r" );
 	if( $file == false )
 	  {
-	    $filename = "/usr/share/geni-ar/etc/notification-email.txt";
+	    $filename = $AR_ALT_TEMPLATE_PATH . "notification-email.txt";
 	    $file = fopen( $filename, "r");
 	    if ($file == false)
 	      {
@@ -237,11 +237,11 @@ else if ($action === 'deny')
   }
 else if ($action === "confirm")
   {
-    $filename = "/etc/geni-ar/confirm-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "confirm-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	$filename = "/usr/share/geni-ar/etc/confirm-email.txt";
+	$filename = $AR_ALT_TEMPLATE_PATH . "confirm-email.txt";
 	$file = fopen( $filename, "r");
 	if ($file == false)
 	  {
@@ -274,11 +274,11 @@ else if ($action === "confirm")
   }
 else if ($action === "leads")
   {
-    $filename = "/etc/geni-ar/leads-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "leads-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	$filename = "/usr/share/geni-ar/etc/leads-email.txt";
+	$filename = $AR_ALT_TEMPLATE_PATH . "leads-email.txt";
 	$file = fopen( $filename, "r");
 	if ($file == false)
 	  {
@@ -317,11 +317,11 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $filename = "/etc/geni-ar/user-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "user-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	$filename = "/usr/share/geni-ar/etc/user-email.txt";
+	$filename = $AR_ALT_TEMPLATE_PATH . "user-email.txt";
 	$file = fopen( $filename, "r");
 	if ($file == false)
 	  {
