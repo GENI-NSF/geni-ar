@@ -57,9 +57,7 @@ if ($action === "delete") {
     //send email to audit address
     $subject = "GENI Identity Provider Account Deleted";
     $body = 'The account with username=' . $id . ' has been deleted by ' . $_SERVER['PHP_AUTH_USER'] . '.';
-    $headers = "Auto-Submitted: auto-generated\r\n";
-    $headers .= "Precedence: bulk\r\n";
-    $headers .= "Reply-to: portal-help@geni.net\r\n";
+    $headers = $AR_EMAIL_HEADERS;
     mail($idp_audit_email, $subject, $body,$headers);
 
     //change status in postgres database

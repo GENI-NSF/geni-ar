@@ -24,3 +24,8 @@
 4. Optionally set favicon for the web server to the geni-ar favicon.
 
    ln -s /usr/share/geni-ar/www/favicon.ico /var/www/favicon.ico
+
+5. Load the following database update:
+
+   psql -U <USER> [-h <HOST>] <DBNAME> \
+        -a -f /usr/share/geni-ar/db/postgresql/update-1.sql

@@ -13,7 +13,7 @@ edit = sed \
 	-e 's|@pkgsysconfdir[@]|$(pkgsysconfdir)|g' \
 	-e 's|@prefix[@]|$(prefix)|g'
 
-apache2.conf: Makefile
+apache2.conf lib/php/ar_constants.php: Makefile
 	rm -f $@ $@.tmp
 	srcdir=''; \
 	  test -f ./$@.in || srcdir=$(srcdir)/; \
@@ -23,12 +23,15 @@ apache2.conf: Makefile
 
 apache2.conf: $(srcdir)/apache2.conf.in
 
+lib/php/ar_constants.php: $(srcdir)/lib/php/ar_constants.php.in
+
 EXTRA_DIST = apache2.conf.in
 CLEANFILES = apache2.conf
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
 	db/postgresql/schema.sql \
+	db/postgresql/update-1.sql \
 	etc/confirm-email.txt \
 	etc/leads-email.txt \
 	etc/notification-email.txt \
