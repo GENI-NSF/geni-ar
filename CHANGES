@@ -1,10 +1,13 @@
 Release 1.2.1
 
 * Handle CONFIRM_REQUESTER state when receiving a new account request (#65)
-* Fix constant in new ar_state table to use correct PW CHANGE REQUEST text (#77)
+* Fix constant in new ar_state table to use correct PW CHANGE REQUEST
+  text (#77) 
 * Add notes column to idp_account_request table (#78)
-* Standardize email headers, use idp_approval_email config variable for Reply-To (#80)
-* If email templates are not in /etc/geni-ar, code falls back to packaged versions (#79)
+* Standardize email headers, use idp_approval_email config variable
+  for Reply-To (#80) 
+* If email templates are not in /etc/geni-ar, code falls back to
+  packaged versions (#79) 
 
 Release 1.2
 
