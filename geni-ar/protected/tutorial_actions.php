@@ -185,11 +185,16 @@ for ($x=1; $x<=intval($num); $x++)
 ldap_close($ldapconn);
 
 //send email to organizer
-$filename = "/etc/geni-ar/tutorial-email.txt";
+$filename = $AR_TEMPLATE_PATH . "tutorial-email.txt";
 $file = fopen( $filename, "r" );
 if( $file == false )
   {
-    process_error ( "Error in opening file " . $filename . " Did not send email.");
+    $filename = $AR_ALT_TEMPLATE_PATH . "tutorial-email.txt";
+    $file = fopen( $filename, "r");
+    if ($file == false)
+      {
+	process_error ( "Error in opening file " . $filename . " Did not send email.");
+      }
   }
 $filesize = filesize( $filename );
 $filetext = fread( $file, $filesize );
@@ -202,10 +207,8 @@ $filetext = str_replace("<numaccounts>",$usernum,$filetext);
 
 $subject = "GENI Identity Provider Accounts for " . $desc;
 
-$headers = "Auto-Submitted: auto-generated\r\n";
-$headers .= "Precedence: bulk\r\n";
+$headers = $AR_EMAIL_HEADERS;
 $headers .= "Cc: $idp_audit_email" . " \r\n";
-$headers .= "Reply-to: portal-help@geni.net\r\n";
 mail($org_email,$subject,$filetext,$headers);
 
 header("Location: " . $acct_manager_url);

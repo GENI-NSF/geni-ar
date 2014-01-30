@@ -115,9 +115,7 @@ if ($action === "passwd")
       $subject = "GENI Identity Provider Account Password Changed";
       $body = 'The password for the account with username=' . $uid . ' has been changed as requested. ';
       $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
-      $headers = "Auto-Submitted: auto-generated\r\n";
-      $headers .= "Precedence: bulk\r\n";
-      $headers .= "Reply-to: portal-help@geni.net\r\n";
+      $headers = $AR_EMAIL_HEADERS;
       mail($user_email, $subject, $body,$headers);
 
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
@@ -181,19 +179,22 @@ else if ($action === "approve")
 	  $body .= "$var: $val\n";
 	}
 	$body .= "\nSee table idp_account_request for complete details.\n";
-	$headers = "Auto-Submitted: auto-generated\r\n";
-	$headers .= "Precedence: bulk\r\n";
-	$headers .= "Reply-to: portal-help@geni.net\r\n";
+	$headers = $AR_EMAIL_HEADERS;
 
 	$res_admin = mail($idp_audit_email, $subject, $body,$headers);
 	
 	// Notify user
-	$filename = "/etc/geni-ar/notification-email.txt";
+	$filename = $AR_TEMPLATE_PATH . "notification-email.txt";
 	$file = fopen( $filename, "r" );
 	if( $file == false )
 	  {
-	    echo ( "Error in opening file");
-	    exit();
+	    $filename = $AR_ALT_TEMPLATE_PATH . "notification-email.txt";
+	    $file = fopen( $filename, "r");
+	    if ($file == false)
+	      {
+		echo ( "Error in opening file");
+		exit();
+	      }
 	  }
 	$filesize = filesize( $filename );
 	$filetext = fread( $file, $filesize );
@@ -229,21 +230,24 @@ else if ($action === 'deny')
     //send email to audit address
     $subject = "GENI Identity Provider Account Request Denied";
     $body = 'The account request for username=' . $uid . ' has been denied by ' . $_SERVER['PHP_AUTH_USER'] . ".";
-    $headers = "Auto-Submitted: auto-generated\r\n";
-    $headers .= "Precedence: bulk\r\n";
-    $headers .= "Reply-to: portal-help@geni.net\r\n";
+    $headers = $AR_EMAIL_HEADERS;
     mail($idp_audit_email, $subject, $body,$headers);
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
   }
 else if ($action === "confirm")
   {
-    $filename = "/etc/geni-ar/confirm-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "confirm-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename );
-	exit();
+	$filename = $AR_ALT_TEMPLATE_PATH . "confirm-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );
@@ -270,12 +274,17 @@ else if ($action === "confirm")
   }
 else if ($action === "leads")
   {
-    $filename = "/etc/geni-ar/leads-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "leads-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename);
-	exit();
+	$filename = $AR_ALT_TEMPLATE_PATH . "leads-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );
@@ -308,12 +317,17 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $filename = "/etc/geni-ar/user-email.txt";
+    $filename = $AR_TEMPLATE_PATH . "user-email.txt";
     $file = fopen( $filename, "r" );
     if( $file == false )
       {
-	process_error ( "Error in opening file " . $filename );
-	exit();
+	$filename = $AR_ALT_TEMPLATE_PATH . "user-email.txt";
+	$file = fopen( $filename, "r");
+	if ($file == false)
+	  {
+	    process_error ( "Error in opening file " . $filename );
+	    exit();
+	  }
       }
     $filesize = filesize( $filename );
     $filetext = fread( $file, $filesize );
