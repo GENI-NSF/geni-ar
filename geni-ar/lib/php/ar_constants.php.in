@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-include_once('/etc/geni-ar/settings.php');
+include_once('@pkgsysconfdir@/settings.php');
 
 /* Set of constants for managing attributes account requests
  */
@@ -86,7 +86,7 @@ $AR_EMAIL_HEADERS = "Auto-Submitted: auto-generated\r\n";
 $AR_EMAIL_HEADERS .= "Precedence: bulk\r\n";
 $AR_EMAIL_HEADERS .= "Reply-To: $idp_approval_email\r\n";
 
-$AR_TEMPLATE_PATH = "/etc/geni-ar/";
-$AR_ALT_TEMPLATE_PATH = "/usr/share/geni-ar/etc/";
+$AR_TEMPLATE_PATH = "@pkgsysconfdir@";
+$AR_ALT_TEMPLATE_PATH = "@pkgdatadir@/etc/";
 
 ?>

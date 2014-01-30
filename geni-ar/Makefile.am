@@ -13,7 +13,7 @@ edit = sed \
 	-e 's|@pkgsysconfdir[@]|$(pkgsysconfdir)|g' \
 	-e 's|@prefix[@]|$(prefix)|g'
 
-apache2.conf: Makefile
+apache2.conf lib/php/ar_constants.php: Makefile
 	rm -f $@ $@.tmp
 	srcdir=''; \
 	  test -f ./$@.in || srcdir=$(srcdir)/; \
@@ -22,6 +22,8 @@ apache2.conf: Makefile
 	mv $@.tmp $@
 
 apache2.conf: $(srcdir)/apache2.conf.in
+
+lib/php/ar_constants.php: $(srcdir)/lib/php/ar_constants.php.in
 
 EXTRA_DIST = apache2.conf.in
 CLEANFILES = apache2.conf
