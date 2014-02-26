@@ -142,7 +142,7 @@ else if ($action === "approve")
     else 
       {
 	//Add log to action table
-	$res = add_log($uid, "Account Created");
+	$res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
 	if ($res != 0) {
 	  process_error ("ERROR: Logging failed.  Will not create account for " . $uid);
 	  exit();
@@ -150,7 +150,7 @@ else if ($action === "approve")
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
 	if ($ret === false) {
 	  process_error ("ERROR: Failed to create new ldap account");
-	  add_log_comment($uid, "Account Created", "FAILED");
+	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
 	  exit();
 	}
 

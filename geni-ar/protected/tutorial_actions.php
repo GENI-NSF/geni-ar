@@ -97,7 +97,8 @@ for ($x=1; $x<=intval($num); $x++)
       }
     $uid = $user_prefix . $usernum;
 
-    $ret = add_log_with_comment($uid,"Created Tutorial Account",$comment);
+    $ret = add_log_with_comment($uid, AR_ACTION::TUTORIAL_ACCOUNT_CREATED,
+                                $comment);
     if ($ret != 0) {
       process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
       exit();
