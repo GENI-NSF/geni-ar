@@ -273,7 +273,14 @@ print '<th>Institution</th><th>Job Title</th><th>Account Reason</th>';
 print '<th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Performer</th><th>Created (UTC)</th><th>Notes</th></tr>';
 foreach ($rows as $row) {
   get_values($row);
-  $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Created' ORDER BY id desc";
+  $sql = ("SELECT performer, action_ts from idp_account_actions"
+          . " WHERE uid=" . $conn->quote($uname, "text")
+          . "       AND (action_performed = "
+          .                   $conn->quote(AR_ACTION::ACCOUNT_CREATED, "text")
+          . "            OR action_performed = "
+          .            $conn->quote(AR_ACTION::TUTORIAL_ACCOUNT_CREATED, "text")
+          . "           )"
+          . " ORDER BY id desc");
   $action_result = db_fetch_rows($sql);
   if ($action_result['code'] != 0) {
     process_error("Postgres database query failed");
@@ -285,6 +292,9 @@ foreach ($rows as $row) {
   $performer = $logs[0]['performer'];
   $action_ts = $logs[0]['action_ts'];
   $action_ts = substr($action_ts,0,16);
+  } else {
+    $performer = '&nbsp;';
+    $action_ts = '&nbsp;';
   }
   print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
   print '</tr>';
