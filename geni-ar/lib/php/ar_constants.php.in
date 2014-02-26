@@ -82,6 +82,11 @@ class AR_STATE {
   const CONFIRM = "CONFIRM_REQUESTER";
 }
 
+class AR_ACTION {
+  const ACCOUNT_CREATED = 'Account Created';
+  const TUTORIAL_ACCOUNT_CREATED = 'Created Tutorial Account';
+}
+
 $AR_EMAIL_HEADERS = "Auto-Submitted: auto-generated\r\n";
 $AR_EMAIL_HEADERS .= "Precedence: bulk\r\n";
 $AR_EMAIL_HEADERS .= "Reply-To: $idp_approval_email\r\n";
