@@ -296,7 +296,9 @@ foreach ($rows as $row) {
     $performer = '&nbsp;';
     $action_ts = '&nbsp;';
   }
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
+  /* Format username as link to log page */
+  $uname_link = "<a href='action_log.php?uid=$uname'>$uname</a>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
   print '</tr>';
 }
 print '</table>';
