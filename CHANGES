@@ -1,6 +1,7 @@
 Release 1.3
 
  * Find the right performer for tutorial account creation (#89)
+ * Display usernames as links to their log entries (#90)
 
 Release 1.2.2
 
