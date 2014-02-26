@@ -75,6 +75,8 @@ function create_log($query_vars,$query_values)
   $result = db_execute_statement($sql);
   if ($result['code'] != 0) {
     process_error("Couldn't create log. Postgres database insert failed");
+    error_log("Database error executing: $sql");
+    error_log("Database error: " . $result['output']);
     exit();
 }
 
