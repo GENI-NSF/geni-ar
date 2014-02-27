@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-include_once('/etc/geni-ar/settings.php');
+require_once('ar_constants.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
-require_once('ar_constants.php');
 require_once('log_actions.php');
+require_once('email_utils.php');
 
 global $leads_email;
 global $acct_manager_url;
@@ -184,22 +184,7 @@ else if ($action === "approve")
 	$res_admin = mail($idp_audit_email, $subject, $body,$headers);
 	
 	// Notify user
-	$filename = $AR_TEMPLATE_PATH . "notification-email.txt";
-	$file = fopen( $filename, "r" );
-	if( $file == false )
-	  {
-	    $filename = $AR_ALT_TEMPLATE_PATH . "notification-email.txt";
-	    $file = fopen( $filename, "r");
-	    if ($file == false)
-	      {
-		echo ( "Error in opening file");
-		exit();
-	      }
-	  }
-	$filesize = filesize( $filename );
-	$filetext = fread( $file, $filesize );
-	fclose( $file );
-
+        $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::NOTIFICATION);
 	$filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
 	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
 	$res_user = mail($user_email, "GENI Identity Provider Account Created", $filetext,$headers);
@@ -237,22 +222,7 @@ else if ($action === 'deny')
   }
 else if ($action === "confirm")
   {
-    $filename = $AR_TEMPLATE_PATH . "confirm-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "confirm-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-    
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::CONFIRM);
     $filetext = str_replace("REQUESTER",$firstname,$filetext);
     
     print '<head><title>Confirm Requester</title></head>';
@@ -274,22 +244,7 @@ else if ($action === "confirm")
   }
 else if ($action === "leads")
   {
-    $filename = $AR_TEMPLATE_PATH . "leads-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "leads-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-	
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::LEADS);
     $filetext = str_replace("INSTITUTION",$org,$filetext);
     $filetext = str_replace("TITLE",$title,$filetext);
     $filetext = str_replace("REASON",$reason,$filetext);
@@ -317,22 +272,7 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $filename = $AR_TEMPLATE_PATH . "user-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "user-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-    
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::USER);
     $filetext = str_replace("REQUESTER",$firstname,$filetext);
     
     print '<head><title>Email Requester</title></head>';

@@ -1,5 +1,6 @@
 geni-ar (1.3) unstable; urgency=low
 
+  * Email templates directories are named consistently (#82)
   * Find the right performer for tutorial account creation (#89)
   * Display usernames as links to their log entries (#90)
 
