@@ -76,6 +76,12 @@ $attrs['uidNumber'] = $id;
 $attrs['gidNumber'] = $id;
 $attrs['homeDirectory'] = "";
 
+/* These are the fields of the $attrs that need utf8 encoding. */
+$utf8_attrs = array('sn', 'givenName', 'cn', 'displayName', 'o');
+foreach ($utf8_attrs as $attr) {
+  $attrs[$attr] = utf8_encode($attrs[$attr]);
+}
+
 $title = $row['title'];
 $reason = $row['reason'];
 
@@ -149,8 +155,11 @@ else if ($action === "approve")
 	}
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
 	if ($ret === false) {
+          $ldap_err = ldap_error($ldapconn);
 	  process_error ("ERROR: Failed to create new ldap account");
-	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
+	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED,
+                          "FAILED: $ldap_err");
+          error_log("ldap_add failed for $new_dn: $ldap_err");
 	  exit();
 	}
 
