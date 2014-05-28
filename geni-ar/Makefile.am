@@ -65,7 +65,8 @@ nobase_dist_pkgdata_DATA = \
 	www/geni.png \
 	www/favicon.ico \
 	www/kmtool.css \
-	www/request.html
+	www/request.html \
+	www/reset.html
 
 dist_bin_SCRIPTS = \
 	bin/geni-add-log \
