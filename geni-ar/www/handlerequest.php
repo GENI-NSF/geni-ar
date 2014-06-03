@@ -172,7 +172,7 @@ if ($p1 === $p2) {
 if ($pwchange) {
   //if this is a password change, find the APPROVED account request and mark
   //new state as "PW CHANGE REQUESTED"
-  $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='APPROVED' or request_state='PW CHANGE REQUESTED')";
+  $sql = "SELECT id, first_name, last_name, email, organization, title from idp_account_request where username_requested='" . $uid . "' and (request_state='APPROVED' or request_state='PW CHANGE REQUESTED')";
   $result = db_fetch_rows($sql);
   if ($result['code'] != 0) {
     print("Postgres database query failed");
@@ -181,6 +181,11 @@ if ($pwchange) {
   }
   if (count($result['value']) === 1) {
       $id = $result['value'][0]['id'];
+      $first_name = $result['value'][0]['first_name'];
+      $last_name =  $result['value'][0]['last_name'];
+      $email_db =  $result['value'][0]['email'];
+      $organization = $result['value'][0]['organization'];
+      $title = $result['value'][0]['title'];
   } else {
     print("Error retrieving account");
     error_log("Error retrieving account");
@@ -372,12 +377,14 @@ if ($pwchange) {
   $body = 'A new IdP account request has been submitted on host ';
 }
 $body .= "$server_host.\n\n";
-$email_vars = array('first_name', 'last_name', 'email',
-		      'organization', 'title', 'reason');
-foreach ($email_vars as $var) {
-  $val = $_REQUEST[$var];
-  $body .= "$var: $val\n";
-} 
+
+// These values were looked up in the DB originally
+$body .= "first_name: $first_name\n";
+$body .= "last_name: $last_name\n";
+$body .= "email: $email_db\n";
+$body .= "organization: $organization\n";
+$body .= "title: $title\n";
+
 $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
 $headers = $AR_EMAIL_HEADERS;
 mail($idp_approval_email, $subject, $body,$headers);
