@@ -372,18 +372,25 @@ if ($pwchange){ ?>
 if ($pwchange) {
   $subject = "New GENI Identity Provider Password Change Request on $server_host";
   $body = 'A new Identity Provider password change request has been submitted on host ';
+  $body .= "$server_host.\n\n";
+  // These values were looked up in the DB originally
+  $body .= "first_name: $first_name\n";
+  $body .= "last_name: $last_name\n";
+  $body .= "email: $email_db\n";
+  $body .= "organization: $organization\n";
+  $body .= "title: $title\n";
 } else {
   $subject = "New GENI Identity Provider Account Request on $server_host";
   $body = 'A new IdP account request has been submitted on host ';
+  $body .= "$server_host.\n\n";
+  $email_vars = array('first_name', 'last_name', 'email',
+                    'organization', 'title', 'reason');
+  foreach ($email_vars as $var) {
+   $val = $_REQUEST[$var];
+   $body .= "$var: $val\n";
+  }
 }
-$body .= "$server_host.\n\n";
 
-// These values were looked up in the DB originally
-$body .= "first_name: $first_name\n";
-$body .= "last_name: $last_name\n";
-$body .= "email: $email_db\n";
-$body .= "organization: $organization\n";
-$body .= "title: $title\n";
 
 $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
 $headers = $AR_EMAIL_HEADERS;
