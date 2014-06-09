@@ -4,6 +4,7 @@ geni-ar (1.3) unstable; urgency=low
   * Email templates directories are named consistently (#82)
   * Find the right performer for tutorial account creation (#89)
   * Display usernames as links to their log entries (#90)
+  * Remove precedence and auto-submitted email headers (#93)
 
  -- Tom Mitchell <tmitchel@bbn.com>  Wed, 05 Feb 2014 18:07:00 +0000
 
