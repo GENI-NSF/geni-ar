@@ -53,6 +53,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/display_requests.php \
 	protected/fix_accounts.html \
 	protected/fix_actions.php \
+	protected/geni-ar.css \
 	protected/index.html \
 	protected/ldap.php \
 	protected/log_actions.php \
