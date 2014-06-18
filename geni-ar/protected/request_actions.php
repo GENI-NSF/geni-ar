@@ -156,6 +156,7 @@ if ($action === "passwd")
       $body = 'The password for the account with username=' . $uid . ' has been changed as requested. ';
       $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
       $headers = $AR_EMAIL_HEADERS;
+      $headers .= "Cc: $idp_approval_email";
       mail($user_email, $subject, $body,$headers);
 
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
