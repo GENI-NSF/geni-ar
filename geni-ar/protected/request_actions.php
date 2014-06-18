@@ -153,8 +153,13 @@ if ($action === "passwd")
     } else {
       //notify the user
       $subject = "GENI Identity Provider Account Password Changed";
-      $body = 'The password for the account with username=' . $uid . ' has been changed as requested. ';
-      $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
+      $body = 'The password for the GENI Identity Provider account'
+        . " with username '$uid' has been changed as requested.\n";
+      $body .= "If you did not request this change please contact"
+        . " the GENI Project Office immediately at help@geni.net.\n";
+      $body .= "\n";
+      $body .= "Thank you,\n";
+      $body .= "GENI Operations\n";
       $headers = $AR_EMAIL_HEADERS;
       $headers .= "Cc: $idp_approval_email";
       mail($user_email, $subject, $body,$headers);
