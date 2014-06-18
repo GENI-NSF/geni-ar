@@ -79,10 +79,50 @@ $attrs['homeDirectory'] = "";
 $title = $row['title'];
 $reason = $row['reason'];
 
-if ($row['request_state'] === AR_STATE::PASSWD and $action != "passwd") {
-  process_error("This a password change request");
-  exit();
+/**
+ * Deny a password change request.
+ */
+function deny_passwd($id, $uid, $row)
+{
+  global $AR_TABLENAME;
+  global $acct_manager_url;
+
+  $res = add_log($uid, "Passwd Change Denied");
+  if ($res != 0) {
+    process_error ("Logging failed.  Will not change request status.");
+    exit();
+  }
+
+  $sql = "UPDATE " . $AR_TABLENAME
+    . " SET request_state='" . AR_STATE::APPROVED . "'"
+    . " where id ='" . $id . '\'';
+  $res = db_execute_statement($sql);
+  if ($res['code'] != 0) {
+    process_error("Database action failed."
+                  . " Could not change request status for " . $uid);
+    exit();
+  }
+  header("Location: " . $acct_manager_url . "/display_requests.php");
 }
+
+if ($row['request_state'] === AR_STATE::PASSWD)
+  {
+    if ($action === "passwd")
+      {
+        /* Oddly, do nothing. This case is taken care of below in the
+           humongous if/then/else statement. */
+      }
+    else if ($action === "deny")
+      {
+        deny_passwd($id, $uid, $row);
+        exit();
+      }
+    else
+      {
+        process_error("This a password change request");
+        exit();
+      }
+  }
 
 if ($action === "passwd")
   {
