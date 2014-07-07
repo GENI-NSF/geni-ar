@@ -7,6 +7,7 @@ geni-ar (1.3) unstable; urgency=low
   * Display usernames as links to their log entries (#90)
   * Allow denial of password change requests (#91)
   * Remove precedence and auto-submitted email headers (#93)
+  * Split password reset page from account request page (#95)
 
  -- Tom Mitchell <tmitchel@bbn.com>  Wed, 05 Feb 2014 18:07:00 +0000
 
