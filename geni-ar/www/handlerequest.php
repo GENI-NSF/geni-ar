@@ -341,7 +341,10 @@ if (!$pwchange) {
 if ($pwchange){ ?>
     <h2>Password Change request received.</h2>
     <p>
-    Congratulations, your password change request has been received. We will be in touch with you about the status of your request.
+    Congratulations, your password change request has been received.
+    </p>
+    <p>
+    An email has been sent to your e-mail address on file. Please reply to that email confirming that you want your password changed.
     </p>
 <?php } else { ?>
     <h2>Account request received.</h2>
