@@ -21,12 +21,12 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-include_once('/etc/geni-ar/settings.php');
+require_once('ar_constants.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
-require_once('ar_constants.php');
 require_once('log_actions.php');
 require_once('ssha.php');
+require_once('email_utils.php');
 
 //First make sure we can connect to ldap
 $ldapconn = ldap_setup();
@@ -97,7 +97,8 @@ for ($x=1; $x<=intval($num); $x++)
       }
     $uid = $user_prefix . $usernum;
 
-    $ret = add_log_with_comment($uid,"Created Tutorial Account",$comment);
+    $ret = add_log_with_comment($uid, AR_ACTION::TUTORIAL_ACCOUNT_CREATED,
+                                $comment);
     if ($ret != 0) {
       process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
       exit();
@@ -185,21 +186,7 @@ for ($x=1; $x<=intval($num); $x++)
 ldap_close($ldapconn);
 
 //send email to organizer
-$filename = $AR_TEMPLATE_PATH . "tutorial-email.txt";
-$file = fopen( $filename, "r" );
-if( $file == false )
-  {
-    $filename = $AR_ALT_TEMPLATE_PATH . "tutorial-email.txt";
-    $file = fopen( $filename, "r");
-    if ($file == false)
-      {
-	process_error ( "Error in opening file " . $filename . " Did not send email.");
-      }
-  }
-$filesize = filesize( $filename );
-$filetext = fread( $file, $filesize );
-fclose( $file );
-
+$filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::TUTORIAL);
 $filetext = str_replace("<description>",$desc,$filetext);
 $filetext = str_replace("<username_prefix>",$user_prefix,$filetext);
 $filetext = str_replace("<password_prefix>",$pw_prefix,$filetext);

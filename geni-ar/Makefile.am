@@ -13,7 +13,7 @@ edit = sed \
 	-e 's|@pkgsysconfdir[@]|$(pkgsysconfdir)|g' \
 	-e 's|@prefix[@]|$(prefix)|g'
 
-apache2.conf lib/php/ar_constants.php: Makefile
+apache2.conf lib/php/ar_constants.php lib/php/email_utils.php: Makefile
 	rm -f $@ $@.tmp
 	srcdir=''; \
 	  test -f ./$@.in || srcdir=$(srcdir)/; \
@@ -24,6 +24,7 @@ apache2.conf lib/php/ar_constants.php: Makefile
 apache2.conf: $(srcdir)/apache2.conf.in
 
 lib/php/ar_constants.php: $(srcdir)/lib/php/ar_constants.php.in
+lib/php/email_utils.php: $(srcdir)/lib/php/email_utils.php.in
 
 EXTRA_DIST = apache2.conf.in
 CLEANFILES = apache2.conf
@@ -40,6 +41,7 @@ nobase_dist_pkgdata_DATA = \
 	etc/tutorial-email.txt \
 	lib/php/ar_constants.php \
 	lib/php/db_utils.php \
+	lib/php/email_utils.php \
 	lib/php/geni_syslog.php \
 	lib/php/ldap_utils.php \
 	lib/php/response_format.php \
@@ -51,6 +53,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/display_requests.php \
 	protected/fix_accounts.html \
 	protected/fix_actions.php \
+	protected/geni-ar.css \
 	protected/index.html \
 	protected/ldap.php \
 	protected/log_actions.php \
@@ -63,7 +66,8 @@ nobase_dist_pkgdata_DATA = \
 	www/geni.png \
 	www/favicon.ico \
 	www/kmtool.css \
-	www/request.html
+	www/request.html \
+	www/reset.html
 
 dist_bin_SCRIPTS = \
 	bin/geni-add-log \

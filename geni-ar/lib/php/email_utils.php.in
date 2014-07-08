@@ -1,0 +1,66 @@
+<?php
+//----------------------------------------------------------------------
+// Copyright (c) 2014 Raytheon BBN Technologies
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and/or hardware specification (the "Work") to
+// deal in the Work without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Work, and to permit persons to whom the Work
+// is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Work.
+//
+// THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+// IN THE WORK.
+//----------------------------------------------------------------------
+
+/*
+ * Utilities to support email.
+ */
+require_once('ar_constants.php');
+
+/**
+ * The set of 
+ */
+class EMAIL_TEMPLATE {
+  const DIRECTORY = "@pkgsysconfdir@";
+  const ALT_DIRECTORY = "@pkgdatadir@/etc";
+
+  const CONFIRM = 'confirm-email.txt';
+  const LEADS = 'leads-email.txt';
+  const NOTIFICATION = 'notification-email.txt';
+  const TUTORIAL = 'tutorial-email.txt';
+  const USER = 'user-email.txt';
+
+  /**
+   * Load a template and return the text. Search a primary directory
+   * and an alternate directory for the named template.
+   *
+   * If the template is not found, returns an empty string.
+   */
+  static function load($template) {
+    $dirs = array(EMAIL_TEMPLATE::DIRECTORY, EMAIL_TEMPLATE::ALT_DIRECTORY);
+    foreach ($dirs as $dir) {
+      $fname = "$dir/$template";
+      if (! is_readable($fname)) {
+        /* if file does not exist or is not readable, skip to the next one. */
+        continue;
+      }
+      $text = file_get_contents($fname);
+      if ($text !== FALSE) {
+        return $text;
+      }
+    }
+    /* The template was not found. Return an empty string. */
+    return '';
+  }
+}
+?>

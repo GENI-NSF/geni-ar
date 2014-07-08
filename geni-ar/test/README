@@ -1,0 +1,41 @@
+Test scripts for the GENI Account Request system
+
+curl-request
+============
+
+Description
+-----------
+
+The `curl-request` script is available for submitting account requests
+programmatically. It allows for customization of the minimal set of
+parameters that must be unique to a request. If further customization
+of requests is desired, `curl-request` can serve as an example for how
+to submit requests via [`curl`](http://curl.haxx.se/).
+
+Usage
+-----
+
+The general form of the `curl-request` invocation is:
+
+    curl-request <URL> <EMAIL> <USERNAME>
+
+`curl-request` takes 3 parameters:
+ * URL - the URL of the request handler
+ * EMAIL - the email address for the request
+ * USERNAME - the desired username for the request
+
+Examples
+--------
+
+To create a single request:
+
+    curl-request https://ar.example.com/geni/handlerequest.php \
+        test20@example.com test20
+
+To create multiple requests in a loop:
+
+    export AR_URL='https://ar.example.com/geni/handlerequest.php'
+    for i in 01 02 03 04 05; do
+      echo ${i}
+      curl-request "${AR_URL}" "test${i}@example.com" "test${i}"
+    done

@@ -36,9 +36,7 @@ $log = $_REQUEST['log'];
 $id = $_REQUEST['id'];
 $replyto = $_REQUEST['reply'];
 
-$headers = "Auto-Submitted: auto-generated\r\n";
-$headers .= "Precedence: bulk\r\n";
-$headers .= "Reply-To: $replyto" . "\r\n";
+$headers = $AR_EMAIL_HEADERS;
 $headers .= "Cc: $idp_approval_email";
 
 $res = mail($sendto, "GENI Identity Provider Account Request", $email_body, $headers);

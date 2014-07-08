@@ -21,11 +21,11 @@
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
 //----------------------------------------------------------------------
-include_once('/etc/geni-ar/settings.php');
+require_once('ar_constants.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
-require_once('ar_constants.php');
 require_once('log_actions.php');
+require_once('email_utils.php');
 
 global $leads_email;
 global $acct_manager_url;
@@ -79,10 +79,50 @@ $attrs['homeDirectory'] = "";
 $title = $row['title'];
 $reason = $row['reason'];
 
-if ($row['request_state'] === AR_STATE::PASSWD and $action != "passwd") {
-  process_error("This a password change request");
-  exit();
+/**
+ * Deny a password change request.
+ */
+function deny_passwd($id, $uid, $row)
+{
+  global $AR_TABLENAME;
+  global $acct_manager_url;
+
+  $res = add_log($uid, "Passwd Change Denied");
+  if ($res != 0) {
+    process_error ("Logging failed.  Will not change request status.");
+    exit();
+  }
+
+  $sql = "UPDATE " . $AR_TABLENAME
+    . " SET request_state='" . AR_STATE::APPROVED . "'"
+    . " where id ='" . $id . '\'';
+  $res = db_execute_statement($sql);
+  if ($res['code'] != 0) {
+    process_error("Database action failed."
+                  . " Could not change request status for " . $uid);
+    exit();
+  }
+  header("Location: " . $acct_manager_url . "/display_requests.php");
 }
+
+if ($row['request_state'] === AR_STATE::PASSWD)
+  {
+    if ($action === "passwd")
+      {
+        /* Oddly, do nothing. This case is taken care of below in the
+           humongous if/then/else statement. */
+      }
+    else if ($action === "deny")
+      {
+        deny_passwd($id, $uid, $row);
+        exit();
+      }
+    else
+      {
+        process_error("This a password change request");
+        exit();
+      }
+  }
 
 if ($action === "passwd")
   {
@@ -113,9 +153,15 @@ if ($action === "passwd")
     } else {
       //notify the user
       $subject = "GENI Identity Provider Account Password Changed";
-      $body = 'The password for the account with username=' . $uid . ' has been changed as requested. ';
-      $body .= "If you didn't request this change please contact the Geni Project Office immediately at help@geni.net.";
+      $body = 'The password for the GENI Identity Provider account'
+        . " with username '$uid' has been changed as requested.\n";
+      $body .= "If you did not request this change please contact"
+        . " the GENI Project Office immediately at help@geni.net.\n";
+      $body .= "\n";
+      $body .= "Thank you,\n";
+      $body .= "GENI Operations\n";
       $headers = $AR_EMAIL_HEADERS;
+      $headers .= "Cc: $idp_approval_email";
       mail($user_email, $subject, $body,$headers);
 
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
@@ -142,7 +188,7 @@ else if ($action === "approve")
     else 
       {
 	//Add log to action table
-	$res = add_log($uid, "Account Created");
+	$res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
 	if ($res != 0) {
 	  process_error ("ERROR: Logging failed.  Will not create account for " . $uid);
 	  exit();
@@ -150,7 +196,7 @@ else if ($action === "approve")
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
 	if ($ret === false) {
 	  process_error ("ERROR: Failed to create new ldap account");
-	  add_log_comment($uid, "Account Created", "FAILED");
+	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
 	  exit();
 	}
 
@@ -184,22 +230,7 @@ else if ($action === "approve")
 	$res_admin = mail($idp_audit_email, $subject, $body,$headers);
 	
 	// Notify user
-	$filename = $AR_TEMPLATE_PATH . "notification-email.txt";
-	$file = fopen( $filename, "r" );
-	if( $file == false )
-	  {
-	    $filename = $AR_ALT_TEMPLATE_PATH . "notification-email.txt";
-	    $file = fopen( $filename, "r");
-	    if ($file == false)
-	      {
-		echo ( "Error in opening file");
-		exit();
-	      }
-	  }
-	$filesize = filesize( $filename );
-	$filetext = fread( $file, $filesize );
-	fclose( $file );
-
+        $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::NOTIFICATION);
 	$filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
 	$filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
 	$res_user = mail($user_email, "GENI Identity Provider Account Created", $filetext,$headers);
@@ -237,22 +268,7 @@ else if ($action === 'deny')
   }
 else if ($action === "confirm")
   {
-    $filename = $AR_TEMPLATE_PATH . "confirm-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "confirm-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-    
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::CONFIRM);
     $filetext = str_replace("REQUESTER",$firstname,$filetext);
     
     print '<head><title>Confirm Requester</title></head>';
@@ -274,22 +290,7 @@ else if ($action === "confirm")
   }
 else if ($action === "leads")
   {
-    $filename = $AR_TEMPLATE_PATH . "leads-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "leads-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-	
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::LEADS);
     $filetext = str_replace("INSTITUTION",$org,$filetext);
     $filetext = str_replace("TITLE",$title,$filetext);
     $filetext = str_replace("REASON",$reason,$filetext);
@@ -317,22 +318,7 @@ else if ($action === "leads")
   }
 else if ($action === "requester")
   {
-    $filename = $AR_TEMPLATE_PATH . "user-email.txt";
-    $file = fopen( $filename, "r" );
-    if( $file == false )
-      {
-	$filename = $AR_ALT_TEMPLATE_PATH . "user-email.txt";
-	$file = fopen( $filename, "r");
-	if ($file == false)
-	  {
-	    process_error ( "Error in opening file " . $filename );
-	    exit();
-	  }
-      }
-    $filesize = filesize( $filename );
-    $filetext = fread( $file, $filesize );
-    fclose( $file );
-    
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::USER);
     $filetext = str_replace("REQUESTER",$firstname,$filetext);
     
     print '<head><title>Email Requester</title></head>';
