@@ -63,26 +63,20 @@ function get_values($row)
 <head>
   <meta charset="utf-8">
   <title>Account Request Management</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="geni-ar.css">
 </head>
 <body>
-  <header id="page_header">
   <h1>Account Request Management</h1>
-  <nav>
-    <ul>
+    <ul id='tablist'>
       <li><a href="display_requests.php" >Manage Account Requests</a></li>
       <li><a href="display_accounts.php" >Manage Current Accounts</a></li>
       <li><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
       <li><a href="tutorial_confirmation.php" >Create Tutorial Accounts</a></li>
     </ul> 
-  </nav>
-  </header>
 
-<section>
-  <header>
 <a name="current"></a>
 <h2>Current Account Requests</h2>
-</header>
 
 <table>
 <tr>
@@ -122,15 +116,8 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
-<section>
-<header>
-<a name="confirm"></a>
 <h2> Account Requests Waiting for Requester Confirmation </h2>
-</header>
 <body>
 <table>
 <tr>
@@ -183,16 +170,8 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
-<section>
-<header>
-<a name="leads"></a>
 <h2> Account Requests Waiting for Lead Response </h2>
-</header>
-<body>
 
 <table>
 <tr>
@@ -242,16 +221,9 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
 
-<section>
-<header>
-<a name="requester"></a>
 <h2>Account Requests Waiting for Requester Response</h2>
-</header>
 <body>
 <table>
 <tr>
@@ -301,16 +273,9 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
-<section>
-<header>
 <a name="approved"></a>
 <h2>Approved Account Requests</h2>
-</header>
-<body>
 <table>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -369,16 +334,8 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
-<section>
-<header>
-<a name="denied"></a>
 <h2>Denied Account Requests</h2>
-</header>
-<body>
 <table>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -412,9 +369,6 @@ foreach ($rows as $row) {
 }
 ?>
 </table>
-<footer>
-</footer>
-</section>
 
 </body>
 </html>
