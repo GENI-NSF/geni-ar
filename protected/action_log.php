@@ -48,6 +48,9 @@ if ($result['code'] != 0) {
 
 $rows = $result['value'];
 
+print '<!DOCTYPE html>';
+print '<html lang="en">';
+
 function get_values($row)
 {
   global $uid, $action_time, $performer, $action, $comment;
@@ -60,17 +63,14 @@ function get_values($row)
   $comment = $row['comment'];
 }
 if ($user == "ALL") {
-  print '<head><title>Account Request Action Logs</title></head>';
+  print '<head><title>Account Request Action Logs</title>';
   print '<a href="' . $acct_manager_url . '">Return to main page</a>';
 } else {
-  print '<head><title>Account Request Action Logs for ' . $user . '</title></head>';
+  print '<head><title>Account Request Action Logs for ' . $user . '</title>';
   print '<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>';
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head><title>Current Accounts</title>
   <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
   <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
   <script type="text/javascript">
