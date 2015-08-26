@@ -64,6 +64,18 @@ function get_values($row)
   <meta charset="utf-8">
   <title>Account Request Management</title>
   <link rel="stylesheet" href="geni-ar.css">
+  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
+  <script type="text/javascript">
+    $(document).ready( function () {
+      $("#currentrequests").DataTable({paging: false});
+      $("#requesterresponse").DataTable({paging: false});
+      $("#requesterconfirmation").DataTable({paging: false});
+      $("#waitingforlead").DataTable({paging: false});
+      $("#approvedrequests").DataTable({paging: false});
+      $("#deniedrequests").DataTable({paging: false});
+    });
+  </script>
 </head>
 <body>
   <header id="page_header">
@@ -84,14 +96,15 @@ function get_values($row)
 <h2>Current Account Requests</h2>
 </header>
 
-<table border="1">
+<table border="1" id='currentrequests'>
+<thead>
 <tr>
-<th> </th>
-<th>Institution</th><th>Job Title</th><th>Account Reason</th>
-<th>Email Address</th><th>First Name</th><th>Last Name</th>
-  <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th><th>Notes</th>
-     </tr>
-
+  <th>&nbsp;</th><th>Institution</th><th>Job Title</th><th>Account Reason</th>
+  <th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th>
+  <th>Username</th><th>Requested (UTC)</th><th>Notes</th>
+</tr>
+</thead>
+<tbody>
 <?php
 
 $conn = db_conn();
@@ -132,14 +145,16 @@ foreach ($rows as $row) {
 <h2> Account Requests Waiting for Requester Confirmation </h2>
 </header>
 <body>
-<table border="1">
+<table border="1" id='requesterconfirmation'>
+<thead>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
   <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
   <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
-
+</thead>
+<tbody>
 
 <?php
 
@@ -182,6 +197,7 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
 <footer>
 </footer>
@@ -194,14 +210,16 @@ foreach ($rows as $row) {
 </header>
 <body>
 
-<table border="1">
+<table border="1" id='waitingforlead'>
+<thead>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
 <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
 <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
-
+</thead>
+<tbody>
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::LEADS . '\'';
 $result = db_fetch_rows($sql);
@@ -241,6 +259,7 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
 <footer>
 </footer>
@@ -253,14 +272,16 @@ foreach ($rows as $row) {
 <h2>Account Requests Waiting for Requester Response</h2>
 </header>
 <body>
-<table border="1">
+<table border="1" id='requesterresponse'>
+<thead>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
 <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
 <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
-
+</thead>
+<tbody>
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::REQUESTER . '\'';
 $result = db_fetch_rows($sql);
@@ -300,6 +321,7 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
 <footer>
 </footer>
@@ -311,13 +333,15 @@ foreach ($rows as $row) {
 <h2>Approved Account Requests</h2>
 </header>
 <body>
-<table border="1">
+<table border="1" id='approvedrequests'>
+<thead>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
   <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
   <th>Performer</th><th>Created (UTC)</th><th>Notes</th></tr>
-
+</thead>
+<tbody>
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::APPROVED . "' ORDER BY created_ts desc";
 $result = db_fetch_rows($sql);
@@ -368,6 +392,7 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
 <footer>
 </footer>
@@ -379,14 +404,15 @@ foreach ($rows as $row) {
 <h2>Denied Account Requests</h2>
 </header>
 <body>
-<table border="1">
+<table border="1" id='deniedrequests'>
+<thead>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
 <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
 <th>Performer</th><th>Denied (UTC)</th><th>Notes</th></tr>
-
-
+</thead>
+<tbody>
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::DENIED . '\'';
 $result = db_fetch_rows($sql);
@@ -411,6 +437,7 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
 <footer>
 </footer>
