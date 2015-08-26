@@ -66,22 +66,38 @@ if ($user == "ALL") {
   print '<head><title>Account Request Action Logs for ' . $user . '</title></head>';
   print '<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>';
 }
+?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Current Accounts</title>
+  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
+  <script type="text/javascript">
+    $(document).ready( function () {
+      $("#accountslogs").DataTable({paging: false});
+    });
+  </script>
+</head>
+<body>
 
+<?php
 print '<h1>';
 print '<p>Account Request Action Logs</p>';
 print '</h1>';
 
-print '<table border="1">';
+print '<table border="1" id="accountslogs">';
+print '<thead>';
 print '<tr>';
-print '<th>Username</th><th>Action</th><th>Date/Time (UTC)</th><th>Performer</th><th>Comment</th></tr>';
+print '<th>Username</th><th>Action</th><th>Date/Time (UTC)</th><th>Performer</th><th>Comment</th></tr></thead>';
+print '<tbody>';
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
   print "<td>$uid</td><td>$action</td><td>$action_time</td><td>$performer</td><td>$comment</td>";
   print '</tr>';
 }
-print '</table>';
+print '</tbody></table></body></html>';
 
 function process_error($msg)
 {
