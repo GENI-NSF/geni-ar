@@ -72,7 +72,7 @@ print '<h1>';
 print '<p>Account Request Action Logs</p>';
 print '</h1>';
 
-print '<table border="1">';
+print '<table>';
 print '<tr>';
 print '<th>Username</th><th>Action</th><th>Date/Time (UTC)</th><th>Performer</th><th>Comment</th></tr>';
 foreach ($rows as $row) {

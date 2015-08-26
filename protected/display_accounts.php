@@ -57,7 +57,7 @@ print '<h1>';
 print '<p>Current Accounts</p>';
 print '</h1>';
 
-print '<table border="1">';
+print '<table>';
 print '<tr>';
 print '<th> </th>';
 print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th></tr>';
@@ -93,7 +93,7 @@ print '<h2>';
 print '<p>Deleted Accounts</p>';
 print '</h2>';
 
-print '<table border="1">';
+print '<table>';
 print '<tr>';
 print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Performer</th><th>Account Deleted</th></tr>';
 foreach ($rows as $row) {

@@ -84,7 +84,7 @@ function get_values($row)
 <h2>Current Account Requests</h2>
 </header>
 
-<table border="1">
+<table>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -132,7 +132,7 @@ foreach ($rows as $row) {
 <h2> Account Requests Waiting for Requester Confirmation </h2>
 </header>
 <body>
-<table border="1">
+<table>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -194,7 +194,7 @@ foreach ($rows as $row) {
 </header>
 <body>
 
-<table border="1">
+<table>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -253,7 +253,7 @@ foreach ($rows as $row) {
 <h2>Account Requests Waiting for Requester Response</h2>
 </header>
 <body>
-<table border="1">
+<table>
 <tr>
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
@@ -311,7 +311,7 @@ foreach ($rows as $row) {
 <h2>Approved Account Requests</h2>
 </header>
 <body>
-<table border="1">
+<table>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
@@ -379,7 +379,7 @@ foreach ($rows as $row) {
 <h2>Denied Account Requests</h2>
 </header>
 <body>
-<table border="1">
+<table>
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
