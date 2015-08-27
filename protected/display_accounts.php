@@ -50,17 +50,34 @@ function get_values($row)
   $org = $row['o'][0];
 }
 
-print '<head><title>Current Accounts</title></head>';
+?>
 
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Current Accounts</title>
+  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
+  <script type="text/javascript">
+    $(document).ready( function () {
+      $("#currentaccounts").DataTable({paging: false});
+      $("#deletedaccounts").DataTable({paging: false});
+    });
+  </script>
+</head>
+<body>
+
+<?php
 print '<a href="' . $acct_manager_url . '">Return to main page</a>';
 print '<h1>';
 print '<p>Current Accounts</p>';
 print '</h1>';
 
-print '<table>';
+print '<table id="currentaccounts">';
+print '<thead>';
 print '<tr>';
 print '<th> </th>';
-print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th></tr>';
+print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th></tr></thead>';
+print '<tbody>';
 foreach ($accts as $acct) {
   get_values($acct);
   if ($uid === null) 
@@ -78,7 +95,7 @@ foreach ($accts as $acct) {
   print "<td>$org</td><td>$uid</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td>";
   print '</tr>';
 }
-print '</table>';
+print '</tbody></table>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DELETED'";
 $result = db_fetch_rows($sql);
@@ -93,9 +110,11 @@ print '<h2>';
 print '<p>Deleted Accounts</p>';
 print '</h2>';
 
-print '<table>';
+print '<table id="deletedaccounts">';
+print '<thead>';
 print '<tr>';
-print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Performer</th><th>Account Deleted</th></tr>';
+print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Performer</th><th>Account Deleted</th></tr></thead>';
+print '<tbody>';
 foreach ($rows as $row) {
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
@@ -120,10 +139,13 @@ foreach ($rows as $row) {
   print "<td>$org</td><td>$uname</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$performer</td><td>$action_ts</td>";
   print '</tr>';
 }
-print '</table>';
+print '</tbody></table>';
 
 function process_error($msg)
 {
   print "$msg";
   error_log($msg);
 }
+
+?>
+</body></html>
