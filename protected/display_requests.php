@@ -67,6 +67,7 @@ function get_values($row)
   <link rel="stylesheet" href="geni-ar.css">
   <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
   <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
+  <script type='text/javascript' charset='utf8' src='cards.js'></script>
   <script type="text/javascript">
     $(document).ready( function () {
       $("#currentrequests").DataTable({paging: false});
@@ -79,17 +80,29 @@ function get_values($row)
   </script>
 </head>
 <body>
-  <h1>Account Request Management</h1>
-    <ul id='tablist'>
-      <li><a href="display_requests.php" >Manage Account Requests</a></li>
-      <li><a href="display_accounts.php" >Manage Current Accounts</a></li>
-      <li><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
-      <li><a href="tutorial_confirmation.php" >Create Tutorial Accounts</a></li>
-    </ul> 
 
-<a name="current"></a>
+<ul class='nav'>
+  <li><a href="display_requests.php" >Manage Account Requests</a></li>
+  <li><a href="display_accounts.php" >Manage Current Accounts</a></li>
+  <li><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
+  <li><a href="tutorial_confirmation.php" >Create Tutorial Accounts</a></li>
+</ul> 
+
+<h1>Account Request Management</h1>
+
+<div class='nav2'>
+  <ul class='tabs'>
+    <li><a class='tab' data-tabindex='1' href='#currentrequestsdiv'>Current Reqs</a></li>
+    <li><a class='tab' data-tabindex='2' href='#requesterconfirmationdiv'>Waiting for Confirmation</a></li>
+    <li><a class='tab' data-tabindex='3' href='#waitingforleaddiv'>Waiting for Lead</a></li>
+    <li><a class='tab' data-tabindex='4' href='#requesterresponsediv'>Waiting for Requester Response</a></li>
+    <li><a class='tab' data-tabindex='5' href='#approvedrequestsdiv'>Approved Reqs</a></li>
+    <li><a class='tab' data-tabindex='6' href='#deniedrequestsdiv'>Denied Reqs</a></li>
+  </ul>
+</div>
+
+<div class='card' id='currentrequestsdiv'>
 <h2>Current Account Requests</h2>
-
 <table id='currentrequests'>
 <thead>
 <tr>
@@ -115,7 +128,7 @@ $rows = $result['value'];
 foreach ($rows as $row) {
   get_values($row);
   print "<tr>";
-  print'<td align="center">';
+  print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
   print $actions;
@@ -128,10 +141,12 @@ foreach ($rows as $row) {
   print '</tr>';
 }
 ?>
+</tbody>
 </table>
+</div>
 
+<div class='card' id='requesterconfirmationdiv'>
 <h2> Account Requests Waiting for Requester Confirmation </h2>
-
 <table id='requesterconfirmation'>
 <thead>
 <tr>
@@ -172,7 +187,7 @@ foreach ($rows as $row) {
     $action_ts = "";
   }
   print "<tr>";
-  print'<td align="center">';
+  print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
@@ -186,9 +201,11 @@ foreach ($rows as $row) {
 ?>
 </tbody>
 </table>
+</div>
 
+
+<div class='card' id='waitingforleaddiv'>
 <h2> Account Requests Waiting for Lead Response </h2>
-
 <table id='waitingforlead'>
 <thead>
 <tr>
@@ -226,7 +243,7 @@ foreach ($rows as $row) {
     $action_ts = "";
   }
   print "<tr>";
-  print'<td align="center">';
+  print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
@@ -240,10 +257,11 @@ foreach ($rows as $row) {
 ?>
 </tbody>
 </table>
+</div>
 
 
+<div class='card' id='requesterresponsediv'>
 <h2>Account Requests Waiting for Requester Response</h2>
-
 <table id='requesterresponse'>
 <thead>
 <tr>
@@ -281,7 +299,7 @@ foreach ($rows as $row) {
     $action_ts = "";
   }
   print "<tr>";
-  print'<td align="center">';
+  print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
   $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
@@ -295,7 +313,9 @@ foreach ($rows as $row) {
 ?>
 </tbody>
 </table>
+</div>
 
+<div class='card' id='approvedrequestsdiv'>
 <h2>Approved Account Requests</h2>
 <table id='approvedrequests'>
 <thead>
@@ -352,13 +372,15 @@ foreach ($rows as $row) {
   }
   /* Format username as link to log page */
   $uname_link = "<a href='action_log.php?uid=$uname'>$uname</a>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
+  print "<tr><td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
 </tbody>
 </table>
+</div>
 
+<div class='card' id='deniedrequestsdiv'>
 <h2>Denied Account Requests</h2>
 <table id='deniedrequests'>
 <thead>
@@ -395,6 +417,7 @@ foreach ($rows as $row) {
 ?>
 </tbody>
 </table>
+</div>
 
 </body>
 </html>

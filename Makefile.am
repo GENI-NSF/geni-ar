@@ -49,6 +49,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/acct_actions.php \
 	protected/action_log.php \
 	protected/add_note.php \
+	protected/cards.js \
 	protected/display_accounts.php \
 	protected/display_requests.php \
 	protected/fix_accounts.html \
