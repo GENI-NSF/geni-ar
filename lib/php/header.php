@@ -34,14 +34,17 @@ function show_header($title, $table_ids) {
   echo "<script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>";
   echo "<script type='text/javascript' charset='utf8' src='cards.js'></script>";
 
-  echo "<script type='text/javascript'>";
-  echo "$(document).ready( function () {";
-  foreach ($table_ids as $table_id) {
-    echo "$('$table_id').DataTable({paging: false});";
+  if (count($table_ids) > 0) {
+    echo "<script type='text/javascript'>";
+    echo "$(document).ready( function () {";
+    foreach ($table_ids as $table_id) {
+      echo "$('$table_id').DataTable({paging: false});";
+    }
+    echo "});";
+    
+    echo "</script>";
   }
-  echo "});";
   
-  echo "</script>";
   echo "</head>";
   echo "<body>";
 
