@@ -69,7 +69,7 @@ show_header("Account Request Management", array("#currentrequests", "#requesterc
   <ul class='tabs'>
     <li><a class='tab' data-tabindex='1' href='#currentrequestsdiv'>Current Reqs</a></li>
     <li><a class='tab' data-tabindex='2' href='#requesterconfirmationdiv'>Waiting for Confirmation</a></li>
-    <li><a class='tab' data-tabindex='3' href='#waitingforleaddiv'>Waiting for Lead</a></li>
+    <li><a class='tab' data-tabindex='3' href='#waitingforleaddiv'>Waiting for Leads</a></li>
     <li><a class='tab' data-tabindex='4' href='#requesterresponsediv'>Waiting for Requester Response</a></li>
     <li><a class='tab' data-tabindex='5' href='#approvedrequestsdiv'>Approved Reqs</a></li>
     <li><a class='tab' data-tabindex='6' href='#deniedrequestsdiv'>Denied Reqs</a></li>
@@ -180,7 +180,7 @@ foreach ($rows as $row) {
 
 
 <div class='card' id='waitingforleaddiv'>
-<h2> Account Requests Waiting for Lead Response </h2>
+<h2> Account Requests Waiting for Leads Response </h2>
 <table id='waitingforlead'>
 <thead>
 <tr>
