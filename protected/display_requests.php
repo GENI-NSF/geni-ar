@@ -57,40 +57,13 @@ function get_values($row)
   $notes = $row['notes'];
 }
 
+
+require_once("header.php");
+show_header("Account Request Management", array("#currentrequests", "#requesterconfirmation", "#waitingforlead",
+                                               "#requesterresponse", "#approvedrequests", "#deniedrequests"));
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Account Request Management</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="geni-ar.css">
-  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
-  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
-  <script type='text/javascript' charset='utf8' src='cards.js'></script>
-  <script type="text/javascript">
-    $(document).ready( function () {
-      $("#currentrequests").DataTable({paging: false});
-      $("#requesterresponse").DataTable({paging: false});
-      $("#requesterconfirmation").DataTable({paging: false});
-      $("#waitingforlead").DataTable({paging: false});
-      $("#approvedrequests").DataTable({paging: false});
-      $("#deniedrequests").DataTable({paging: false});
-    });
-  </script>
-</head>
-<body>
 
-<ul id='header'>
-  <li class='headerlink'><a href="tutorial_confirmation.php">Create Tutorial Accounts</a></li>
-  <li class='headerlink'><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
-  <li class='headerlink'><a href="display_accounts.php" >Manage Current Accounts</a></li>
-  <li class='headerlink'><a href="display_requests.php" >Manage Account Requests</a></li>
-</ul> 
-
-
-<div id='content-outer'>
-<h1 style='margin-top: 60px;'>Account Request Management</h1>
+<h2 style='margin-top: 80px;' class='card'>Account Request Management</h2>
 
 <div class='nav2'>
   <ul class='tabs'>

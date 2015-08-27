@@ -48,9 +48,6 @@ if ($result['code'] != 0) {
 
 $rows = $result['value'];
 
-print '<!DOCTYPE html>';
-print '<html lang="en">';
-
 function get_values($row)
 {
   global $uid, $action_time, $performer, $action, $comment;
@@ -62,33 +59,20 @@ function get_values($row)
   $action = $row['action_performed'];
   $comment = $row['comment'];
 }
+
 if ($user == "ALL") {
-  print '<head><title>Account Request Action Logs</title>';
-  print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+  $title = 'Account Request Action Logs';
 } else {
-  print '<head><title>Account Request Action Logs for ' . $user . '</title>';
-  print '<a href="' . $acct_manager_url . '/display_accounts.php">Return to Current Accounts</a>';
+  $title = 'Account Request Action Logs for ' . $user;
 }
-?>
 
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
-  <link rel="stylesheet" href="geni-ar.css">
-  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
-  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
-  <script type="text/javascript">
-    $(document).ready( function () {
-      $("#accountslogs").DataTable({paging: false});
-    });
-  </script>
-</head>
-<body>
+require_once("header.php");
+show_header("Account Request Action Logs", array("#accountlogs"));
 
-<?php
-print '<h1>';
-print '<p>Account Request Action Logs</p>';
-print '</h1>';
 
-print '<table id="accountslogs">';
+print '<div class="card" style="margin-top: 80px;">';
+print '<h1>Account Request Action Logs</h1>';
+print '<table id="accountlogs">';
 print '<thead>';
 print '<tr>';
 print '<th>Username</th><th>Action</th><th>Date/Time (UTC)</th><th>Performer</th><th>Comment</th></tr></thead>';
@@ -99,7 +83,7 @@ foreach ($rows as $row) {
   print "<td>$uid</td><td>$action</td><td>$action_time</td><td>$performer</td><td>$comment</td>";
   print '</tr>';
 }
-print '</tbody></table></body></html>';
+print '</tbody></table></div></div></body></html>';
 
 function process_error($msg)
 {
