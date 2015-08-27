@@ -55,6 +55,8 @@ function get_values($row)
 <!DOCTYPE html>
 <html lang="en">
 <head><title>Current Accounts</title>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="geni-ar.css">
   <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
   <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
   <script type="text/javascript">
