@@ -1,8 +1,15 @@
 body {
   background-color: #BBDEFB;
   margin: 0px;
-  padding: 20px 40px;
   font-family: 'Open Sans', sans-serif;
+}
+
+#content-outer {
+  border-radius: 3px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
+  margin: 25px auto 35px auto;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -52,6 +59,44 @@ th {
 
 .actions {
   text-align: center;
+}
+
+#header {
+  margin: 0px;
+  vertical-align: middle;
+  background-color: #FFFFFF;
+  height: 50px;
+  line-height: 50px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  min-width: 1000px;
+  width: 100%;
+  padding: 0px;
+  position: fixed;
+  top: 0px;
+  z-index: 1000;
+}
+
+.headerlink {
+  font-size: 15px;
+  font-weight: normal;
+  text-align: center;    
+  display: block;
+  min-width: 150px;
+  padding: 0px 10px;
+  float: right;
+  height: 50px;
+  line-height: 50px;
+}
+
+.headerlink:hover {
+  cursor: default;
+  background-color: #EEEEEE;
+}
+
+.headerlink a {
+  display: block;
+  text-decoration: none;
+  color: #303030;
 }
 
 .tabs {

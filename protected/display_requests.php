@@ -81,14 +81,16 @@ function get_values($row)
 </head>
 <body>
 
-<ul class='nav'>
-  <li><a href="display_requests.php" >Manage Account Requests</a></li>
-  <li><a href="display_accounts.php" >Manage Current Accounts</a></li>
-  <li><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
-  <li><a href="tutorial_confirmation.php" >Create Tutorial Accounts</a></li>
+<ul id='header'>
+  <li class='headerlink'><a href="tutorial_confirmation.php">Create Tutorial Accounts</a></li>
+  <li class='headerlink'><a href="action_log.php?uid=ALL" >Account Action Logs</a></li>
+  <li class='headerlink'><a href="display_accounts.php" >Manage Current Accounts</a></li>
+  <li class='headerlink'><a href="display_requests.php" >Manage Account Requests</a></li>
 </ul> 
 
-<h1>Account Request Management</h1>
+
+<div id='content-outer'>
+<h1 style='margin-top: 60px;'>Account Request Management</h1>
 
 <div class='nav2'>
   <ul class='tabs'>
@@ -417,6 +419,7 @@ foreach ($rows as $row) {
 ?>
 </tbody>
 </table>
+</div>
 </div>
 
 </body>
