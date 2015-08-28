@@ -50,29 +50,24 @@ function get_values($row)
   $org = $row['o'][0];
 }
 
+require_once("header.php");
+show_header("View Accounts", array("#currentaccounts", "#deletedaccounts"));
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head><title>Current Accounts</title>
-  <script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
-  <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>
-  <script type="text/javascript">
-    $(document).ready( function () {
-      $("#currentaccounts").DataTable({paging: false});
-      $("#deletedaccounts").DataTable({paging: false});
-    });
-  </script>
-</head>
-<body>
 
-<?php
-print '<a href="' . $acct_manager_url . '">Return to main page</a>';
-print '<h1>';
-print '<p>Current Accounts</p>';
-print '</h1>';
+<h2 style="margin-top: 80px;" class="card">Accounts</h2>
+<div class='nav2'>
+  <ul class='tabs'>
+    <li><a class='tab' data-tabindex='1' href='#current'>Current Accounts</a></li>
+    <li><a class='tab' data-tabindex='2' href='#deleted'>Deleted Requests</a></li>
+  </ul>
+</div>
 
-print '<table border="1" id="currentaccounts">';
+<?php 
+print '<div class="card" id="current">';
+print '<h2>Current Accounts</h2>';
+print '<table id="currentaccounts">';
 print '<thead>';
 print '<tr>';
 print '<th> </th>';
@@ -95,7 +90,7 @@ foreach ($accts as $acct) {
   print "<td>$org</td><td>$uid</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td>";
   print '</tr>';
 }
-print '</tbody></table>';
+print '</tbody></table></div>';
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DELETED'";
 $result = db_fetch_rows($sql);
@@ -106,11 +101,10 @@ if ($result['code'] != 0) {
 
 $rows = $result['value'];
 
-print '<h2>';
-print '<p>Deleted Accounts</p>';
-print '</h2>';
 
-print '<table border="1" id="deletedaccounts">';
+print '<div class="card" id="deleted">';
+print '<h2>Deleted Accounts</h2>';
+print '<table id="deletedaccounts">';
 print '<thead>';
 print '<tr>';
 print '<th>Institution</th><th>Username</th><th>Email Address</th><th>First Name</th><th>Last Name</th><th>Performer</th><th>Account Deleted</th></tr></thead>';
@@ -148,4 +142,4 @@ function process_error($msg)
 }
 
 ?>
-</body></html>
+</div></div></body></html>

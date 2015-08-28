@@ -22,15 +22,16 @@
 // IN THE WORK.
 //----------------------------------------------------------------------
 include_once('/etc/geni-ar/settings.php');
+require_once('header.php');
 
 global $acct_manager_url;
 
-print '<head><title>Create Tutorial Accounts</title></head>';
+show_header('Create Tutorial Accounts', array());
 
-print '<h1>';
-print '<p>Tutorial Account Creation</p>';
-print '</h1>';
 
+print '<h1 style="margin-top: 60px;">Tutorial Account Creation</h1>';
+
+print '<div class="card">';
 print '<h2>';
 print '<p>You must open a ticket with infra and verify that it\'s approved before creating tutorial accounts</p>';
 print '</h2>';
@@ -46,3 +47,4 @@ print '<form method="POST" action="index.html">';
 print '<input type="submit" value="CANCEL" style="width:100px;height:50px"/>';
 print "</form>";
 
+print '</div></div></body></html>';
