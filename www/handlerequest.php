@@ -95,8 +95,11 @@ if ($result['code'] != 0) {
 if (count($result['value']) != 0) {
   foreach ($result['value'] as $row) {
     $state = $row['request_state'];
-    if ($state === "REQUESTED" or $state==="EMAILED_LEADS" or $state=="CONFIRM_REQUESTER") {
-      $errors[] = "An account request for this username is pending approval";
+    if (   $state === "REQUESTED"
+        or $state === "EMAILED_LEADS"
+        or $state === "CONFIRM_REQUESTER"
+        or $state === "DELETED") {
+      $errors[] = "Username " . $uid . " already exists";
     }
     if ($state == "EMAILED_REQUESTER") {
       //get the request id
