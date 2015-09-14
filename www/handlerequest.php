@@ -84,8 +84,12 @@ if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
   }
 }
 
+// Get a database connection so that values can be quoted
+$db_conn = db_conn();
+
 //check if there is a pending request for this username
-$sql = "SELECT * from idp_account_request where username_requested='" . $uid . '\'';
+$sql = "SELECT * from idp_account_request where username_requested = ";
+$sql .= $db_conn->quote($uid, 'text');
 $result = db_fetch_rows($sql);
 if ($result['code'] != 0) {
   print("Postgres database query failed");
