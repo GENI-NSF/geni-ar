@@ -103,25 +103,24 @@ if (count($result['value']) != 0) {
       $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='EMAILED_REQUESTER')";
       $result = db_fetch_rows($sql);
       if ($result['code'] != 0) {
-	print("Postgres database query failed");
-	error_log("Postgres database query failed");
-	exit();
+        print("Postgres database query failed");
+        error_log("Postgres database query failed");
+        exit();
       }
       if (count($result['value']) === 1) {
-	$id = $result['value'][0]['id'];
+        $id = $result['value'][0]['id'];
       } else {
-	print("Error retrieving account");
-	error_log("Error retrieving account");
-	exit();
+        print("Error retrieving account");
+        error_log("Error retrieving account");
+        exit();
       }
       // deny original request and submit this one
       $sql = "UPDATE idp_account_request SET request_state='DENIED' where id='" . $id . '\'';  $result = db_execute_statement($sql);
       if ($result['code'] != 0) {
-	print ("Database action failed.  Could not change request status for password change request for" . $uid);
-	error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
-	exit();
+        print ("Database action failed.  Could not change request status for password change request for" . $uid);
+        error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+        exit();
       }
- 
     }
   }
 }
