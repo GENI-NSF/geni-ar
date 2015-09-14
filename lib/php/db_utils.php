@@ -171,14 +171,6 @@ $DATE_FORMAT = 'Y-m-d H:i:s';
 date_default_timezone_set('UTC');
 $UTC = new DateTimeZone('UTC');
 
-// Get date N days in future from now - in UTC
-function get_future_date($num_days, $num_hours = 0)
-{
-  $dt = new DateTime(null, new DateTimeZone('UTC'));
-  $dt->add(new DateInterval('P' . $num_days . 'DT' . $num_hours . 'H'));
-  return $dt;
-}
-
 // Get format for date for inserting into database:
 // Convert to UTC first
 function db_date_format($date)
@@ -187,13 +179,6 @@ function db_date_format($date)
   $utcdate = $date;
   $utcdate = $utcdate->setTimezone(new DateTimeZone('UTC'));
   return $utcdate->format($DATE_FORMAT);
-}
-
-// Add a quote to an argument in database-specific manner
-function quotify($str)
-{
-  $conn = portal_conn();
-  return $conn->quote($str);
 }
 
 // Pull out only the 'userinfo' field from error
@@ -207,114 +192,6 @@ function generate_database_response($code, $value, $output)
 
       return generate_response($code, $value, $userinfo);
     }
-}
-
-// For selecting key values (ID's) from a table of name/value pairs
-// matching each value pair in a given dictionary
-//
- // Compute statement:
-// select event_id from 
-//  $attribute_tablename lea1, .... // For each entry
-// where lea1.$key_fieldname = lea2.$key_fieldname ... // For each post-first entry
-// and leai.$attribute_name_field = $attribute_name_field 
-// and lea1.$attribute_value_field = $attribute_value_field
-// If the length of the attributes is null, we match anything with attributes
-function compute_attributes_sql($attributes, 
-				$attribute_tablename, 
-				$key_fieldname,
-				$attribute_name_field,
-				$attribute_value_field)
-{
-
-  // If the match attributes is empty, match anything with ANY attributes
-  // But not anything with NO attributes
-  if (count($attributes) == 0) {
-    return "select $key_fieldname from $attribute_tablename";
-  }
-
-  $from_clause = "";
-  for($i = 1; $i <= count($attributes); $i = $i + 1) {
-    if ($i > 1) { $from_clause = $from_clause . ", "; }
-    $from_clause = $from_clause . " " . 
-      $attribute_tablename . " lea" . $i;
-  }
-
-  $link_event_ids_clause = "";
-  if(count($attributes) > 1) {
-    for($i = 2; $i <= count($attributes); $i = $i + 1) {
-      if ($i > 2) {
-	$link_event_ids_clause = $link_event_ids_clause . " AND ";
-      }
-      $link_event_ids_clause = $link_event_ids_clause . " " . 
-	"lea1." . $key_fieldname . " = " .
-	"lea" . $i . "." . $key_fieldname;
-    }
-    $link_event_ids_clause = $link_event_ids_clause . " AND " ;
-  }
-
-  $match_clause = "";
-  $match_count = 1;
-  $conn = db_conn();
-  foreach($attributes as $key => $value) {
-    //    error_log("ATT : " . print_r($attributes, true));
-    if ($match_clause != "") {
-      $match_clause = $match_clause . " AND ";
-    }
-    $match_clause = $match_clause . 
-      "lea" . $match_count . "." . 
-      $attribute_name_field . 
-      " = " . $conn->quote($key, 'text') .
-      " AND " .
-      "lea" . $match_count . "." . 
-      $attribute_value_field . 
-      " = " . $conn->quote($value, 'text');
-    $match_count = $match_count + 1;
-  }
-
-  $sql = "select " . "lea1." . $key_fieldname .
-    " from " . $from_clause . 
-    " where " . $link_event_ids_clause . " " . 
-    $match_clause;
-
-  return $sql;
-    
-}
-
-/**
- * Convert a db boolean into a PHP boolean.
- */
-function convert_boolean($db_value) {
-  /* A boolean column is returned from PostgreSQL as a single
-   * character. There is a way to push the datatype interpretation into
-   * MDB2, but it's not particularly well documented. Even a source dive
-   * doesn't reveal the format of the setResultType array.
-   *
-   * For now, do a brute force convert. But note: try to catch
-   * a different database implementation by watching for values that
-   * are not either "f" or "t".
-   */
-  if ($db_value === "f") {
-    return false;
-  } else if ($db_value === "t") {
-    return true;
-  } else {
-    throw new Exception("Unknown value for DB boolean: "
-            . print_r($db_value));
-  }
-}
-
-/**
- * Convert list of string entities (e.g. UUID's)
- * into SQL list ('A', 'B', 'C')
- */
-function convert_list($list)
-{
-  $list_image = "";
-  foreach ($list as $elt) {
-    if ($list_image != "") $list_image = $list_image . ", ";
-    $list_image = $list_image . quotify($elt, 'text');
-  }
-  return "(" . $list_image . ")";
 }
 
 ?>
