@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# exit on error
+set -e
+
+# echo commands
+set -x
+
+cd "${HOME}"/geni-ar
+autoreconf --install
+./configure --prefix=/usr --sysconfdir=/etc --bindir=/usr/local/bin --sbindir=/usr/local/sbin
+make
+sudo make install

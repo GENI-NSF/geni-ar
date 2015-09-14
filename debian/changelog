@@ -1,11 +1,15 @@
 geni-ar (1.3) unstable; urgency=low
 
+  * CC admins on password change email (#71)
   * Remove post-install script to copy email templates (#79)
   * Email templates directories are named consistently (#82)
   * Find the right performer for tutorial account creation (#89)
   * Display usernames as links to their log entries (#90)
+  * Allow denial of password change requests (#91)
+  * Remove precedence and auto-submitted email headers (#93)
+  * Split password reset page from account request page (#95)
 
- -- Tom Mitchell <tmitchel@bbn.com>  Wed, 05 Feb 2014 18:07:00 +0000
+ -- Tom Mitchell <tmitchel@bbn.com>  Tue, 08 Jul 2014 14:11:35 +0000
 
 geni-ar (1.2.2) unstable; urgency=low
 
@@ -17,12 +21,12 @@ geni-ar (1.2.1) unstable; urgency=low
 
   * Handle CONFIRM_REQUESTER state when receiving a new account request (#65)
   * Fix constant in new ar_state table to use correct PW CHANGE REQUEST
-	text (#77)
+    text (#77)
   * Add notes column to idp_account_request table (#78)
   * Standardize email headers, use idp_approval_email config variable for
-	Reply-To (#80)
+    Reply-To (#80)
   * If email templates are not in /etc/geni-ar, code falls back to
-	packaged versions (#79)
+    packaged versions (#79)
 
  -- Tom Mitchell <tmitchel@bbn.com>  Thu, 30 Jan 2014 20:32:00 +0000
 

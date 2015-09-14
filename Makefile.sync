@@ -1,0 +1,21 @@
+# -*- mode: Makefile -*-
+
+# To delete extraneous files on the remote side, do the following:
+#
+# make RSYNC='/usr/bin/rsync --delete --delete-excluded' -f Makefile.sync synci
+#
+
+RSYNC = /usr/bin/rsync
+RSYNC_EXCLUDE = --exclude .git --exclude '*~' \
+		--exclude '\#*\#' --exclude '.\#*'
+RSYNC_DELETE = --delete --delete-excluded
+RSYNC_ARGS = -aztv $(RSYNC_EXCLUDE)
+
+
+.PHONY: syncb syncd syncm synci syncs synct syncp syncc
+
+default:
+	echo "Choose a specific sync target."
+
+syncm: 
+	$(RSYNC) $(RSYNC_ARGS) ../geni-ar macomb.gpolab.bbn.com:

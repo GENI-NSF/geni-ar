@@ -43,16 +43,19 @@ nobase_dist_pkgdata_DATA = \
 	lib/php/db_utils.php \
 	lib/php/email_utils.php \
 	lib/php/geni_syslog.php \
+	lib/php/header.php \
 	lib/php/ldap_utils.php \
 	lib/php/response_format.php \
 	lib/php/ssha.php \
 	protected/acct_actions.php \
 	protected/action_log.php \
 	protected/add_note.php \
+	protected/cards.js \
 	protected/display_accounts.php \
 	protected/display_requests.php \
 	protected/fix_accounts.html \
 	protected/fix_actions.php \
+	protected/geni-ar.css \
 	protected/index.html \
 	protected/ldap.php \
 	protected/log_actions.php \
@@ -65,7 +68,8 @@ nobase_dist_pkgdata_DATA = \
 	www/geni.png \
 	www/favicon.ico \
 	www/kmtool.css \
-	www/request.html
+	www/request.html \
+	www/reset.html
 
 dist_bin_SCRIPTS = \
 	bin/geni-add-log \
