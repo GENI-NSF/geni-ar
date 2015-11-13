@@ -40,5 +40,10 @@ CREATE TABLE idp_account_actions (
      action_performed VARCHAR NOT NULL,
      comment VARCHAR
 );
-     
-     
+
+CREATE TABLE idp_passwd_reset (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL,
+    nonce VARCHAR NOT NULL,
+    created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
+);
