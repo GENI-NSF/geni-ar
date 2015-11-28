@@ -68,6 +68,7 @@ nobase_dist_pkgdata_DATA = \
 	www/geni.png \
 	www/favicon.ico \
 	www/kmtool.css \
+	www/newpasswd.php \
 	www/pwchange.php \
 	www/request.html \
 	www/reset.html
