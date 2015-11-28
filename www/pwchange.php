@@ -25,10 +25,13 @@
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
+require_once('ar_constants.php');
+
 
 /**
  * Generate a random ID comprised of numbers and upper case characters.
  */
+
 function random_id($width=6) {
     $result = '';
     for ($i=0; $i < $width; $i++) { 
@@ -41,7 +44,7 @@ function create_newpasswd_link($base_path, $id1, $id2) {
     global $acct_manager_url;
     $base_url = parse_url($acct_manager_url);
     $path = dirname($base_path);
-    $path .= "/newpasswd.php/$id1/$id2";
+    $path .= "/newpasswd.php?id=$id1&n=$id2";
     $url = $base_url["scheme"] . "://" . $base_url["host"] . "$path";
     return $url;
 }
@@ -99,7 +102,9 @@ $EMAIL_KEY = 'username';
 if (array_key_exists($EMAIL_KEY, $_REQUEST)) {
     $email = $_REQUEST[$EMAIL_KEY];
 }
-$email = 'tmitchel@bbn.com';
+
+$email = 'cmey63@gmail.com';
+
 if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $errors[] = "Invalid email address";
 } else {
@@ -112,14 +117,27 @@ if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Invalid email address";
         }
         // Enter a record in the database for this request
+        delete_expired_resets(1);
+
         // Generate a link to be clicked
-        // Send an email with the link
         $nonce = random_id(8);
         $db_result = insert_passwd_reset($email, $nonce);
         $db_id = $db_result['id'];
         $change_url = create_newpasswd_link($_SERVER['PHP_SELF'],
                                             $db_id, $nonce);
-        delete_expired_resets(1);
+
+        // Send an email with the link
+        $subject = "TESTING sending passwd reset link";
+        $body  = "Please use the following link to reset your GENI account password \n"
+              .  "$change_url\n"
+              .  "If you did not request this change please contact "
+              .  "the GENI Project Office immediately at help@geni.net.\n"
+              .  "\n"
+              . "Thank you,\n"
+              . "GENI Operations\n";
+        $headers = $AR_EMAIL_HEADERS;
+        $headers .= "Cc: $idp_approval_email";
+        mail($email, $subject, $body, $headers);
     }
 }
 
@@ -141,16 +159,13 @@ span.required {color:red;}
 </style>
 </head>
 <body>
+<h1>An email to reset your password has been sent.</h1>
 <pre>
 <?php echo $change_url; ?>
 </pre>
 <hr/>
 <pre>
 <?php print_r($errors); ?>
-</pre>
-<hr/>
-<pre>
-<?php print_r($db_result); ?>
 </pre>
 </body>
 </html>
