@@ -28,10 +28,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ar_constants.php');
 
 
-/**
- * Generate a random ID comprised of numbers and upper case characters.
- */
-
+// Generate a random string (nums, uppercase, lowercase) of width $width
 function random_id($width=6) {
     $result = '';
     for ($i=0; $i < $width; $i++) { 
@@ -40,6 +37,7 @@ function random_id($width=6) {
     return strtoupper($result);
 }
 
+// make a new /newpasswd.php?id=XXX&n=YYY link for use in new password emails
 function create_newpasswd_link($base_path, $id1, $id2) {
     global $acct_manager_url;
     $base_url = parse_url($acct_manager_url);
@@ -49,12 +47,8 @@ function create_newpasswd_link($base_path, $id1, $id2) {
     return $url;
 }
 
+// Insert the password change request into the idp_passwd_reset table
 function insert_passwd_reset($email, $nonce) {
-    # insert into idp_passwd_reset (email, nonce)
-    #     values ('tmitchel@bbn.com', 'DUH4Z0KT')
-    #     returning id, created;
-
-    # db_execute_statement($stmt, $msg = "", $rollback_on_error = false)
     $db_conn = db_conn();
     $sql = "insert into idp_passwd_reset (email, nonce) values (";
     $sql .= $db_conn->quote($email, 'text');
@@ -74,6 +68,7 @@ function insert_passwd_reset($email, $nonce) {
     return $result;
 }
 
+// clear out requests older than $hours hours
 function delete_expired_resets($hours) {
     $sql = "delete from idp_passwd_reset";
     $sql .= " where created <";
@@ -89,58 +84,26 @@ function delete_expired_resets($hours) {
     return $result == RESPONSE_ERROR::NONE;
 }
 
+function send_passwd_change_email($email, $change_url) {
+    // Send an email with the link
+    $subject = "TESTING sending passwd reset link";
+    $body  = "Please use the following link to reset your GENI account password \n"
+          .  "$change_url\n"
+          .  "If you did not request this change please contact "
+          .  "the GENI Project Office immediately at help@geni.net.\n"
+          .  "\n"
+          . "Thank you,\n"
+          . "GENI Operations\n";
+    $headers = $AR_EMAIL_HEADERS;
+    $headers .= "Cc: $idp_approval_email";
+    mail($email, $subject, $body, $headers);
+}
+
 #----------------------------------------------------------------------
 # Delete things older than 10 minutes. Convert to 24 hours, or X hours.
 # delete from idp_passwd_reset
 #    where created < (now()  at time zone 'utc') - interval '10 minutes';
 #----------------------------------------------------------------------
-
-$errors = array();
-
-$email = null;
-$EMAIL_KEY = 'username';
-if (array_key_exists($EMAIL_KEY, $_REQUEST)) {
-    $email = $_REQUEST[$EMAIL_KEY];
-}
-
-$email = 'cmey63@gmail.com';
-
-if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "Invalid email address";
-} else {
-    $ldapconn = ldap_setup();
-    if ($ldapconn === -1) {
-        $errors[] = "Internal Error";
-    } else {
-        $known_email = ldap_check_email($ldapconn, $email);
-        if (! $known_email) {
-            $errors[] = "Invalid email address";
-        }
-        // Enter a record in the database for this request
-        delete_expired_resets(1);
-
-        // Generate a link to be clicked
-        $nonce = random_id(8);
-        $db_result = insert_passwd_reset($email, $nonce);
-        $db_id = $db_result['id'];
-        $change_url = create_newpasswd_link($_SERVER['PHP_SELF'],
-                                            $db_id, $nonce);
-
-        // Send an email with the link
-        $subject = "TESTING sending passwd reset link";
-        $body  = "Please use the following link to reset your GENI account password \n"
-              .  "$change_url\n"
-              .  "If you did not request this change please contact "
-              .  "the GENI Project Office immediately at help@geni.net.\n"
-              .  "\n"
-              . "Thank you,\n"
-              . "GENI Operations\n";
-        $headers = $AR_EMAIL_HEADERS;
-        $headers .= "Cc: $idp_approval_email";
-        mail($email, $subject, $body, $headers);
-    }
-}
-
 
 //
 // Use INSERT INTO .... RETURNING id; in PostgreSQL to
@@ -148,6 +111,7 @@ if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
 //
 
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,15 +123,46 @@ span.required {color:red;}
 </style>
 </head>
 <body>
-<h1>An email to reset your password has been sent.</h1>
-<pre>
-<?php echo $change_url; ?>
-</pre>
-<hr/>
-<pre>
-<?php print_r($errors); ?>
-</pre>
-</body>
-</html>
+
+<?php
+$errors = array();
+$EMAIL_KEY = 'email';
+if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
+    print "No email given";
+} else {
+    $email = $_REQUEST[$EMAIL_KEY];
+    if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email address";
+    } else {
+        $ldapconn = ldap_setup();
+        if ($ldapconn === -1) {
+            $errors[] = "Internal Error";
+        } else {
+            $known_email = ldap_check_email($ldapconn, $email);
+            if (! $known_email) {
+                $errors[] = "Unknown email address";
+            } else {
+                $errors[] = "Good email address";
+                // Enter a record in the database for this request
+                delete_expired_resets(1);
+
+                // Generate a link to be clicked
+                $nonce = random_id(8);
+                // TODO: what to do when this is an error
+                $db_result = insert_passwd_reset($email, $nonce);
+                $db_id = $db_result['id'];
+
+                $change_url = create_newpasswd_link($_SERVER['PHP_SELF'],
+                                                    $db_id, $nonce);
+                send_passwd_reset_email($email, $change_url);
+                // TODO: better messages here probably
+                print "<h1>An email to reset your password has been sent.</h1>";
+                print "<p>If this was done in accident, simply ignore the email you receive</p>";
+            }
+        }
+    }
+}
 
 ?>
+</body>
+</html>
