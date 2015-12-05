@@ -122,7 +122,8 @@ if (count($result['value']) != 0) {
         exit();
       }
       // deny original request and submit this one
-      $sql = "UPDATE idp_account_request SET request_state='DENIED' where id='" . $id . '\'';  $result = db_execute_statement($sql);
+      $sql = "UPDATE idp_account_request SET request_state='DENIED' where id='" . $id . '\'';
+      $result = db_execute_statement($sql);
       if ($result['code'] != 0) {
         print ("Database action failed.  Could not change request status for password change request for" . $uid);
         error_log ("Database action failed.  Could not change request status for password change request for " . $uid);

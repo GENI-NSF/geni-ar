@@ -85,6 +85,7 @@ function delete_expired_resets($hours) {
 }
 
 function send_passwd_change_email($email, $change_url) {
+    global $AR_EMAIL_HEADERS;
     // Send an email with the link
     $subject = "TESTING sending passwd reset link";
     $body  = "Please use the following link to reset your GENI account password \n"
@@ -98,17 +99,6 @@ function send_passwd_change_email($email, $change_url) {
     $headers .= "Cc: $idp_approval_email";
     mail($email, $subject, $body, $headers);
 }
-
-#----------------------------------------------------------------------
-# Delete things older than 10 minutes. Convert to 24 hours, or X hours.
-# delete from idp_passwd_reset
-#    where created < (now()  at time zone 'utc') - interval '10 minutes';
-#----------------------------------------------------------------------
-
-//
-// Use INSERT INTO .... RETURNING id; in PostgreSQL to
-// discover the id of the last row inserted.
-//
 
 ?>
 
@@ -154,10 +144,10 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
 
                 $change_url = create_newpasswd_link($_SERVER['PHP_SELF'],
                                                     $db_id, $nonce);
-                send_passwd_reset_email($email, $change_url);
+                send_passwd_change_email($email, $change_url);
                 // TODO: better messages here probably
                 print "<h1>An email to reset your password has been sent.</h1>";
-                print "<p>If this was done in accident, simply ignore the email you receive</p>";
+                print "<p>If this was done by accident, simply ignore the email you receive</p>";
             }
         }
     }

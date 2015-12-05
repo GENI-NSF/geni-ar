@@ -25,6 +25,7 @@
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
+require_once('ssha.php');
 
 // See if we should actually let user who clicked this link change the password
 function validate_passwdchange() {
@@ -42,8 +43,7 @@ function validate_passwdchange() {
 
         if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
             $result = $db_result[RESPONSE_ARGUMENT::VALUE];
-            print count($result);
-            return true;
+            return count($result) > 0;
         } else {
             error_log("Error getting password reset record: "
                       . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
@@ -54,6 +54,74 @@ function validate_passwdchange() {
         return false; 
     }
 }
+
+// once password is changed, delete the entry from idp_passwd_reset
+function delete_reset($id, $nonce) {
+    $db_conn = db_conn();
+    $sql = "delete from idp_passwd_reset";
+    $sql .= " where id = ";
+    $result = db_execute_statement($sql);
+    if ($result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        $rows = $result[RESPONSE_ARGUMENT::VALUE];
+        error_log("Deleted $rows old records");
+    } else {
+        error_log("Error deleting old records: "
+                  . $result[RESPONSE_ARGUMENT::OUTPUT]);
+    }
+    return $result == RESPONSE_ERROR::NONE;
+}
+
+function change_passwd() {
+    print_r($_REQUEST);
+    if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)
+        && array_key_exists('password1', $_REQUEST) && array_key_exists('password2', $_REQUEST) 
+        && array_key_exists('email', $_REQUEST)) {
+        $nonce = $_REQUEST['n'];
+        $db_id = $_REQUEST['id'];
+        $email = $_REQUEST['email'];
+        $password = $_REQUEST['password1'];
+        $password2 = $_REQUEST['password2'];
+        if ($password == $password2) {
+            if(validate_passwdchange()) {
+                $db_conn = db_conn();
+                $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($email, 'text') 
+                     . " and (request_state='APPROVED')"; // ??
+                $db_result = db_fetch_rows($sql, "fetch accounts with that email");
+                if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+                    $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+                } else {
+                    error_log("Error getting password reset record: "
+                              . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+                    return false;
+                }
+                print_r($result);
+                if (count($result) == 1) {
+                    $pw_hash = SSHA::newHash($password);
+                    $id = $result[0]['id'];
+                    $sql = "UPDATE idp_account_request SET password_hash='" . $pw_hash . "' where id='" . $id . "'";
+                    $db_result = db_execute_statement($sql, "update user password");
+                    if ($db_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+                      error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+                      return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                  print("Error retrieving account");
+                  error_log("Error retrieving account");
+                  return false;
+                }
+            }
+        } else {
+            error_log("Non matching passwords passed");
+            return false;
+        }
+    } else {
+        error_log("Failed to get password page because bad url");
+        return false; 
+    }
+}
+
 
 ?>
 
@@ -70,16 +138,31 @@ span.required {color:red;}
 <body>
 
 <?php 
-if(validate_passwdchange()) { // print the form for them to actually change their password
-    print "<h1>Enter your new password</h1>";
-    print "<p><label class='input'>New Password:<span class='required'>*</span>";
-    print "<input name='password1' type='password' size='50' required onchange='form.password2.pattern = this.value;'></label></p>";
-    print "<p><label class='input'>Confirm New password:<span class='required'>*</span>";
-    print "<input name='password2' type='password' size='50' required title='The passwords must match'></label></p>";
-} else {
-    print "<h1>Invalid request to password change page</h1>";
-}
 
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if(change_passwd()) {
+        print "<h1>Password successfully changed</h1>";
+    } else {
+        print "<h1>Failed to change password</h1>";
+    }
+} else {
+    if(validate_passwdchange()) { // print the form for them to actually change their password
+        print "<h1>Enter your new password</h1>";
+        print "<form action='newpasswd.php' method='POST'>";
+        print "<p><label>Email:<span class='required'>*</span>";
+        print "<input name='email' size='50' required></label></p>";
+        print "<p><label>New Password:<span class='required'>*</span>";
+        print "<input name='password1' type='password' size='50' required onchange='form.password2.pattern = this.value;'></label></p>";
+        print "<p><label>Confirm New password:<span class='required'>*</span>";
+        print "<input name='password2' type='password' size='50' required title='The passwords must match'></label></p>";
+        print "<input type='hidden' name='n' value='{$_REQUEST['n']}'/>";
+        print "<input type='hidden' name='id' value='{$_REQUEST['id']}'/>";
+        print "<input type='submit'/>";
+        print "</form>";
+    } else {
+        print "<h1>Invalid request to password change page</h1>";
+    }
+}
 ?>
 
 </body>
