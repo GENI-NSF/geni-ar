@@ -26,6 +26,7 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
 require_once('ssha.php');
+require_once('ar_constants.php');
 
 // See if we should actually let user who clicked this link change the password
 function validate_passwdchange() {
@@ -101,15 +102,17 @@ function change_passwd() {
                     $sql = "UPDATE idp_account_request SET password_hash='" . $pw_hash . "' where id='" . $id . "'";
                     $db_result = db_execute_statement($sql, "update user password");
                     if ($db_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-                      error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
-                      return false;
+                        error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
+                        return false;
                     } else {
+                        send_confirmation_email($email);
+                        delete_reset($db_id, $nonce);
                         return true;
                     }
                 } else {
-                  print("Error retrieving account");
-                  error_log("Error retrieving account");
-                  return false;
+                    print("Error retrieving account");
+                    error_log("Error retrieving account");
+                    return false;
                 }
             }
         } else {
@@ -122,6 +125,20 @@ function change_passwd() {
     }
 }
 
+function send_confirmation_email($email) {
+    global $AR_EMAIL_HEADERS;
+    // Send an email with the link
+    $subject = "GENI Password Reset Confirmation";
+    $body  = "Your GENI Password has been successfully changed. \n"
+          .  "If you did not request this change please contact "
+          .  "the GENI Project Office immediately at help@geni.net.\n"
+          .  "\n"
+          . "Thank you,\n"
+          . "GENI Operations\n";
+    $headers = $AR_EMAIL_HEADERS;
+    $headers .= "Cc: $idp_approval_email";
+    mail($email, $subject, $body, $headers);
+}
 
 ?>
 
