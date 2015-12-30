@@ -84,8 +84,8 @@ function delete_expired_resets($hours) {
     return $result == RESPONSE_ERROR::NONE;
 }
 
-function send_passwd_change_email($email, $change_url) {
-    global $AR_EMAIL_HEADERS;
+function send_passwd_change_email($user_email, $change_url) {
+    global $AR_EMAIL_HEADERS, $idp_approval_email;
     // Send an email with the link
     $subject = "TESTING sending passwd reset link";
     $body  = "Please use the following link to reset your GENI account password \n"
@@ -97,7 +97,19 @@ function send_passwd_change_email($email, $change_url) {
           . "GENI Operations\n";
     $headers = $AR_EMAIL_HEADERS;
     $headers .= "Cc: $idp_approval_email";
-    mail($email, $subject, $body, $headers);
+    mail($user_email, $subject, $body, $headers);
+}
+
+// TODO: used to include name, email, organiztion, title. worth looking these up here?
+// Also todo: worth sending this at all?
+function send_passwd_change_admin_email($user_email) {
+    global $AR_EMAIL_HEADERS, $idp_approval_email;
+    $server_host = $_SERVER['SERVER_NAME'];
+    $subject = "New GENI Identity Provider Password Change Request on $server_host";
+    $body = "A new Identity Provider password change request for user with email $user_email "
+          . "has been submitted on host $server_host.\n\n";
+    $headers = $AR_EMAIL_HEADERS;
+    mail($idp_approval_email, $subject, $body, $headers);
 }
 
 ?>
@@ -147,6 +159,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
                 $change_url = create_newpasswd_link($_SERVER['PHP_SELF'],
                                                     $db_id, $nonce);
                 send_passwd_change_email($email, $change_url);
+                send_passwd_change_admin_email($email);
                 // TODO: better messages here probably
                 print "<h2>An email to reset your password has been sent.</h2>";
                 print "<p>If this was done by accident, simply ignore the email you receive</p>";

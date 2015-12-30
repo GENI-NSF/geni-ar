@@ -122,7 +122,7 @@ function change_passwd() {
 }
 
 function send_confirmation_email($email) {
-    global $AR_EMAIL_HEADERS;
+    global $AR_EMAIL_HEADERS, $idp_approval_email;
     // Send an email with the link
     $subject = "GENI Password Reset Confirmation";
     $body  = "Your GENI Password has been successfully changed. \n"
