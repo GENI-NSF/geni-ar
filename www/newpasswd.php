@@ -71,7 +71,6 @@ function delete_reset($id, $nonce) {
 }
 
 function change_passwd() {
-    print_r($_REQUEST);
     if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)
         && array_key_exists('password1', $_REQUEST) && array_key_exists('password2', $_REQUEST) 
         && array_key_exists('email', $_REQUEST)) {
@@ -93,7 +92,6 @@ function change_passwd() {
                               . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
                     return false;
                 }
-                print_r($result);
                 if (count($result) == 1) {
                     $pw_hash = SSHA::newHash($password);
                     $id = $result[0]['id'];
@@ -144,41 +142,58 @@ function send_confirmation_email($email) {
 <html>
 <head>
 <title>GENI: Reset Password</title>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
 <link type="text/css" href="kmtool.css" rel="Stylesheet"/>
-<style type="text/css">
-label.input {font-weight:bold;}
-span.required {color:red;}
-</style>
 </head>
 <body>
+<div id="content">
+<a id='geni_logo' href="http://www.geni.net" target="_blank">
+<img src="geni.png" width="88" height="75" alt="GENI"/>
+</a>
 
 <?php 
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(change_passwd()) {
-        print "<h1>Password successfully changed</h1>";
+        print "<h2>Password successfully changed</h2>";
+        print "<a href='https://portal.geni.net/secure/home.php'>Login to GENI</a>";
     } else {
-        print "<h1>Failed to change password</h1>";
+        print "<h2>Failed to change password</h2>";
     }
 } else {
     if(validate_passwdchange()) { // print the form for them to actually change their password
-        print "<h1>Enter your new password</h1>";
+        print "<h2>Enter your new password</h2>";
         print "<form action='newpasswd.php' method='POST'>";
         print "<p><label>Email:<span class='required'>*</span>";
-        print "<input name='email' size='50' required></label></p>";
+        print "<input name='email' size='30' required></label></p>";
         print "<p><label>New Password:<span class='required'>*</span>";
-        print "<input name='password1' type='password' size='50' required onchange='form.password2.pattern = this.value;'></label></p>";
-        print "<p><label>Confirm New password:<span class='required'>*</span>";
-        print "<input name='password2' type='password' size='50' required title='The passwords must match'></label></p>";
+        print "<input name='password1' type='password' size='30' required onchange='form.password2.pattern = this.value;'></label></p>";
+        print "<p><label>Confirm new password:<span class='required'>*</span>";
+        print "<input name='password2' type='password' size='30' required title='The passwords must match'></label></p>";
         print "<input type='hidden' name='n' value='{$_REQUEST['n']}'/>";
         print "<input type='hidden' name='id' value='{$_REQUEST['id']}'/>";
         print "<input type='submit'/>";
         print "</form>";
     } else {
-        print "<h1>Invalid request to password change page</h1>";
+        print "<h2>Invalid request to password change page</h2>";
     }
 }
 ?>
 
+</div>
+
+<div id="footer">
+Need help? Questions? Email 
+<a href="mailto:help@geni.net">GENI Help
+help@geni.net</a>.
+<br>
+<a href="http://www.geni.net/">GENI</a>
+is sponsored by the
+<a href="http://www.nsf.gov/">
+  <img src="https://www.nsf.gov/images/logos/nsf1.gif"
+       alt="NSF Logo" height="25" width="25">
+  National Science Foundation
+</a>
+</div>
 </body>
 </html>

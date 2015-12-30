@@ -106,13 +106,14 @@ function send_passwd_change_email($email, $change_url) {
 <html>
 <head>
 <title>GENI: Reset Password</title>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
 <link type="text/css" href="kmtool.css" rel="Stylesheet"/>
-<style type="text/css">
-label.input {font-weight:bold;}
-span.required {color:red;}
-</style>
 </head>
 <body>
+<div id="content">
+<a id='geni_logo' href="http://www.geni.net" target="_blank">
+  <img src="geni.png" width="88" height="75" alt="GENI"/>
+</a>
 
 <?php
 $errors = array();
@@ -147,7 +148,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
                                                     $db_id, $nonce);
                 send_passwd_change_email($email, $change_url);
                 // TODO: better messages here probably
-                print "<h1>An email to reset your password has been sent.</h1>";
+                print "<h2>An email to reset your password has been sent.</h2>";
                 print "<p>If this was done by accident, simply ignore the email you receive</p>";
             }
         }
@@ -155,13 +156,31 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
 }
 
 if (!$success) {
-    print "Could not reset password because: <ul>";
+    print "<h2>Could not reset password because:</h2> <ul>";
     foreach ($errors as $error) {
         print "<li>$error</li>";
     }
     print "</ul>";
+    print "<a href='/geni/reset.html' class='button'>Back</a>";
 }
 
+
 ?>
+
+</div>
+
+<div id="footer">
+Need help? Questions? Email 
+<a href="mailto:help@geni.net">GENI Help
+help@geni.net</a>.
+<br>
+<a href="http://www.geni.net/">GENI</a>
+is sponsored by the
+<a href="http://www.nsf.gov/">
+  <img src="https://www.nsf.gov/images/logos/nsf1.gif"
+       alt="NSF Logo" height="25" width="25">
+  National Science Foundation
+</a>
+</div>
 </body>
 </html>
