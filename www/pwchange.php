@@ -117,6 +117,7 @@ span.required {color:red;}
 <?php
 $errors = array();
 $EMAIL_KEY = 'email';
+$success = false;
 if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
     print "No email given";
 } else {
@@ -151,6 +152,14 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
             }
         }
     }
+}
+
+if (!$success) {
+    print "Could not reset password because: <ul>";
+    foreach ($errors as $error) {
+        print "<li>$error</li>";
+    }
+    print "</ul>";
 }
 
 ?>
