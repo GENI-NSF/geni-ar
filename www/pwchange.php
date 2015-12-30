@@ -133,7 +133,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
             if (! $known_email) {
                 $errors[] = "Unknown email address";
             } else {
-                $errors[] = "Good email address";
+                $success = true;
                 // Enter a record in the database for this request
                 delete_expired_resets(1);
 

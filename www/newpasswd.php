@@ -59,13 +59,11 @@ function validate_passwdchange() {
 // once password is changed, delete the entry from idp_passwd_reset
 function delete_reset($id, $nonce) {
     $db_conn = db_conn();
-    $sql = "delete from idp_passwd_reset";
-    $sql .= " where id = ";
+    $sql = "delete from idp_passwd_reset"
+         . " where id = " . $db_conn->quote($id, 'text')
+         . " and nonce = " . $db_conn->quote($nonce, 'text');
     $result = db_execute_statement($sql);
-    if ($result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
-        $rows = $result[RESPONSE_ARGUMENT::VALUE];
-        error_log("Deleted $rows old records");
-    } else {
+    if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
         error_log("Error deleting old records: "
                   . $result[RESPONSE_ARGUMENT::OUTPUT]);
     }
