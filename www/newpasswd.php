@@ -29,6 +29,7 @@ require_once('ssha.php');
 require_once('ar_constants.php');
 
 // See if we should actually let user who clicked this link change the password
+// Returns user's email if valid, "" otherwise.
 function validate_passwdchange() {
     if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
         $nonce = $_REQUEST['n'];
@@ -44,15 +45,15 @@ function validate_passwdchange() {
 
         if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
             $result = $db_result[RESPONSE_ARGUMENT::VALUE];
-            return count($result) > 0;
+            return $result['email'];
         } else {
             error_log("Error getting password reset record: "
                       . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
-            return false;
+            return "";
         }
     } else {
         error_log("Failed to get password page because bad url");
-        return false; 
+        return ""; 
     }
 }
 
@@ -71,20 +72,20 @@ function delete_reset($id, $nonce) {
 }
 
 function change_passwd() {
+    global $base_dn;
     if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)
-        && array_key_exists('password1', $_REQUEST) && array_key_exists('password2', $_REQUEST) 
-        && array_key_exists('email', $_REQUEST)) {
+        && array_key_exists('password1', $_REQUEST) && array_key_exists('password2', $_REQUEST)) {
         $nonce = $_REQUEST['n'];
         $db_id = $_REQUEST['id'];
-        $email = $_REQUEST['email'];
         $password = $_REQUEST['password1'];
         $password2 = $_REQUEST['password2'];
         if ($password == $password2) {
-            if(validate_passwdchange()) {
+            $email = validate_passwdchange();
+            if($email) {
                 $db_conn = db_conn();
                 $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($email, 'text') 
                      . " and (request_state='APPROVED')"; // ??
-                $db_result = db_fetch_rows($sql, "fetch accounts with that email");
+                $db_result = db_fetch_rows($sql, "fetch accounts with that email $email");
                 if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
                     $result = $db_result[RESPONSE_ARGUMENT::VALUE];
                 } else {
@@ -95,6 +96,33 @@ function change_passwd() {
                 if (count($result) == 1) {
                     $pw_hash = SSHA::newHash($password);
                     $id = $result[0]['id'];
+                    $uid = $result[0]['username_requested'];
+                    $ldapconn = ldap_setup();
+                    if ($ldapconn === -1) {
+                        print("LDAP Connection Failed");
+                        return false;
+                    }
+                    if (ldap_check_account($ldapconn, $uid) == false) {
+                        print("Cannot change password for uid=" . $uid . ". Account does not exist.");
+                        return false;
+                    } 
+                    // todo: was in old code, couldn't include right file with this function for some reason
+                    // $res = add_log($uid, "Passwd Changed");
+                    // if ($res != 0) {
+                    //     print("Logging failed.  Will not change request status.");
+                    //     return false;
+                    // } 
+                    $filter = "(uidNumber=" . $id . ")";
+                    $result = ldap_search($ldapconn, $base_dn, $filter);
+                    $entry = ldap_first_entry($ldapconn, $result);
+
+                    $dn = ldap_get_dn($ldapconn, $entry);
+                    $newattrs['userPassword'] = $pw_hash;
+                    $ret = ldap_modify($ldapconn, $dn, $newattrs);
+                    if ($ret === false) {
+                        print("ERROR: Failed to change password for ldap account for " . $uid);
+                        return false;
+                    } 
                     $sql = "UPDATE idp_account_request SET password_hash='" . $pw_hash . "' where id='" . $id . "'";
                     $db_result = db_execute_statement($sql, "update user password");
                     if ($db_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
@@ -164,8 +192,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if(validate_passwdchange()) { // print the form for them to actually change their password
         print "<h2>Enter your new password</h2>";
         print "<form action='newpasswd.php' method='POST'>";
-        print "<p><label>Email:<span class='required'>*</span>";
-        print "<input name='email' size='30' required></label></p>";
         print "<p><label>New Password:<span class='required'>*</span>";
         print "<input name='password1' type='password' size='30' required onchange='form.password2.pattern = this.value;'></label></p>";
         print "<p><label>Confirm new password:<span class='required'>*</span>";
