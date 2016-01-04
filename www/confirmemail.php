@@ -24,6 +24,7 @@
 
 require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
+require_once('institutions.php');
 require_once('ar_constants.php');
 
 // Returns user's email if valid, "" otherwise.
@@ -45,7 +46,20 @@ function confirm_email() {
             $email = $result['email'];
             // actually do the email confirming 
             // todo: ask tom stuff about what states are, about whitelist and blacklist
-            $sql = "UPDATE idp_account_request SET request_state='CONFIRM_REQUESTER'"
+            $new_state = "";
+            $institution = get_domain($email);
+
+            if (array_key_exists($institution, $INSTITUTIONS)) {
+                if ($INSTITUTIONS[$institution] == "allow") {
+                    $new_state = "APPROVED";
+                    // send congrats email!?
+                    // also do an ldap add in this situation
+                }
+            } else {
+                $new_state = "CONFIRM_REQUESTER";
+            }
+
+            $sql = "UPDATE idp_account_request SET request_state='$new_state'"
                  . " where email = " . $db_conn->quote($email, 'text')
                  . " and (request_state='REQUESTED')";
             $update_result = db_execute_statement($sql);
@@ -61,6 +75,16 @@ function confirm_email() {
     } else {
         error_log("Failed to confirm email because bad url");
         return ""; 
+    }
+}
+
+// returns the domain from $email, returns "" if not an email address
+function get_domain($email) {
+    $tmp = explode("@", $email);
+    if(count($tmp) != 2) {
+        return "";
+    } else {
+        return $tmp[1];
     }
 }
 

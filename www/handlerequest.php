@@ -27,6 +27,7 @@ require_once('geni_syslog.php');
 require_once('response_format.php');
 require_once('ssha.php');
 require_once('ar_constants.php');
+require_once('institutions.php');
 include_once('/etc/geni-ar/settings.php');
 
 // Generate a random string (nums, uppercase, lowercase) of width $width
@@ -36,6 +37,16 @@ function random_id($width=6) {
         $result .= base_convert(strval(rand(0, 35)), 10, 36);
     }
     return strtoupper($result);
+}
+
+// returns the domain from $email, returns "" if not an email address
+function get_domain($email) {
+    $tmp = explode("@", $email);
+    if(count($tmp) != 2) {
+        return "";
+    } else {
+        return $tmp[1];
+    }
 }
 
 // make a new /confirmemail.php?id=XXX&n=YYY link for use in email confirmation email
@@ -148,6 +159,23 @@ if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
     $errors[] = "An account for this email address already exists.";
   }
 }
+
+// whitelist/blacklist checking
+// todo: better messages here, probably send emails too.
+// maybe even stick denied reqs in db. ask tom
+
+$institution = get_domain($email);
+
+if (array_key_exists($institution, $INSTITUTIONS)) {
+  $institution_type = $INSTITUTIONS[$institution];
+  if ($institution_type == "deny") {
+    print("Sorry, you've been denied. We don't like $institution email addresses");
+    exit();
+  } else if ($institution_type == "open_id") {
+    print("You can use your $institution account to login to GENI. Select it from the dropdown at login");
+    exit();
+  }
+} 
 
 // Get a database connection so that values can be quoted
 $db_conn = db_conn();
