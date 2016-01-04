@@ -64,6 +64,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/tutorial_requests.php \
 	protected/tutorial_actions.php \
 	protected/tutorial_confirmation.php \
+	www/confirmemail.php \
 	www/handlerequest.php \
 	www/geni.png \
 	www/favicon.ico \

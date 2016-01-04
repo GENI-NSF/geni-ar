@@ -29,6 +29,45 @@ require_once('ssha.php');
 require_once('ar_constants.php');
 include_once('/etc/geni-ar/settings.php');
 
+// Generate a random string (nums, uppercase, lowercase) of width $width
+function random_id($width=6) {
+    $result = '';
+    for ($i=0; $i < $width; $i++) { 
+        $result .= base_convert(strval(rand(0, 35)), 10, 36);
+    }
+    return strtoupper($result);
+}
+
+// make a new /confirmemail.php?id=XXX&n=YYY link for use in email confirmation email
+function create_email_confirm_link($base_path, $id1, $id2) {
+    global $acct_manager_url;
+    $base_url = parse_url($acct_manager_url);
+    $path = dirname($base_path);
+    $path .= "/confirmemail.php?id=$id1&n=$id2";
+    $url = $base_url["scheme"] . "://" . $base_url["host"] . "$path";
+    return $url;
+}
+
+// Insert the password change request into the idp_email_confirm table
+function insert_email_confirm($email, $nonce) {
+    $db_conn = db_conn();
+    $sql = "insert into idp_email_confirm (email, nonce) values (";
+    $sql .= $db_conn->quote($email, 'text');
+    $sql .= ', ';
+    $sql .= $db_conn->quote($nonce, 'text');
+    $sql .= ") returning id, created";
+
+    $db_result = db_fetch_row($sql, "insert idp_email_confirm");
+    $result = false;
+    if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+    } else {
+        error_log("Error inserting password reset record: "
+                  . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+    }
+    return $result;
+}
+
 // Email admins about new request
 function send_admin_confirmation_email() {
   global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
@@ -36,8 +75,7 @@ function send_admin_confirmation_email() {
   $subject = "New GENI Identity Provider Account Request on $server_host";
   $body = 'A new IdP account request has been submitted on host ';
   $body .= "$server_host.\n\n";
-  $email_vars = array('first_name', 'last_name', 'email',
-                    'organization', 'title', 'reason');
+  $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
   foreach ($email_vars as $var) {
     $val = $_REQUEST[$var];
     $body .= "$var: $val\n";
@@ -49,10 +87,11 @@ function send_admin_confirmation_email() {
 }
 
 // Email requester about their request
-function send_user_confirmation_email($user_email) {
+function send_user_confirmation_email($user_email, $confirm_url) {
   global $AR_EMAIL_HEADERS;
   $subject = "GENI Identity Provider Account Request Received";
-  $body = 'Thank you for requesting an Identity Provider account with GENI.  ';
+  $body = 'Thank you for requesting an Identity Provider account with GENI.';
+  $body .= "Please confirm your email address by clicking this link:\n $confirm_url \n";
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
   $headers = $AR_EMAIL_HEADERS;
   mail($user_email, $subject, $body, $headers);
@@ -276,10 +315,20 @@ if ($errors) {
     print "<p> We are sorry, your account request failed.";
     print "An email has been sent to the operators and they will be in touch with you shortly.</p>";
   } else {
-    send_admin_confirmation_email();
-    send_user_confirmation_email($email);
-    print "<h2>Account request received.</h2>";
-    print "<p>Congratulations, your account request has been received. We will be in touch with you about the status of your request. </p>";
+    $nonce = random_id(8);
+    $db_result = insert_email_confirm($email, $nonce);
+    if ($db_result) {
+      $db_id = $db_result['id'];
+      $confirm_url = create_email_confirm_link($_SERVER['PHP_SELF'], $db_id, $nonce);
+      send_user_confirmation_email($email, $confirm_url);
+      send_admin_confirmation_email();
+      print "<h2>Account request received.</h2>";
+      print "<p>Your account request has been received. ";
+      print "Please check your email and click the confirmation link sent from {OUR-EMAIL-HERE} </p>";
+    } else {
+      // todo: what to do in this case. same as above when DB fails?
+      print "<h1>ERROR</h1>";
+    }
   }
 }
 
