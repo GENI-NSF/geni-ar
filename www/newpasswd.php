@@ -27,6 +27,7 @@ require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
 require_once('ssha.php');
 require_once('ar_constants.php');
+require_once('log_actions.php');
 
 // See if we should actually let user who clicked this link change the password
 // Returns user's email if valid, "" otherwise.
@@ -57,7 +58,7 @@ function validate_passwdchange() {
     }
 }
 
-// once password is changed, delete the entry from idp_passwd_reset
+// Once password is changed, delete the entry from idp_passwd_reset
 function delete_reset($id, $nonce) {
     $db_conn = db_conn();
     $sql = "delete from idp_passwd_reset"
@@ -99,19 +100,18 @@ function change_passwd() {
                     $uid = $result[0]['username_requested'];
                     $ldapconn = ldap_setup();
                     if ($ldapconn === -1) {
-                        print("LDAP Connection Failed");
+                        error_log("LDAP Connection Failed");
                         return false;
                     }
                     if (ldap_check_account($ldapconn, $uid) == false) {
-                        print("Cannot change password for uid=" . $uid . ". Account does not exist.");
+                        error_log("Cannot change password for uid=" . $uid . ". Account does not exist.");
                         return false;
                     } 
-                    // todo: was in old code, couldn't include right file with this function for some reason
-                    // $res = add_log($uid, "Passwd Changed");
-                    // if ($res != 0) {
-                    //     print("Logging failed.  Will not change request status.");
-                    //     return false;
-                    // } 
+                    $res = add_log($uid, "Passwd Changed");
+                    if ($res != 0) {
+                        error_log("Logging failed.  Will not change request status.");
+                        return false;
+                    } 
                     $filter = "(uidNumber=" . $id . ")";
                     $result = ldap_search($ldapconn, $base_dn, $filter);
                     $entry = ldap_first_entry($ldapconn, $result);
@@ -129,12 +129,11 @@ function change_passwd() {
                         error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
                         return false;
                     } else {
-                        send_confirmation_email($email);
+                        send_admin_email($email);
                         delete_reset($db_id, $nonce);
                         return true;
                     }
                 } else {
-                    print("Error retrieving account");
                     error_log("Error retrieving account");
                     return false;
                 }
@@ -149,19 +148,27 @@ function change_passwd() {
     }
 }
 
-function send_confirmation_email($email) {
-    global $AR_EMAIL_HEADERS, $idp_approval_email;
-    // Send an email with the link
-    $subject = "GENI Password Reset Confirmation";
-    $body  = "Your GENI Password has been successfully changed. \n"
-          .  "If you did not request this change please contact "
-          .  "the GENI Project Office immediately at help@geni.net.\n"
-          .  "\n"
-          . "Thank you,\n"
-          . "GENI Operations\n";
-    $headers = $AR_EMAIL_HEADERS;
-    $headers .= "Cc: $idp_approval_email";
-    mail($email, $subject, $body, $headers);
+// Alert admins that request has been successfully completed.
+// This should probabably be removed after new auto confirmation system deemed working
+function send_admin_email($email) {
+  global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
+  $server_host = $_SERVER['SERVER_NAME'];
+  $subject = "New GENI Identity Provider Password Change on $server_host";
+  $body = 'A password change has been submitted by user with email $email on host ';
+  $body .= "$server_host.\n\n";
+  $headers = $AR_EMAIL_HEADERS;
+  mail($idp_approval_email, $subject, $body, $headers);
+}
+
+// Tell admins that password reset failed
+function send_admin_error_email() {
+  global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
+  $server_host = $_SERVER['SERVER_NAME'];
+  $subject = "New GENI Identity Provider Password Change FAILED on $server_host";
+  $body = 'A password change submitted by user with email $email on host ';
+  $body .= "$server_host failed. Check logs for more information\n\n";
+  $headers = $AR_EMAIL_HEADERS;
+  mail($idp_approval_email, $subject, $body, $headers);
 }
 
 ?>
@@ -186,7 +193,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         print "<h2>Password successfully changed</h2>";
         print "<a href='https://portal.geni.net/secure/home.php'>Login to GENI</a>";
     } else {
+        // Todo: Tell them to email admins?
         print "<h2>Failed to change password</h2>";
+        send_admin_error_email();
     }
 } else {
     if(validate_passwdchange()) { // print the form for them to actually change their password
