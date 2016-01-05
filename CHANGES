@@ -1,6 +1,7 @@
 Release 1.4
  * Make tables on account manager pages searchable.
  * Update account manager UI with similar style to portal
+ * Allow for apostrophes in notes (#94)
  * Add 'new' to password reset page (#104)
  * Do not reissue deleted accounts (#106)
 
