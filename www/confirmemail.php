@@ -26,6 +26,8 @@ require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
 require_once('institutions.php');
 require_once('ar_constants.php');
+require_once('log_actions.php');
+require_once('email_utils.php');
 
 // Returns user's email if valid, "" otherwise.
 function confirm_email() {
@@ -52,8 +54,7 @@ function confirm_email() {
             if (array_key_exists($institution, $INSTITUTIONS)) {
                 if ($INSTITUTIONS[$institution] == "allow") {
                     $new_state = "APPROVED";
-                    // send congrats email!?
-                    // also do an ldap add in this situation
+                    accept_user($email);
                 }
             } else {
                 $new_state = "CONFIRM_REQUESTER";
@@ -76,6 +77,99 @@ function confirm_email() {
         error_log("Failed to confirm email because bad url");
         return ""; 
     }
+}
+
+function accept_user($user_email) {
+    $db_conn = db_conn();
+    $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text') 
+         . " and (request_state='REQUESTED')";
+    $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
+    if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+    } else {
+        error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+        return false;
+    }
+    if (count($result) == 1) {
+        $id = $result[0]['id'];
+        $uid = $result[0]['username_requested'];
+        $ldapconn = ldap_setup();
+        if ($ldapconn === -1) {
+            print("LDAP Connection Failed");
+            return false;
+        }
+
+        if (ldap_check_account($ldapconn, $uid)) {
+            process_error("Account for uid=" . $uid . " already exists.");
+        } else if (ldap_check_email($ldapconn, $user_email)) {
+            process_error("Account with email address=" . $user_email . " already exists.");
+        } else {
+            //Add log to action table
+            $res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
+            if ($res != 0) {
+                process_error ("ERROR: Logging failed.  Will not create account for " . $uid);
+                return false;
+            }
+            $ret = ldap_add($ldapconn, $new_dn, $attrs);
+            if ($ret === false) {
+                process_error ("ERROR: Failed to create new ldap account");
+                add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
+                return false;
+            }
+            // Now set created timestamp in postgres db
+            $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
+            $result = db_execute_statement($sql);
+            if ($result['code'] != 0) {
+                process_error("Postgres database update failed");
+                return false;
+            }
+
+            $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
+            $result = db_execute_statement($sql);
+            if ($result['code'] != 0) {
+                process_error("Postgres database update failed");
+                return false;
+            }
+
+            // notify in email
+            $subject = "New GENI Identity Provider Account Created";
+            $body = 'A new GENI Identity Provider account has been created by ' . $_SERVER['PHP_AUTH_USER'] . ' for ';
+            $body .= "$uid.\n\n";
+            $email_vars = array('first_name', 'last_name', 'email','organization', 'title', 'reason');
+            foreach ($email_vars as $var) {
+              $val = $result[$var];
+              $body .= "$var: $val\n";
+            }
+            $body .= "\nSee table idp_account_request for complete details.\n";
+            $headers = $AR_EMAIL_HEADERS;
+
+            $res_admin = mail($idp_audit_email, $subject, $body, $headers);
+            
+            // Notify user
+            $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::NOTIFICATION);
+            $filetext = str_replace("EXPERIMENTER_NAME_HERE",$firstname,$filetext);
+            $filetext = str_replace("USER_NAME_GOES_HERE",$uid,$filetext);
+            $res_user = mail($user_email, "GENI Identity Provider Account Created", $filetext,$headers);
+            //$res_user = true;
+            if (!($res_admin and $res_user)) {
+                if (!$res_admin)
+                    process_error("Failed to send email to " . $portal_admin_email . " for account " . $uid);
+                if (!$res_user)
+                    process_error("Failed to send email to " . $user_email . " for account " . $uid);
+                return false;
+            }
+            header("Location: " . $acct_manager_url . "/display_requests.php");
+        } 
+    } else {
+        process_error("Failed to find user with email $user_email in db");
+    }
+}
+
+function process_error($msg) {
+  print "$msg";
+  print ('<br><br>');
+  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+  error_log($msg);
 }
 
 // returns the domain from $email, returns "" if not an email address
