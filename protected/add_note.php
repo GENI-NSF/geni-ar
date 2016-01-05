@@ -41,7 +41,7 @@ $text = $oldnote . " " . $newnote;
 $conn = db_conn();
 
 //add the note
-$sql = "UPDATE " . $AR_TABLENAME . " SET notes=" . $conn->quote($text, 'text') . " WHERE ID=". $conn->quote($id, 'text');
+$sql = "UPDATE " . $AR_TABLENAME . " SET notes=" . $conn->quote($text, 'text') . " WHERE ID=". $conn->quote($id, 'integer');
 $result = db_execute_statement($sql);
 if ($result['code'] != 0) {
   process_error("Postgres datbase update failed. Could not add note.");
