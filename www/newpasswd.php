@@ -154,7 +154,7 @@ function send_admin_email($email) {
   global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
   $server_host = $_SERVER['SERVER_NAME'];
   $subject = "New GENI Identity Provider Password Change on $server_host";
-  $body = 'A password change has been submitted by user with email $email on host ';
+  $body = "User with email $email successfully changed their password on host ";
   $body .= "$server_host.\n\n";
   $headers = $AR_EMAIL_HEADERS;
   mail($idp_approval_email, $subject, $body, $headers);
@@ -165,8 +165,8 @@ function send_admin_error_email() {
   global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
   $server_host = $_SERVER['SERVER_NAME'];
   $subject = "New GENI Identity Provider Password Change FAILED on $server_host";
-  $body = 'A password change submitted by user with email $email on host ';
-  $body .= "$server_host failed. Check logs for more information\n\n";
+  $body = "User with email $email failed to change their password on host ";
+  $body .= "$server_host failed. Check logs for more information.\n\n";
   $headers = $AR_EMAIL_HEADERS;
   mail($idp_approval_email, $subject, $body, $headers);
 }

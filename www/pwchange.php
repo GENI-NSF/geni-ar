@@ -125,15 +125,15 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
 } else {
     $email = $_REQUEST[$EMAIL_KEY];
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "invalid email address given";
+        $error = "Invalid email address given";
     } else {
         $ldapconn = ldap_setup();
         if ($ldapconn === -1) {
-            $error = "internal error";
+            $error = "Internal error";
         } else {
             $known_email = ldap_check_email($ldapconn, $email);
             if (! $known_email) {
-                $error = "unknown email address given";
+                $error = "Unknown email address given";
             } else {
                 $nonce = random_id(8);
                 $db_result = insert_passwd_reset($email, $nonce);                
@@ -144,7 +144,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
                     print "<h2>An email to reset your password has been sent.</h2>";
                     print "<p>If this was done by accident, simply ignore the email you receive</p>";
                 } else {
-                    $error = "internal Error";  
+                    $error = "Internal Error";  
                 }
             }
         }
@@ -153,7 +153,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
 
 if ($error != "") {
     print "<h2>Error</h2>";
-    print "<p>Failed to request password reset because $error</p>";
+    print "<p>$error</p>";
     print "<a href='/geni/reset.html' class='button'>Back</a>";
 }
 
