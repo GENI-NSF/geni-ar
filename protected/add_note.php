@@ -51,7 +51,12 @@ if ($result['code'] != 0) {
   header("Location: " . $acct_manager_url . "/display_requests.php#leads");
 } elseif ($state==="EMAILED_REQUESTER") {
   header("Location: " . $acct_manager_url . "/display_requests.php#requester");
+} elseif ($state === "CONFIRM_REQUESTER") {
+  header("Location: " . $acct_manager_url . "/display_requests.php#requesterconfirmationdiv");
+} else {
+  header("Location: " . $acct_manager_url . "/display_requests.php");
 }
+
 //log the note
 $res = add_log_with_comment($uid, "Note",$note);
 if ($res != 0) {

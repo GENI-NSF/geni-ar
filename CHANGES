@@ -1,6 +1,7 @@
 Release 1.4
  * Make tables on account manager pages searchable.
  * Update account manager UI with similar style to portal
+ * Fix redirect after adding a note (#85)
  * Allow for apostrophes in notes (#94)
  * Make default account request action nothing (#100)
  * Add 'new' to password reset page (#104)
