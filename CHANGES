@@ -6,6 +6,7 @@ Release 1.4
  * Make default account request action nothing (#100)
  * Add 'new' to password reset page (#104)
  * Do not reissue deleted accounts (#106)
+ * Update the information link in the notification email (#110)
 
 Release 1.3
 
