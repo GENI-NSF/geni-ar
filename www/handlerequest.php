@@ -79,24 +79,6 @@ function insert_email_confirm($email, $nonce) {
     return $result;
 }
 
-// Email admins about new request
-function send_admin_confirmation_email() {
-  global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
-  $server_host = $_SERVER['SERVER_NAME'];
-  $subject = "New GENI Identity Provider Account Request on $server_host";
-  $body = 'A new IdP account request has been submitted on host ';
-  $body .= "$server_host.\n\n";
-  $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
-  foreach ($email_vars as $var) {
-    $val = $_REQUEST[$var];
-    $body .= "$var: $val\n";
-  }
-
-  $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
-  $headers = $AR_EMAIL_HEADERS;
-  mail($idp_approval_email, $subject, $body, $headers);
-}
-
 // Email requester about their request
 function send_user_confirmation_email($user_email, $confirm_url) {
   global $AR_EMAIL_HEADERS;
@@ -105,7 +87,7 @@ function send_user_confirmation_email($user_email, $confirm_url) {
   $body .= "Please confirm your email address by clicking this link:\n $confirm_url \n";
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
   $headers = $AR_EMAIL_HEADERS;
-  mail($user_email, $subject, $body, $headers);
+  mail("charles.meyer@tufts.edu", $subject, $body, $headers);
 }
 
 function print_errors($errors) {
@@ -159,23 +141,6 @@ if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
     $errors[] = "An account for this email address already exists.";
   }
 }
-
-// whitelist/blacklist checking
-// todo: better messages here, probably send emails too.
-// maybe even stick denied reqs in db. ask tom
-
-$institution = get_domain($email);
-
-if (array_key_exists($institution, $INSTITUTIONS)) {
-  $institution_type = $INSTITUTIONS[$institution];
-  if ($institution_type == "deny") {
-    print("Sorry, you've been denied. We don't like $institution email addresses");
-    exit();
-  } else if ($institution_type == "open_id") {
-    print("You can use your $institution account to login to GENI. Select it from the dropdown at login");
-    exit();
-  }
-} 
 
 // Get a database connection so that values can be quoted
 $db_conn = db_conn();
@@ -349,7 +314,6 @@ if ($errors) {
       $db_id = $db_result['id'];
       $confirm_url = create_email_confirm_link($_SERVER['PHP_SELF'], $db_id, $nonce);
       send_user_confirmation_email($email, $confirm_url);
-      send_admin_confirmation_email();
       print "<h2>Account request received.</h2>";
       print "<p>Your account request has been received. ";
       print "Please check your email and click the confirmation link sent from {OUR-EMAIL-HERE} </p>";
