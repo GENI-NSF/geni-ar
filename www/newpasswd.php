@@ -160,17 +160,6 @@ function send_admin_email($email) {
   mail($idp_approval_email, $subject, $body, $headers);
 }
 
-// Tell admins that password reset failed
-function send_admin_error_email() {
-  global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
-  $server_host = $_SERVER['SERVER_NAME'];
-  $subject = "New GENI Identity Provider Password Change FAILED on $server_host";
-  $body = "User with email $email failed to change their password on host ";
-  $body .= "$server_host failed. Check logs for more information.\n\n";
-  $headers = $AR_EMAIL_HEADERS;
-  mail($idp_approval_email, $subject, $body, $headers);
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -193,9 +182,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         print "<h2>Password successfully changed</h2>";
         print "<a href='https://portal.geni.net/secure/home.php'>Login to GENI</a>";
     } else {
-        // Todo: Tell them to email admins?
         print "<h2>Failed to change password</h2>";
-        send_admin_error_email();
     }
 } else {
     if(validate_passwdchange()) { // print the form for them to actually change their password

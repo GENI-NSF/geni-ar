@@ -86,8 +86,8 @@ function delete_expired_resets($hours) {
 function send_passwd_change_email($user_email, $change_url) {
     global $AR_EMAIL_HEADERS, $idp_approval_email;
     $subject = "GENI IDP Passsword Reset Link";
-    $body  = "Please use the following link to reset your GENI account password \n"
-          .  "$change_url\n"
+    $body  = "Please use the following link to reset your GENI account password: \n\n"
+          .  "$change_url\n\n"
           .  "If you did not request this change please contact "
           .  "the GENI Project Office immediately at help@geni.net.\n"
           .  "\n"
