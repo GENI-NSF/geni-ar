@@ -29,81 +29,69 @@ require_once('ar_constants.php');
 require_once('log_actions.php');
 require_once('email_utils.php');
 
-// Returns user's email if valid, "" otherwise.
-function confirm_email() {
-    if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
-        $nonce = $_REQUEST['n'];
-        $db_id = $_REQUEST['id'];
+// Returns user's email if confirmation link was valid, "" otherwise.
+function confirm_email($nonce, $db_id) {
+    $db_conn = db_conn();
+    $sql = "SELECT * from idp_email_confirm "
+    . "where id =" . $db_conn->quote($db_id, 'integer')
+    . " and nonce =" . $db_conn->quote($nonce, 'text');
+    $db_result = db_fetch_row($sql, "get idp_email_confirm");
 
-        $db_conn = db_conn();
-
-        $sql = "SELECT * from idp_email_confirm "
-        . "where id = " . $db_conn->quote($db_id, 'integer')
-        . " and nonce = " . $db_conn->quote($nonce, 'text');
-
-        $db_result = db_fetch_row($sql, "get idp_email_confirm");
-
-        if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
-            $result = $db_result[RESPONSE_ARGUMENT::VALUE];
-            $email = $result['email'];
-            
-            $new_state = "";
-            $institution = get_domain($email);
-
-            $whitelist_sql = "SELECT * from idp_whitelist " 
-            . "where institution=" . $db_conn->quote($institution, 'text');
-
-            $whitelist_result = db_fetch_row($whitelist_sql, "get from idp_whitelist");
-
-            if ($whitelist_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE
-                && count($whitelist_result[RESPONSE_ARGUMENT::VALUE]) != 0) {                
-                if(accept_user($email, $institution)) {
-                    print("winner!");
-                    return $email;
-                } else {
-                    return "";
-                }
-            } else {
-                print("normal");
-                // do normal stuff
-                $sql = "UPDATE idp_account_request SET request_state='EMAIL_CONFIRMED'"
-                     . " where email = " . $db_conn->quote($email, 'text')
-                     . " and (request_state='REQUESTED')";
-                $update_result = db_execute_statement($sql);
-                if ($update_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-                    return "";
-                } else {
-                    send_admin_confirmation_email($email);
-                    return $email;
-                }
-            }
-            // delete_confirmation($db_id, $nonce); 
+    if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+        $email = $result['email'];
+        
+        $sql = "UPDATE idp_account_request SET request_state='EMAIL_CONFIRMED'"
+             . " where email = " . $db_conn->quote($email, 'text')
+             . " and (request_state='REQUESTED')";
+        $update_result = db_execute_statement($sql);
+        if ($update_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+            delete_confirmation($db_id, $nonce); 
+            return $email;
         } else {
-            error_log("Error getting email confirm record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
-            return "";
+            error_log("Failed to update user account status: " . 
+                      $update_result[RESPONSE_ARGUMENT::OUTPUT]);
+            return $email;
         }
     } else {
-        error_log("Failed to confirm email because bad url");
-        return ""; 
+        error_log("Error getting email confirm record: " 
+                 . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+        return "";
     }
 }
 
-function accept_user($user_email, $institution) {
-    global $AR_EMAIL_HEADERS, $idp_audit_email, $acct_manager_url;
+// Return true if $user_email should automatically get account, false otherwise
+function check_whitelist($user_email) {
+    $db_conn = db_conn();
+    $institution = get_domain($user_email);
+    $sql = "SELECT * from idp_whitelist " 
+    . "where institution=" . $db_conn->quote($institution, 'text');
+    $result = db_fetch_row($sql, "get from idp_whitelist");
 
+    if ($result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        return count($result[RESPONSE_ARGUMENT::VALUE]) != 0;
+    } else {
+        error_log("Failed to lookup in idp_whitelist: "
+                  . $result[RESPONSE_ARGUMENT::OUTPUT]);
+        return false;
+    }               
+}
+
+function accept_user($user_email) {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text')
-        . " and (request_state='REQUESTED')";
+        . " and (request_state='EMAIL_CONFIRMED')";
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
-        $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+        $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
     } else {
-        error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+        error_log("Error getting user record: " 
+                  . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
         return false;
     }
 
-    $id = $result[0]['id'];
-    $uid = $result[0]['username_requested'];
+    $id = $result['id'];
+    $uid = $result['username_requested'];
     $ldapconn = ldap_setup();
     if ($ldapconn === -1) {
         print("LDAP Connection Failed");
@@ -112,20 +100,20 @@ function accept_user($user_email, $institution) {
 
     if (ldap_check_account($ldapconn, $uid)) {
         error_log("Account for uid=" . $uid . " already exists.");
+        return false;
     } else if (ldap_check_email($ldapconn, $user_email)) {
         error_log("Account with email address=" . $user_email . " already exists.");
+        return false;
     } else {
-        //Add log to action table
         $res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
-        // todo: stopping just because we can't add log seems a bit extreme
+        // Todo: stopping just because we can't add log seems a bit extreme
         if ($res != 0) {
             error_log("ERROR: Logging failed.  Will not create account for " . $uid);
             return false;
         }
 
         $new_dn = get_userdn($uid);
-        $attrs = make_ldap_attrs($result[0]);
-        print_r($attrs);
+        $attrs = make_ldap_attrs($result);
         $ret = ldap_add($ldapconn, $new_dn, $attrs);
         if ($ret === false) {
             error_log("ERROR: Failed to create new ldap account");
@@ -134,44 +122,47 @@ function accept_user($user_email, $institution) {
         }
 
         $sql = "UPDATE idp_account_request SET request_state='APPROVED', " 
-             . "created_ts=now() at time zone \'utc\' where id ='" . $id . '\'';
-        $result = db_execute_statement($sql);
-        if ($result[RESPONSE_ARGUMENT::CODE] != 0) {
-            error_log("Postgres database update failed");
-            return false;
+             . "created_ts=now() at time zone 'utc' where id ='" . $id . '\'';
+        $update_result = db_execute_statement($sql);
+
+        // TODO: if we fail here... what happens since we already did ldap add?
+        if ($update_result[RESPONSE_ARGUMENT::CODE] != 0) {
+            error_log("Error updating user record: " 
+                      . $update_result[RESPONSE_ARGUMENT::OUTPUT]); 
         }
 
-        // notify in email
-        $subject = "New GENI Identity Provider Account Created";
-        $body = 'A new GENI Identity Provider account has been created for ';
-        $body .= "$uid. Account was automatically approved as user email was from $institution \n\n";
-        $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
-        foreach ($email_vars as $var) {
-            $val = $result[$var];
-            $body .= "$var: $val\n";
-        }
-        $body .= "\nSee table idp_account_request for complete details.\n";
-        $headers = $AR_EMAIL_HEADERS;
+        send_admin_success_email($result);
+        send_user_success_email($user_email, $result['username_requested'], $result['first_name']);
 
-        $res_admin = mail($idp_audit_email, $subject, $body, $headers);
-        
-        // Notify user
-        $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::NOTIFICATION);
-        $filetext = str_replace("EXPERIMENTER_NAME_HERE", $firstname, $filetext);
-        $filetext = str_replace("USER_NAME_GOES_HERE", $uid, $filetext);
-        $res_user = mail($user_email, "GENI Identity Provider Account Created", $filetext, $headers);
-
-        if (!($res_admin and $res_user)) {
-            if (!$res_admin) {
-                error_log("Failed to send email to " . $portal_admin_email . " for account " . $uid);
-            }
-            if (!$res_user) {
-                error_log("Failed to send email to " . $user_email . " for account " . $uid);
-            }
-        }
-        
         return true;
     } 
+}
+
+function send_user_success_email($user_email, $uid, $firstname) {
+    global $AR_EMAIL_HEADERS;
+    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::NOTIFICATION);
+    $filetext = str_replace("EXPERIMENTER_NAME_HERE", $firstname, $filetext);
+    $filetext = str_replace("USER_NAME_GOES_HERE", $uid, $filetext);
+    $headers = $AR_EMAIL_HEADERS;
+    mail($user_email, "GENI Identity Provider Account Created", $filetext, $headers);
+}
+
+function send_admin_success_email($row) {
+    global $AR_EMAIL_HEADERS, $idp_audit_email, $acct_manager_url;
+    $uid = $row['username_requested'];
+    $email = $row['email'];
+    $institution = get_domain($email);
+    $subject = "New GENI Identity Provider Account Created";
+    $body = 'A new GENI Identity Provider account has been created for ';
+    $body .= "$uid. Account was automatically approved as user email was from $institution \n\n";
+    $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
+    foreach ($email_vars as $var) {
+        $val = $row[$var];
+        $body .= "$var: $val\n";
+    }
+    $body .= "\nSee table idp_account_request for complete details.\n";
+    $headers = $AR_EMAIL_HEADERS;
+    mail($idp_audit_email, $subject, $body, $headers);
 }
 
 // Populates an attribute object for ldap_add
@@ -199,6 +190,7 @@ function make_ldap_attrs($row) {
     $attrs['o'] = $org;
     $attrs['uidNumber'] = $id;
     $attrs['gidNumber'] = $id;
+    $attrs['homeDirectory'] = "";
 
     return $attrs;
 }
@@ -228,12 +220,11 @@ function delete_confirmation($id, $nonce) {
 }
 
 // Email admins about new request
-// Todo: include link to accept them from the email
 function send_admin_confirmation_email($user_email) {
     global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
     $server_host = $_SERVER['SERVER_NAME'];
     $subject = "New GENI Identity Provider Account Request on $server_host";
-    $body = "A new IdP account request for user with email $user_email has been submitted";
+    $body = "A new IdP account request for user with email $user_email has been submitted ";
     $body .= "and email confirmed on host ";
     $body .= "$server_host.\n\n";
 
@@ -242,17 +233,20 @@ function send_admin_confirmation_email($user_email) {
 
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
-        $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+        $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
         $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
         foreach ($email_vars as $var) {
             $val = $result[$var];
             $body .= "$var: $val\n";
         }
+        $id = $result['id'];
+        $body .= "\nSee $acct_manager_url" . "/approve.php?id=$id to approve this request.\n";
     } else {
         error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
     }
 
     $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
+
     $headers = $AR_EMAIL_HEADERS;
     mail($idp_approval_email, $subject, $body, $headers);
 }
@@ -273,15 +267,37 @@ function send_admin_confirmation_email($user_email) {
 </a>
 
 <?php 
-$email = confirm_email();
+if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
+    $nonce = $_REQUEST['n'];
+    $db_id = $_REQUEST['id'];
 
-if($email != "") { 
-    print "<h2>Email address $email successfully confrimed</h2>";
-    print "<p>You should hear from us in a few days regarding the status of your new account</p>";
+    $email = confirm_email($nonce, $db_id);
+
+    if($email != "") { 
+        if (check_whitelist($email)) {
+            if (accept_user($email)) {
+                print "<h2>Account successfully created</h2>";
+                print "<a href='http://www.portal.geni.net'>Login to GENI</a>";
+            } else {
+                // Todo: Probably? maybe send them some indication that things went wrong?
+                send_admin_confirmation_email($email);
+                print "<h2>Email address $email successfully confrimed</h2>";
+                print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
+            }
+        } else {
+            send_admin_confirmation_email($email);
+            print "<h2>Email address $email successfully confrimed</h2>";
+            print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
+        }  
+    } else {
+        print "<h2>Error</h2>";
+        // Todo: what's the message here
+        print "<p>Could not confirm email. Please try again. (or email someone?)</p>";
+    }
 } else {
-    print "<h2>Error</h2>";
-    print "<p>Could not confirm email. Please try again or email someone!?</p>";
+    print "<p>Error: couldn't confirm email because bad url.</p>";
 }
+
 
 ?>
 
