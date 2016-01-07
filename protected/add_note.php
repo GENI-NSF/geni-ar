@@ -38,8 +38,10 @@ $ts = gmdate("Y-m-d H:i");
 $newnote = $ts . " " . $note;
 $text = $oldnote . " " . $newnote;
 
+$conn = db_conn();
+
 //add the note
-$sql = "UPDATE " . $AR_TABLENAME . " SET notes='" . $text . "' WHERE ID='". $id . '\'';
+$sql = "UPDATE " . $AR_TABLENAME . " SET notes=" . $conn->quote($text, 'text') . " WHERE ID=". $conn->quote($id, 'integer');
 $result = db_execute_statement($sql);
 if ($result['code'] != 0) {
   process_error("Postgres datbase update failed. Could not add note.");
@@ -49,7 +51,12 @@ if ($result['code'] != 0) {
   header("Location: " . $acct_manager_url . "/display_requests.php#leads");
 } elseif ($state==="EMAILED_REQUESTER") {
   header("Location: " . $acct_manager_url . "/display_requests.php#requester");
+} elseif ($state === "CONFIRM_REQUESTER") {
+  header("Location: " . $acct_manager_url . "/display_requests.php#requesterconfirmationdiv");
+} else {
+  header("Location: " . $acct_manager_url . "/display_requests.php");
 }
+
 //log the note
 $res = add_log_with_comment($uid, "Note",$note);
 if ($res != 0) {
