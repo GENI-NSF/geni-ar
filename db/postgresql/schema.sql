@@ -54,3 +54,8 @@ CREATE TABLE idp_email_confirm (
     nonce VARCHAR NOT NULL,
     created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
 );
+
+CREATE TABLE idp_whitelist (
+    id SERIAL PRIMARY KEY,
+    institution VARCHAR NOT NULL
+);
