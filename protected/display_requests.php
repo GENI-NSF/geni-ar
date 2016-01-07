@@ -1,6 +1,6 @@
 <?php
 //----------------------------------------------------------------------
-// Copyright (c) 2012 Raytheon BBN Technologies
+// Copyright (c) 2012-2016 Raytheon BBN Technologies
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and/or hardware specification (the "Work") to
@@ -63,6 +63,17 @@ show_header("Account Request Management", array("#currentrequests", "#requesterc
                                                "#requesterresponse", "#approvedrequests", "#deniedrequests"));
 ?>
 
+<script>
+
+$(document).ready(function(){
+  $(".actionselect").change(function(){
+    $(this).siblings(".actionsubmit").prop("disabled", false);
+  });
+});
+
+</script>
+
+
 <h2 style='margin-top: 80px;' class='card'>Account Request Management</h2>
 
 <div class='nav2'>
@@ -105,9 +116,9 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
   print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
+  print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
@@ -164,9 +175,9 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
+  print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
@@ -220,9 +231,9 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
+  print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
@@ -276,9 +287,9 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select name=action><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
-  print '<input type="submit" value="SUBMIT"/>';
+  print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";

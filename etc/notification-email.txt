@@ -18,7 +18,7 @@ You can use your account to access the GENI Portal, please give it a try.
 9. You're done! You should now be at the portal home page.
 
 At this point, you will need to become a member of a project.  To do this, continue with the instructions found here: 
-http://groups.geni.net/geni/wiki/SignMeUp#a2.BecomeamemberofaGENIProject
+http://groups.geni.net/geni/wiki/JoinAProject
 
 If you have any problems, questions, or suggestions for improvement, please contact help@geni.net.
 
