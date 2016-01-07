@@ -26,7 +26,11 @@ require_once('db_utils.php');
 require_once('ldap_utils.php');
 include_once('/etc/geni-ar/settings.php');
 
-$performer = $_SERVER['PHP_AUTH_USER'];
+if (array_key_exists("PHP_AUTH_USER", $_SERVER)) {
+  $performer = $_SERVER["PHP_AUTH_USER"];
+} else {
+  $performer = "self";
+}
 
 /**
  *  Add log entry to action log table

@@ -7,6 +7,7 @@ Release 1.4
  * Add 'new' to password reset page (#104)
  * Do not reissue deleted accounts (#106)
  * Update the information link in the notification email (#110)
+ * Send users links to have them auto confirm password resets. 
 
 Release 1.3
 
