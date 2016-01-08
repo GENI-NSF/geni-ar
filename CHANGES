@@ -3,6 +3,7 @@ Release 1.4
  * Update account manager UI with similar style to portal
  * Fix redirect after adding a note (#85)
  * Allow for apostrophes in notes (#94)
+ * Make reason field larger (#98)
  * Make default account request action nothing (#100)
  * Add 'new' to password reset page (#104)
  * Do not reissue deleted accounts (#106)
