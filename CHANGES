@@ -1,14 +1,8 @@
-Release 1.4
- * Make tables on account manager pages searchable.
- * Update account manager UI with similar style to portal
- * Fix redirect after adding a note (#85)
- * Allow for apostrophes in notes (#94)
- * Make reason field larger (#98)
- * Make default account request action nothing (#100)
- * Add 'new' to password reset page (#104)
- * Do not reissue deleted accounts (#106)
- * Update the information link in the notification email (#110)
- * Send users links to have them auto confirm password resets. 
+# ----------------------------------------------------------------------
+# This file documents changes for versions 1.3 and earlier.
+#
+# For releases 1.4 and later, please see CHANGES.md
+# ----------------------------------------------------------------------
 
 Release 1.3
 
