@@ -77,7 +77,8 @@ function accept_user($id) {
             error_log("Error updating user record: " . $update_result[RESPONSE_ARGUMENT::OUTPUT]); 
         }
         send_admin_success_email($result);
-        send_user_success_email($user_email, $result['username_requested'], $result['first_name']);
+        send_user_success_email($user_email, $result['first_name'],
+                                $result['username_requested']);
 
         return true;
     } 
