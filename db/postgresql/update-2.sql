@@ -1,5 +1,6 @@
 -- ----------------------------------------------------------------------
--- Add table for self service password resets
+-- Add tables for self service password resets, email confirmations,
+-- and an auto-approve white list.
 -- ----------------------------------------------------------------------
 
 -- avoid innocuous NOTICEs about automatic sequence creation
@@ -17,4 +18,20 @@ CREATE TABLE idp_passwd_reset (
     email VARCHAR NOT NULL,
     nonce VARCHAR NOT NULL,
     created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
+);
+
+DROP TABLE IF EXISTS idp_email_confirm;
+
+CREATE TABLE idp_email_confirm (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL,
+    nonce VARCHAR NOT NULL,
+    created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
+);
+
+DROP TABLE IF EXISTS idp_whitelist;
+
+CREATE TABLE idp_whitelist (
+    id SERIAL PRIMARY KEY,
+    institution VARCHAR NOT NULL
 );
