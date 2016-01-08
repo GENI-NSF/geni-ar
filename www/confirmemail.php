@@ -277,7 +277,7 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
         if (check_whitelist($email)) {
             if (accept_user($email)) {
                 print "<h2>Account successfully created</h2>";
-                print "<a href='http://www.portal.geni.net'>Login to GENI</a>";
+                print "<a href='https://portal.geni.net'>Login to GENI</a>";
             } else {
                 // Todo: Probably? maybe send them some indication that things went wrong?
                 send_admin_confirmation_email($email);
