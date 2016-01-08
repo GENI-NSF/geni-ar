@@ -41,6 +41,8 @@ CREATE TABLE idp_account_actions (
      comment VARCHAR
 );
 
+DROP TABLE IF EXISTS idp_passwd_reset;
+
 CREATE TABLE idp_passwd_reset (
     id SERIAL PRIMARY KEY,
     email VARCHAR NOT NULL,
