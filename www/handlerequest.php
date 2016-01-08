@@ -86,8 +86,11 @@ function send_user_confirmation_email($user_email, $confirm_url) {
   $body = 'Thank you for requesting an Identity Provider account with GENI. ';
   $body .= "Please confirm your email address by clicking this link:\n\n $confirm_url \n\n";
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+  $body .= "\n\n";
+  $body .= "Thanks,\n";
+  $body .= "GENI Operations\n";
   $headers = $AR_EMAIL_HEADERS;
-  mail("charles.meyer@tufts.edu", $subject, $body, $headers);
+  mail($user_email, $subject, $body, $headers);
 }
 
 function print_errors($errors) {
@@ -314,9 +317,14 @@ if ($errors) {
       $db_id = $db_result['id'];
       $confirm_url = create_email_confirm_link($_SERVER['PHP_SELF'], $db_id, $nonce);
       send_user_confirmation_email($email, $confirm_url);
-      print "<h2>Account request received.</h2>";
-      print "<p>Your account request has been received. ";
-      print "Please check your email and click the confirmation link sent from {OUR-EMAIL-HERE} </p>";
+      print "<h2>Account request received.</h2>\n";
+      print "<p>\n";
+      print "A confirmation email has been sent to $email.";
+      print " Please confirm your account request by following the";
+      print " instructions in that email. If you do not receive an email";
+      print " in 24 hours, please contact us at";
+      print " <a href=\"mailto:help@geni.net\">help@geni.net</a>.\n";
+      print "</p>\n";
     } else {
       // todo: what to do in this case. same as above when DB fails?
       print "<h1>ERROR</h1>";
