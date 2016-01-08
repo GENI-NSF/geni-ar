@@ -49,3 +49,15 @@ CREATE TABLE idp_passwd_reset (
     nonce VARCHAR NOT NULL,
     created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
 );
+
+CREATE TABLE idp_email_confirm (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL,
+    nonce VARCHAR NOT NULL,
+    created timestamp DEFAULT (NOW() at time zone 'utc') NOT NULL
+);
+
+CREATE TABLE idp_whitelist (
+    id SERIAL PRIMARY KEY,
+    institution VARCHAR NOT NULL
+);

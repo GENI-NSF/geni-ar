@@ -51,6 +51,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/acct_actions.php \
 	protected/action_log.php \
 	protected/add_note.php \
+	protected/approve.php \
 	protected/cards.js \
 	protected/display_accounts.php \
 	protected/display_requests.php \
@@ -64,6 +65,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/tutorial_requests.php \
 	protected/tutorial_actions.php \
 	protected/tutorial_confirmation.php \
+	www/confirmemail.php \
 	www/handlerequest.php \
 	www/geni.png \
 	www/favicon.ico \
