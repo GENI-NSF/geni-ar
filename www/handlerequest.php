@@ -86,6 +86,9 @@ function send_user_confirmation_email($user_email, $confirm_url) {
   $body = 'Thank you for requesting an Identity Provider account with GENI. ';
   $body .= "Please confirm your email address by clicking this link:\n\n $confirm_url \n\n";
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
+  $body .= "\n\n";
+  $body .= "Thanks,\n";
+  $body .= "GENI Operations\n";
   $headers = $AR_EMAIL_HEADERS;
   mail($user_email, $subject, $body, $headers);
 }
