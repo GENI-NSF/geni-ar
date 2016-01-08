@@ -87,7 +87,7 @@ function send_user_confirmation_email($user_email, $confirm_url) {
   $body .= "Please confirm your email address by clicking this link:\n\n $confirm_url \n\n";
   $body .= "You will be contacted if there are any questions about your request and notified when the account has been created.";
   $headers = $AR_EMAIL_HEADERS;
-  mail("charles.meyer@tufts.edu", $subject, $body, $headers);
+  mail($user_email, $subject, $body, $headers);
 }
 
 function print_errors($errors) {
