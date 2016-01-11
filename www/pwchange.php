@@ -117,8 +117,7 @@ function send_passwd_change_email($user_email, $change_url) {
 $error = "";
 $EMAIL_KEY = 'email';
 
-// TODO: What's the deal with the expired resets
-delete_expired_resets(1);
+delete_expired_resets(24);
 
 if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
     print "No email given";
