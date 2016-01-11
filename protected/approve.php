@@ -55,10 +55,8 @@ function accept_user($id) {
         return false;
     } else {
         $res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
-        // todo: stopping just because we can't add log seems a bit extreme
         if ($res != 0) {
             error_log("ERROR: Logging failed.  Will not create account for " . $uid);
-            return false;
         }
         $new_dn = get_userdn($uid);
         $attrs = make_ldap_attrs($result);
@@ -72,7 +70,6 @@ function accept_user($id) {
              . "created_ts=now() at time zone 'utc' where id ='" . $id . '\'';
         $update_result = db_execute_statement($sql);
 
-        // TODO: if we fail here... what happens since we already did ldap add?
         if ($update_result[RESPONSE_ARGUMENT::CODE] != 0) {
             error_log("Error updating user record: " . $update_result[RESPONSE_ARGUMENT::OUTPUT]); 
         }
