@@ -276,7 +276,6 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
                 print "<h2>Account successfully created</h2>";
                 print "<a href='https://portal.geni.net'>Login to GENI</a>";
             } else {
-                // Todo: Probably? maybe send them some indication that things went wrong?
                 send_admin_confirmation_email($email);
                 print "<h2>Email address $email successfully confrimed</h2>";
                 print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
@@ -288,11 +287,14 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
         }  
     } else {
         print "<h2>Error</h2>";
-        // Todo: what's the message here
-        print "<p>Could not confirm email. Please try again. (or email someone?)</p>";
+        print "<p>Could not confirm email. ";
+        print "Please contact <a href='mailto:help@geni.net'>help@geni.net</a>.<br><br>";
+        print "Note: if you have already confirmed your email,";
+        print " it may take several days for your account to be approved.</p>";
     }
 } else {
-    print "<p>Error: couldn't confirm email because bad url.</p>";
+    print "<h2>Error</h2>";
+    print "<p>Couldn't confirm email because bad url given.</p>";
 }
 
 
@@ -302,8 +304,7 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
 
 <div id="footer">
 Need help? Questions? Email 
-<a href="mailto:help@geni.net">GENI Help
-help@geni.net</a>.
+<a href="mailto:help@geni.net">GENI Help</a>.
 <br>
 <a href="http://www.geni.net/">GENI</a>
 is sponsored by the
