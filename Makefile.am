@@ -74,7 +74,9 @@ nobase_dist_pkgdata_DATA = \
 	www/newpasswd.php \
 	www/pwchange.php \
 	www/request.html \
-	www/reset.html
+	www/reset.html \
+	www/usernamerecover.html \
+	www/usernamerecover.php
 
 dist_bin_SCRIPTS = \
 	bin/geni-add-log \
