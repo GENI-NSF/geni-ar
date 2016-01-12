@@ -10,6 +10,8 @@
   ([#85](https://github.com/GENI-NSF/geni-ar/issues/85))
 * Allow for apostrophes in notes
   ([#94](https://github.com/GENI-NSF/geni-ar/issues/94))
+* Add username recovery page
+  ([#96](https://github.com/GENI-NSF/geni-ar/issues/96))
 * Make reason field larger
   ([#98](https://github.com/GENI-NSF/geni-ar/issues/98))
 * Make default account request action nothing
