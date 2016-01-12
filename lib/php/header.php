@@ -34,11 +34,32 @@ function show_header($title, $table_ids) {
   echo "<script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.7/js/jquery.dataTables.js'></script>";
   echo "<script type='text/javascript' charset='utf8' src='cards.js'></script>";
 
+  // specify the default ordering for the table by id using DataTables format
+  // [9, 'desc'] means order table based on values in 9th column (zero indexed),
+  // in descending order
+  $table_orders = array(
+    "#currentrequests" => "[9, 'desc']",
+    "#confirmedrequests" => "[9, 'desc']",
+    "#requesterconfirmation" => "[9, 'desc']",
+    "#waitingforlead" => "[9, 'desc']",
+    "#requesterresponse" => "[9, 'desc']",
+    "#approvedrequests" => "[8, 'desc']",
+    "#deniedrequests" => "[8, 'desc']",
+    "#currentaccounts" => "[2, 'asc']",
+    "#deletedaccounts" => "[1, 'asc']",
+    "#accountlogs" => "[2, 'desc']"
+  );
+
   if (count($table_ids) > 0) {
     echo "<script type='text/javascript'>";
     echo "$(document).ready( function () {";
     foreach ($table_ids as $table_id) {
-      echo "$('$table_id').DataTable({paging: false});";
+      if (array_key_exists($table_id, $table_orders)) {
+        $order = $table_orders[$table_id];
+      } else {
+        $order = "[1, 'asc']";
+      }
+      echo "$('$table_id').DataTable({paging: false, order: $order});";
     }
     echo "});";
     
