@@ -40,6 +40,26 @@ function insert_to_whitelist($institution) {
     }
 }
 
+function delete_from_whitelist($institutions) {
+    $to_delete = array();
+    foreach($institutions as $inst) {
+        $to_delete[] = $inst;
+    }
+    if (count($to_delete) > 0) {
+        $sql = "DELETE FROM idp_whitelist WHERE id IN (" . implode(", ", $to_delete) . ")";
+        $result = db_execute_statement($sql); 
+        if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+            error_log("Error deleting old records: "
+                      . $result[RESPONSE_ARGUMENT::OUTPUT]);
+            return "Error deleting from whitelist";
+        } else {
+            return "Successfully deleted " . count($to_delete) . " institutions from whitelist";
+        }
+    } else {
+        return "Nothing to delete.";
+    }
+}
+
 function print_whitelist() {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_whitelist";
@@ -47,11 +67,20 @@ function print_whitelist() {
 
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $institutions = $db_result[RESPONSE_ARGUMENT::VALUE];
-        print "<ul>";
-        foreach ($institutions as $inst) {
-            print "<li>{$inst['institution']}</li>";
+        if (count($institutions) > 0) {
+            print "<p>(Check things if you want to delete them)</p>";
+            print "<form action='whitelist.php' method='POST'><ul style='list-style-type:none'>";
+            $i = 0;
+            foreach ($institutions as $inst) {
+                print "<li><input class='instbox' type='checkbox' name='$i' value='{$inst['id']}'/>{$inst['institution']}</li>";
+                $i++;
+            }
+            print "<input type='hidden' name='delete' value='delete'>";
+            print "<input type='submit' value='Delete' id='deletebutton' style='display:none;' />";
+            print "</ul></form>";
+        } else {
+            print "<p>No institutions are on the whitelist</p>";
         }
-        print "</ul>";
     } else {
         error_log("Error inserting password reset record: "
                   . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
@@ -67,7 +96,21 @@ function print_whitelist() {
 <title>GENI IDP Whitelist</title>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
 <link type="text/css" href="geni-ar.css" rel="Stylesheet"/>
+<script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
+
 </head>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".instbox").change(function(){
+            if($(".instbox:checked").length > 0) {
+                $("#deletebutton").show();
+            } else {
+                $("#deletebutton").hide();
+            }
+        });
+    });
+</script>
 <body>
 
 <div id="content" class='card' style="width:500px; margin: 30px auto">
@@ -84,8 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $message = "Failed to add $institution. Try again or check logs.";
         }
+    } else if (array_key_exists('delete', $_REQUEST)) {
+        unset($_REQUEST['delete']);
+        $message = delete_from_whitelist($_REQUEST);
     } else {
-        $message = "No institution given";
+        $message = "No post params given";
     }
     print_whitelist();
     print $message;
