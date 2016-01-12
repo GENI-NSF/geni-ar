@@ -134,8 +134,8 @@ foreach ($rows as $row) {
 </div>
 
 <div class='card' id='confirmedrequestsdiv'>
-<h2>Current Account Requests</h2>
-<table id='currentrequests'>
+<h2>Email Confirmed Account Requests</h2>
+<table id='confirmedrequests'>
 <thead>
 <tr>
   <th>&nbsp;</th><th>Institution</th><th>Job Title</th><th>Account Reason</th>
