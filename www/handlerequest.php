@@ -306,7 +306,6 @@ if ($errors) {
          "An error occurred on IdP account request. See /var/log/user.log for details.",
          $headers);
 
-    print "<h1>ERROR</h1>";
     print "<h2>Account request failed</h2>";
     print "<p> We are sorry, your account request failed.";
     print "An email has been sent to the operators and they will be in touch with you shortly.</p>";
@@ -326,8 +325,9 @@ if ($errors) {
       print " <a href=\"mailto:help@geni.net\">help@geni.net</a>.\n";
       print "</p>\n";
     } else {
-      // todo: what to do in this case. same as above when DB fails?
-      print "<h1>ERROR</h1>";
+      print "<h2>Internal Error</h2>";
+      print "<p> We are sorry, but your account request could not be completed. ";
+      print "Email <a href=\"mailto:help@geni.net\">help@geni.net</a> for assistance.";
     }
   }
 }
