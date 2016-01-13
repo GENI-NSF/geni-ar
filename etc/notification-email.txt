@@ -1,0 +1,26 @@
+Hi EXPERIMENTER_NAME_HERE,
+
+Your account at the GPO identity provider has been created.
+If you did not request an account please contact us immediately at help@geni.net.
+
+You can use your account to access the GENI Portal, please give it a try.
+
+1. Go to https://portal.geni.net
+2. Click the big orange "Use GENI" button
+3. In the text entry widget on the IdP choose page, type in "geni"
+4. Select "GENI Project Office"
+5. Click "Continue"
+  Note: If you are having trouble loading the page, TCP port 8444 might be blocked in your end. This port is used by the 
+  GENI Identity Provider.
+6. Type in your Username ("USER_NAME_GOES_HERE") 
+7. Type in your Password (the plain text that you entered in the web form)
+8. You should be redirected to an agreement page. You'll need to check the unchecked box (leave the other one checked), and submit the page.
+9. You're done! You should now be at the portal home page.
+
+At this point, you will need to become a member of a project.  To do this, continue with the instructions found here: 
+http://groups.geni.net/geni/wiki/JoinAProject
+
+If you have any problems, questions, or suggestions for improvement, please contact help@geni.net.
+
+Thanks,
+The GENI Project Office

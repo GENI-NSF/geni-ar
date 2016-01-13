@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GENI: Request an account</title>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+<link type="text/css" href="kmtool.css" rel="Stylesheet"/>
+</head>
+
+<body>
+  <div id="content" style='width: 600px;'>
+    <a id='geni_logo' href="http://www.geni.net" target="_blank">
+      <img src="geni.png" width="88" height="75" alt="GENI"/>
+    </a>
+    <h2>Request a GPO account for GENI portal access</h2>
+    <p>
+    Fill out the form below to request a new username and password to access
+    the GENI Portal and Clearinghouse. Use this form only if you cannot
+    <a href="http://groups.geni.net/geni/wiki/SignMeUp#CheckifyoucanuseyourInstitutionsaccount">
+     login using your usual home organization account
+     </a>.
+    </p>
+    <p>
+      Once your account has been created, you will be notified by email.
+      You can then use this account to log in to the Portal by identifying
+      your institution as "GENI Project Office" and supplying the username
+      and password you chose here.
+
+      If you already have an account and would like to reset your password, use the <a href="reset.html">password
+       reset</a> page instead. If you have an account and forgot your username, use the 
+       <a href="usernamerecover.html">username recovery</a> page.
+    </p>
+  <form action="handlerequest.php" method="POST">
+    <p><span class="required">*</span> = required</p>
+    <p><label class="input">First name:<span class="required">*</span>
+        <input name="first_name" size="25" required></label></p>
+    <p><label class="input">Last name:<span class="required">*</span>
+        <input name="last_name" size="25" required></label></p>
+    <p><label class="input">Email address:<span class="required">*</span>
+        <input name="email" type="email" size="35" required></label>
+      <br>(Your institutional or organization email address)
+    </p>
+    <p><label class="input">Desired username:<span class="required">*</span>
+        <input name="username" size="15" required maxlength="8">
+      </label>
+      <br>(max. 8 chars, lowercase letters and numbers only)</p>
+    <p><label class="input">Phone number:<span class="required">*</span>
+        <input name="phone" type="tel" size="15" required></label></p>
+    <p><label class="input">Password:<span class="required">*</span>
+        <input name="password1" type="password" size="20" required
+               onchange="form.password2.pattern = this.value;"></label></p>
+    <p><label class="input">Confirm password:<span class="required">*</span>
+        <input name="password2" type="password" size="20" required
+               title="The passwords must match"></label></p>
+    <p><label class="input">School/Company/Organization:<span class="required">*</span>
+        <input name="organization" size="50" required></label></p>
+    <p><label class="input">Job title:<span class="required">*</span>
+        <input name="title" size="50" required></label></p>
+    <p><label class="input">URL: <input name="url" size="50"></label>
+      <br>(For information about you or your organization)
+    </p>
+    <p><label class="input" for="reason">Reason for using GENI:<span class="required">*</span>
+        <textarea name="reason" rows="3" cols="50" style='vertical-align:top;' required></textarea></label></p>
+    <input type="submit"/>
+  </form>
+  </div>
+  <div id="footer" style='width: 600px;'>
+    Need help? Questions? Email <a href="mailto:help@geni.net">GENI Help</a>.
+    <br>
+    <a href="http://www.geni.net/">GENI</a> is sponsored by the
+    <a href="http://www.nsf.gov/">
+      <img src="https://www.nsf.gov/images/logos/nsf1.gif" alt="NSF Logo" height="25" width="25">
+      National Science Foundation
+    </a>
+  </div>
+</body>
+</html>

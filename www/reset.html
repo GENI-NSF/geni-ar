@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GENI: Reset Password</title>
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
+<link type="text/css" href="kmtool.css" rel="Stylesheet"/>
+</head>
+
+<body>
+  <div id="content">
+  <a id='geni_logo' href="http://www.geni.net" target="_blank">
+    <img src="geni.png" width="88" height="75" alt="GENI"/>
+  </a>
+  <h2>Reset password to a GPO IdP account</h2>
+  <p> Enter the email for your GPO IdP account below to request a password reset link.
+   Follow the link you are emailed and fill out the form to pick your new password. </p>
+  <p> You can then use this account to log in to the Portal by identifying
+      your institution as "GENI Project Office" and supplying the username
+      and password you chose here. If you do not already have an account and would like to request one, use the <a href="request.html">account request</a> page instead.
+    </p>
+
+  <form action="pwchange.php" method="POST">
+    <p><label class="input">Email<span class="required">*</span>
+        <input name="email" size="50" required>
+      </label></p>
+    <input type="submit"/>
+  </form>
+  </div>
+
+  <div id="footer">
+    Need help? Questions? Email 
+    <a href="mailto:help@geni.net">GENI Help</a>.
+    <br>
+    <a href="http://www.geni.net/">GENI</a>
+    is sponsored by the
+    <a href="http://www.nsf.gov/">
+      <img src="https://www.nsf.gov/images/logos/nsf1.gif"
+           alt="NSF Logo" height="25" width="25">
+      National Science Foundation
+    </a>
+  </div>
+</body>
+</html>

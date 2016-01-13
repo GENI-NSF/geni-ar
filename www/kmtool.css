@@ -1,0 +1,94 @@
+body {
+  font-family: 'Open Sans';
+  background-color: #BBDEFB;
+  padding: 0px;
+  margin: 0px;
+}
+    
+#content {
+  width: 500px;
+  margin: 30px auto;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  padding: 25px;
+  background-color: #FFFFFF;
+  text-align: left;
+}    
+
+form {
+  margin: 10px auto;
+}
+
+#geni_logo {
+	display: block;
+	width: 80px;
+	margin: 0 auto;
+}
+
+#footer {
+  width: 500px;
+  color: #ffffff;
+  padding: 25px;
+  background-color: #616161; 
+  margin: 0 auto 20px auto;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+#footer a {
+  color: white; 
+}
+
+select {
+  font-family: 'Open Sans';
+  font-size: 14px;
+  margin: 15px;
+}
+
+select:focus {
+  outline: none;
+}
+
+label {
+	font-weight: bold;
+	margin-right: 5px;
+}
+
+span.required {
+	color:red;
+}
+
+input {
+	margin-left: 5px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Open Sans', sans-serif;
+  color: #F57F21;
+}
+
+@keyframes raise {
+    from {box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 2px 4px rgba(0,0,0,0.23);}
+    to {box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);}
+}
+
+#content button, #content input[type=submit], #content input[type=button], #content .button
+{
+  padding: 5px 10px;
+  border: none;
+  background-color: #FB8C00;
+  color: #ffffff !important;
+  font-family: inherit;
+  font-size: 15px;
+  cursor: pointer;
+  vertical-align: middle;
+  outline: none;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24);
+}
+
+#content button:hover, #content input[type=submit]:hover, #content input[type=button]:hover, #content .button:hover{
+  background-color: #FF9800;
+  animation: raise;
+  animation-duration: .2s;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);  
+}
+

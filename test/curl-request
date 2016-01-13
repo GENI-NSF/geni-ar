@@ -1,0 +1,69 @@
+#!/bin/sh
+
+#----------------------------------------------------------------------
+# Copyright (c) 2014-2016 Raytheon BBN Technologies
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and/or hardware specification (the "Work") to
+# deal in the Work without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Work, and to permit persons to whom the Work
+# is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Work.
+#
+# THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+# IN THE WORK.
+#----------------------------------------------------------------------
+
+#----------------------------------------------------------------------
+# Submit a single request to the AR request handler.
+#
+# This is useful during development to test request handling and UI
+# operations by loading a series of requests.
+#
+# Usage: curl-request <URL> <EMAIL> <USERNAME>
+#
+# Example invocation:
+#
+#    curl-request https://ar.example.com/geni/handlerequest.php \
+#        test20@example.com test20
+#----------------------------------------------------------------------
+
+# Parse arguments
+AR_URL=${1:-'https://ar.example.com/geni/handlerequest.php'}
+AR_EMAIL=${2:-'test@example.com'}
+AR_USERNAME=${3:-'test'}
+
+# Constants for all requests
+AR_FIRST="Test"
+AR_LAST="User"
+AR_PHONE="555-1212"
+AR_PW1="tiger"
+AR_PW2="tiger"
+AR_ORG="Example,%20Inc."
+AR_JOB="Experimenter"
+AR_REASON="Testing"
+
+# Build the post data
+AR_DATA="email=${AR_EMAIL}"
+AR_DATA="${AR_DATA}&username=${AR_USERNAME}"
+AR_DATA="${AR_DATA}&first_name=${AR_FIRST}"
+AR_DATA="${AR_DATA}&last_name=${AR_LAST}"
+AR_DATA="${AR_DATA}&phone=${AR_PHONE}"
+AR_DATA="${AR_DATA}&password1=${AR_PW1}"
+AR_DATA="${AR_DATA}&password2=${AR_PW2}"
+AR_DATA="${AR_DATA}&organization=${AR_ORG}"
+AR_DATA="${AR_DATA}&title=${AR_JOB}"
+AR_DATA="${AR_DATA}&reason=${AR_REASON}"
+
+CURL_OPTS="--insecure"
+
+curl ${CURL_OPTS} --data "${AR_DATA}" ${AR_URL}
