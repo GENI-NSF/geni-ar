@@ -1,8 +1,8 @@
-Release 1.4
- * Make tables on account manager pages searchable.
- * Update account manager UI with similar style to portal
- * Add 'new' to password reset page (#104)
- * Do not reissue deleted accounts (#106)
+# ----------------------------------------------------------------------
+# This file documents changes for versions 1.3 and earlier.
+#
+# For releases 1.4 and later, please see CHANGES.md
+# ----------------------------------------------------------------------
 
 Release 1.3
 
