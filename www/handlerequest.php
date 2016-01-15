@@ -23,7 +23,6 @@
 //----------------------------------------------------------------------
 require_once('db_utils.php');
 require_once('ldap_utils.php');
-require_once('geni_syslog.php');
 require_once('response_format.php');
 require_once('ssha.php');
 require_once('ar_constants.php');
@@ -295,15 +294,14 @@ if ($errors) {
 
   // An error occurred. First, log the query and result for debugging
   if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-    geni_syslog("IDP request query", $sql);
-    geni_syslog("IDP request result", print_r($result, true));
+    error_log("DB Error query: $sql");
+    error_log("DB Error result: " . $result[RESPONSE_ARGUMENT::OUTPUT]);
     // Next send an email about the error
     $headers = $AR_EMAIL_HEADERS;
-    $headers .= "Cc: $portal_admin_email" . "\r\n";
     $server_host = $_SERVER['SERVER_NAME'];
     mail($idp_approval_email,
          "IdP Account Request Failure $server_host",
-         "An error occurred on IdP account request. See /var/log/user.log for details.",
+         "An error occurred on IdP account request. See log file for details.",
          $headers);
 
     print "<h2>Account request failed</h2>";
