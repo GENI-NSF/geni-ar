@@ -251,7 +251,7 @@ foreach ($required_vars as $name) {
   if (array_key_exists($name, $_REQUEST) && $_REQUEST[$name]) {
     $value = $_REQUEST[$name];
     $query_vars[] = $name;
-    $query_values[] = $conn->quote($value, 'text');
+    $query_values[] = $conn->quote(utf8_encode($value), 'text');
   } else {
     $pretty_name = str_replace("_", " ", $name);
     $errors[] = "No $pretty_name specified.";
@@ -262,7 +262,7 @@ foreach ($optional_vars as $name) {
   if (array_key_exists($name, $_REQUEST)) {
     $value = $_REQUEST[$name];
     $query_vars[] = $name;
-    $query_values[] = $conn->quote($value, 'text');
+    $query_values[] = $conn->quote(utf8_encode($value), 'text');
   }
 }
 
