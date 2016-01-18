@@ -76,12 +76,6 @@ $attrs['uidNumber'] = $id;
 $attrs['gidNumber'] = $id;
 $attrs['homeDirectory'] = "";
 
-/* These are the fields of the $attrs that need utf8 encoding. */
-$utf8_attrs = array('sn', 'givenName', 'cn', 'displayName', 'o');
-foreach ($utf8_attrs as $attr) {
-  $attrs[$attr] = utf8_encode($attrs[$attr]);
-}
-
 $title = $row['title'];
 $reason = $row['reason'];
 
