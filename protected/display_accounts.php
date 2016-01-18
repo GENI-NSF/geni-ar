@@ -38,24 +38,16 @@ $result = ldap_search($ldapconn, $base_dn, $filter);
 $accts = ldap_get_entries($ldapconn,$result);
 //print "Found accounts: " . $accts['count'];
 
-function decode_value($row, $index) {
-  return utf8_decode($row[$index][0]);
-}
-
 function get_values($row)
 {
   global $firstname, $lastname, $email, $uid, $phone, $org;
 
-  /* Some of these values are utf8_decoded for display on the web
-   * page. The values that are not utf8_decoded are assumed to be pure
-   * ascii.
-   */
-  $firstname = decode_value($row, 'givenname');
-  $lastname = decode_value($row, 'sn');
+  $firstname = $row['givenname'][0];
+  $lastname = $row['sn'][0];
   $email = $row['mail'][0];
   $uid = $row['uid'][0];
   $phone = $row['telephonenumber'][0];
-  $org = decode_value($row, 'o');
+  $org = $row['o'][0];
 }
 
 require_once("header.php");
