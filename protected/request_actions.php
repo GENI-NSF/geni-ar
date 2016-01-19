@@ -195,8 +195,11 @@ else if ($action === "approve")
 	}
 	$ret = ldap_add($ldapconn, $new_dn, $attrs);
 	if ($ret === false) {
+          $ldap_err = ldap_error($ldapconn);
 	  process_error ("ERROR: Failed to create new ldap account");
-	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
+	  add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED,
+                          "FAILED: $ldap_err");
+          error_log("ldap_add failed for $new_dn: $ldap_err");
 	  exit();
 	}
 
