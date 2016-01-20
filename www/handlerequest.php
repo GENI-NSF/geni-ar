@@ -26,7 +26,6 @@ require_once('ldap_utils.php');
 require_once('response_format.php');
 require_once('ssha.php');
 require_once('ar_constants.php');
-require_once('institutions.php');
 include_once('/etc/geni-ar/settings.php');
 
 // Generate a random string (nums, uppercase, lowercase) of width $width

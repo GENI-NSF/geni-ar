@@ -24,7 +24,6 @@
 
 require_once('db_utils.php');
 include_once('/etc/geni-ar/settings.php');
-require_once('institutions.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
 require_once('email_utils.php');
