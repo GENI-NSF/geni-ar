@@ -1,5 +1,12 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.5](https://github.com/GENI-NSF/geni-ar/milestones/1.5)
+
+* Handle international characters via UTF8 encoding
+  ([#64](https://github.com/GENI-NSF/geni-ar/issues/64))
+* Add ordering for entries in account manager tables
+  ([#128](https://github.com/GENI-NSF/geni-ar/issues/128))
+
 # [Release 1.4](https://github.com/GENI-NSF/geni-ar/milestones/1.4)
 
 * Add an auto-approve whitelist capability
