@@ -3,6 +3,11 @@
 # [Release 1.6](https://github.com/GENI-NSF/geni-ar/milestones/1.6)
 
 
+# [Release 1.5.1](https://github.com/GENI-NSF/geni-ar/milestones/1.5.1)
+
+* Stop requiring a non-existent file
+  ([#133](https://github.com/GENI-NSF/geni-ar/issues/133))
+
 # [Release 1.5](https://github.com/GENI-NSF/geni-ar/milestones/1.5)
 
 * Handle international characters via UTF8 encoding
