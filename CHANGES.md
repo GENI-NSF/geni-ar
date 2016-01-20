@@ -1,5 +1,8 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.6](https://github.com/GENI-NSF/geni-ar/milestones/1.6)
+
+
 # [Release 1.5](https://github.com/GENI-NSF/geni-ar/milestones/1.5)
 
 * Handle international characters via UTF8 encoding
