@@ -64,8 +64,9 @@ function send_username_recover_email($user_email, $username) {
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
 <title>GENI: Recover Username</title>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
 <link type="text/css" href="kmtool.css" rel="Stylesheet"/>
