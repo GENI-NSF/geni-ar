@@ -12,10 +12,13 @@ RSYNC_DELETE = --delete --delete-excluded
 RSYNC_ARGS = -aztv $(RSYNC_EXCLUDE)
 
 
-.PHONY: syncb syncd syncm synci syncs synct syncp syncc
+.PHONY: synce syncm
 
 default:
 	echo "Choose a specific sync target."
 
 syncm: 
 	$(RSYNC) $(RSYNC_ARGS) ../geni-ar macomb.gpolab.bbn.com:
+
+synce:
+	$(RSYNC) $(RSYNC_ARGS) ../geni-ar escobar.gpolab.bbn.com:
