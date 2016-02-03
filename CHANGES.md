@@ -1,5 +1,8 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.7](https://github.com/GENI-NSF/geni-ar/milestones/1.7)
+
+
 # [Release 1.6](https://github.com/GENI-NSF/geni-ar/milestones/1.6)
 
 * Standardize HTML headers, declare UTF-8 charset
