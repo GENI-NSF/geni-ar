@@ -151,13 +151,8 @@ function change_passwd() {
 // Alert admins that request has been successfully completed.
 // This should probabably be removed after new auto confirmation system deemed working
 function send_admin_email($email) {
-  global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
-  $server_host = $_SERVER['SERVER_NAME'];
-  $subject = "New GENI Identity Provider Password Change on $server_host";
-  $body = "User with email $email successfully changed their password on host ";
-  $body .= "$server_host.\n\n";
-  $headers = $AR_EMAIL_HEADERS;
-  mail($idp_approval_email, $subject, $body, $headers);
+    // do nothing, the feature works.
+    // Leaving this as a stub for now -- February 5, 2016
 }
 
 ?>
