@@ -94,7 +94,6 @@ function send_passwd_change_email($user_email, $change_url) {
           . "Thank you,\n"
           . "GENI Operations\n";
     $headers = $AR_EMAIL_HEADERS;
-    $headers .= "Cc: $idp_approval_email";
     mail($user_email, $subject, $body, $headers);
 }
 

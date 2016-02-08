@@ -57,7 +57,6 @@ function send_username_recover_email($user_email, $username) {
            . "Thank you,\n"
            . "GENI Operations\n";
     $headers = $AR_EMAIL_HEADERS;
-    $headers .= "Cc: $idp_approval_email";
     mail($user_email, $subject, $body, $headers);
 }
 
