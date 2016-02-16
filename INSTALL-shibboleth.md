@@ -60,18 +60,29 @@ wget --no-cookies --no-check-certificate \
      --header "Cookie:oraclelicense=accept-securebackup-cookie" ${JDK_URL}
 
 ## Install JDK
+
+```bash
 sudo yum localinstall jdk-8u74-linux-x64.rpm
+```
 
 ## Install the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction Policy Files
-See https://wiki.shibboleth.net/confluence/display/IDP30/Installation
 
-Download from http://www.oracle.com/technetwork/java/javase/downloads/index.html, towards the bottom
+See https://wiki.shibboleth.net/confluence/display/IDP30/Installation for
+more information about this *required* component.
 
-```
+Download from
+http://www.oracle.com/technetwork/java/javase/downloads/index.html,
+towards the bottom. Once unpacked, installation instructions can be found
+in a file named `README.txt`.
+
+```bash
+# Adjust JDK_HOME as needed
+export JDK_HOME=/usr/java/jdk1.8.0_74
+
 unzip jce_policy-8.zip
 cd UnlimitedJCEPolicyJDK8
-sudo cp local_policy.jar /usr/java/jdk1.8.0_74/jre/lib/security/
-sudo cp US_export_policy.jar /usr/java/jdk1.8.0_74/jre/lib/security/
+sudo cp local_policy.jar "${JDK_HOME}"/jre/lib/security/
+sudo cp US_export_policy.jar "${JDK_HOME}"/jre/lib/security/
 ```
 
 
