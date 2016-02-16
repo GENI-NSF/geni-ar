@@ -59,7 +59,7 @@ JDK_URL=http://download.oracle.com/otn-pub/java/jdk/8u74-b02/jdk-8u74-linux-x64.
 wget --no-cookies --no-check-certificate \
      --header "Cookie:oraclelicense=accept-securebackup-cookie" ${JDK_URL}
 
-## Install JDK
+Once downloaded, the JDK RPM can be installed as follows:
 
 ```bash
 sudo yum localinstall jdk-8u74-linux-x64.rpm
@@ -77,12 +77,10 @@ in a file named `README.txt`.
 
 ```bash
 # Adjust JDK_HOME as needed
-export JDK_HOME=/usr/java/jdk1.8.0_74
-
 unzip jce_policy-8.zip
 cd UnlimitedJCEPolicyJDK8
-sudo cp local_policy.jar "${JDK_HOME}"/jre/lib/security/
-sudo cp US_export_policy.jar "${JDK_HOME}"/jre/lib/security/
+sudo cp local_policy.jar /usr/java/default/jre/lib/security/
+sudo cp US_export_policy.jar /usr/java/default/jre/lib/security/
 ```
 
 
@@ -97,14 +95,36 @@ Download Jetty from the [Jetty website](http://download.eclipse.org/jetty/).
 Be sure to download the lates version of the 9.3 series. At this writing
 that was version 9.3.7.v20160115.
 
+Unpack Jetty:
 
-# Install Shibboleth Identity Provider
+```bash
+cd /opt
+sudo tar zxf /path/to/jetty-distribution-9.3.7.v20160115.tar.gz
+```
 
+Create `/opt/jetty-base` for Jetty configuration:
 
-# Download Shibboleth IdP
-# Version current as of 15-Feb-2016
-SHIB_URL=http://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.2.1.tar.gz
-wget ${SHIB_URL}
+```bash
+sudo mkdir /opt/jetty-base
+```
+
+Set up environment variables to aid in later commands:
+
+```bash
+export JETTY_HOME=/opt/jetty-distribution-9.3.7.v20160115
+export JETTY_BASE=/opt/jetty-base
+```
+
+Follow the
+"[Required Configuration](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-RequiredConfiguration)"
+instructions. This is a lengthy section.
+You will be following the thread that leaves the default ports in place and
+uses a port forwarding approach (Apache) documented at the end of that page.
+
+Follow the
+"[Recommended Configuration](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-RecommendedConfiguration)"
+instructions.
+
 
 # Download Logback (needed for logging)
 # Version current as of 15-Feb-2016
@@ -119,16 +139,6 @@ wget ${SLF4J_URL}
 
 
 
-# Unpack Jetty
-cd /opt
-sudo tar zxf /path/to/jetty-distribution-9.3.7.v20160115.tar.gz
-
-# Create jetty-base for Jetty configuration
-sudo mkdir /opt/jetty-base
-
-export JETTY_HOME=/opt/jetty-distribution-9.3.7.v20160115
-export JETTY_BASE=/opt/jetty-base
-
 # Configure jetty
 sudo mkdir "${JETTY_BASE}"/start.d
 sudo cp "${JETTY_HOME}"/demo-base/start.d/http.ini "${JETTY_BASE}"/start.d
@@ -136,16 +146,28 @@ sudo cp "${JETTY_HOME}"/demo-base/start.d/https.ini "${JETTY_BASE}"/start.d
 sudo cp "${JETTY_HOME}"/demo-base/start.d/ssl.ini "${JETTY_BASE}"/start.d
 
 
-# Unpack Shibboleth
+# Install Shibboleth Identity Provider
+
+
+Download Shibboleth IdP
+
+Version current as of 15-Feb-2016:
+
+```
+SHIB_URL=http://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.2.1.tar.gz
+wget ${SHIB_URL}
+```
+
+## Unpack Shibboleth
 cd /opt
 sudo tar zxf /path/to/shibboleth-identity-provider-3.2.1.tar.gz
 cd shibboleth-identity-provider-3.2.1
 
-# Edit conf/idp.properties
+## Edit conf/idp.properties
 Set idp.entityID to your entityID (for staging, try shib-idp1.geni.net)
 Set idp.scope to geni.net
 
-# Build the IdP
+## Build the IdP
 sudo JAVA_HOME=/usr bin/build.sh
 
 # Configure Jetty
@@ -160,10 +182,12 @@ http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-
 
 
 
-# Sample /etc/httpd/conf.d/idp.conf
+# Configure Apache
+
+Sample /etc/httpd/conf.d/idp.conf
+
 ```
 # Base configuration from http://wiki.eclipse.org/Jetty/Tutorial/Apache
-
 
 # Turn off support for true Proxy behaviour as we are acting as 
 # a transparent proxy
@@ -204,6 +228,7 @@ The key is in /etc/pki/tls/localhost.key
 
 
 
-Ansible
-https://github.com/AAROC/DevOps/wiki/idp-ldap-playbook
-https://www.digitalocean.com/community/tutorials/how-to-configure-apache-using-ansible-on-ubuntu-14-04
+# Ansible
+
+* https://github.com/AAROC/DevOps/wiki/idp-ldap-playbook
+* https://www.digitalocean.com/community/tutorials/how-to-configure-apache-using-ansible-on-ubuntu-14-04
