@@ -56,7 +56,8 @@ For installation on CentOS consider using the RPM. That should make it easier
 to upgrade to a newer version in the future. These instructions assume you are
 using the RPM.
 
-Once downloaded, the JDK RPM can be installed as follows:
+Once downloaded, the JDK RPM can be installed as follows (replace RPM file
+name as appropriate):
 
 ```bash
 sudo yum localinstall jdk-8u74-linux-x64.rpm
@@ -114,15 +115,20 @@ export JETTY_BASE=/opt/jetty-base
 
 Follow the
 "[Required Configuration](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-RequiredConfiguration)"
-instructions. This is a lengthy section.
-You will be following the thread that leaves the default ports in place and
-uses a port forwarding approach (Apache) documented at the end of that page.
+instructions. You will be following the thread that leaves the default ports
+in place and uses a port forwarding approach (Apache) documented at the end
+of that page.
 
 Follow the
 "[Recommended Configuration](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-RecommendedConfiguration)"
-instructions.
+instructions. This includes downloading the
+[logback]()
+and
+[slf4j]()
+libraries. Sample commands are below, but please use the latest versions
+of each library, not the ones listed in the examples.
 
-
+```
 # Download Logback (needed for logging)
 # Version current as of 15-Feb-2016
 LOGBACK_URL=http://logback.qos.ch/dist/logback-1.1.5.tar.gz
@@ -132,8 +138,7 @@ wget ${LOGBACK_URL}
 # Version current as of 15-Feb-2016
 SLF4J_URL=http://www.slf4j.org/dist/slf4j-1.7.16.tar.gz
 wget ${SLF4J_URL}
-
-
+```
 
 
 # Configure jetty
