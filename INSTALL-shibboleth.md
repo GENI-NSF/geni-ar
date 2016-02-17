@@ -1,17 +1,13 @@
 The definitive source of information about Shibboleth Identity Provider
-installation is on the Shibboleth Wiki. The instructions there will guide
-you through all the installatino and deployment options. This guide follows
+installation is on the
+[Shibboleth Wiki](https://wiki.shibboleth.net/confluence/display/IDP30).
+The instructions there will guide
+you through all the installation and deployment options. This guide follows
 a single path through the installation. It should not be considered a
 substitute for reading the pages on the Shibboleth Wiki.
 
 The Shibboleth Identity Provider installation documentation starts at
 https://wiki.shibboleth.net/confluence/display/IDP30/Installation
-
-This guide installs the following software:
-
-* Shibboleth Identity Provider 3
-* Oracle JDK 8
-* Jetty servlet container 9.3
 
 As of early 2016 the
 [recommended system requirements](https://wiki.shibboleth.net/confluence/display/IDP30/SystemRequirements)
@@ -19,6 +15,11 @@ for Shibboleth Identity Provider installation were Oracle JDK and the Jetty
 servlet container. These installation instructions guide the installation
 of Shibboleth Identity Provider to use these dependencies.
 
+This guide installs the following software:
+
+* Shibboleth Identity Provider 3
+* Oracle JDK 8
+* Jetty servlet container 9.3
 
 # Reading
 
@@ -52,12 +53,8 @@ Policy Files", which is also required. The Java version changes often enough
 that it is impractical to list a specific version here.
 
 For installation on CentOS consider using the RPM. That should make it easier
-to upgrade to a newer version in the future.
-
-Version current as of 15-Feb-2016
-JDK_URL=http://download.oracle.com/otn-pub/java/jdk/8u74-b02/jdk-8u74-linux-x64.rpm
-wget --no-cookies --no-check-certificate \
-     --header "Cookie:oraclelicense=accept-securebackup-cookie" ${JDK_URL}
+to upgrade to a newer version in the future. These instructions assume you are
+using the RPM.
 
 Once downloaded, the JDK RPM can be installed as follows:
 
