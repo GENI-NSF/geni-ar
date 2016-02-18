@@ -122,34 +122,20 @@ of that page.
 Follow the
 "[Recommended Configuration](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-RecommendedConfiguration)"
 instructions. This includes downloading the
-[logback]()
+[logback](http://logback.qos.ch/download.html)
 and
-[slf4j]()
-libraries. Sample commands are below, but please use the latest versions
-of each library, not the ones listed in the examples.
+[slf4j](http://www.slf4j.org/download.html)
+libraries. If you have any doubt about where files should go in the JETTY_BASE
+directory hierarchy, refer to the list of files at the top of the wiki page.
 
-```
-# Download Logback (needed for logging)
-# Version current as of 15-Feb-2016
-LOGBACK_URL=http://logback.qos.ch/dist/logback-1.1.5.tar.gz
-wget ${LOGBACK_URL}
-
-# Download SLF4J (needed for logging)
-# Version current as of 15-Feb-2016
-SLF4J_URL=http://www.slf4j.org/dist/slf4j-1.7.16.tar.gz
-wget ${SLF4J_URL}
-```
-
-
-# Configure jetty
-sudo mkdir "${JETTY_BASE}"/start.d
-sudo cp "${JETTY_HOME}"/demo-base/start.d/http.ini "${JETTY_BASE}"/start.d
-sudo cp "${JETTY_HOME}"/demo-base/start.d/https.ini "${JETTY_BASE}"/start.d
-sudo cp "${JETTY_HOME}"/demo-base/start.d/ssl.ini "${JETTY_BASE}"/start.d
-
+_**TODO: I am deferring the "Offloading TLS" section for now.
+We need to handle offloading TLS to Apache in order to get the IdP
+service running on port 443. We have had issues with some users who
+are unable to connect to non-standard ports on our current IdP.
+Some of the configuration is covered below in references to the
+Jetty web site. Revisit this section later.**_
 
 # Install Shibboleth Identity Provider
-
 
 Download Shibboleth IdP
 
