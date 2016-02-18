@@ -135,31 +135,33 @@ are unable to connect to non-standard ports on our current IdP.
 Some of the configuration is covered below in references to the
 Jetty web site. Revisit this section later.**_
 
+For Offloading TLS, use the example code on the Shibboleth wiki (bottom
+of the Jetty page) and the "X-Forward-for Configuration" in the
+[linked Jetty instructions](http://www.eclipse.org/jetty/documentation/current/configuring-connectors.html#d0e4447).
+
 # Install Shibboleth Identity Provider
 
-Download Shibboleth IdP
+Download the latest Shibboleth
+[Identity Provider](https://shibboleth.net/downloads/identity-provider/latest/)
+software.
 
-Version current as of 15-Feb-2016:
+Unpack the distribution in `/opt`. This way it is easy to find if you
+have to rebuild it later. Then build according to the instructions.
+Here is an example:
 
 ```
-SHIB_URL=http://shibboleth.net/downloads/identity-provider/latest/shibboleth-identity-provider-3.2.1.tar.gz
-wget ${SHIB_URL}
-```
+# Adjust version as appropriate
+IDP_VERSION=3.2.1
 
-## Unpack Shibboleth
 cd /opt
-sudo tar zxf /path/to/shibboleth-identity-provider-3.2.1.tar.gz
-cd shibboleth-identity-provider-3.2.1
+sudo tar zxf /path/to/shibboleth-identity-provider-${IDP_VERSION}.tar.gz
+cd shibboleth-identity-provider-${IDP_VERSION}
+sudo JAVA_HOME=/usr/java/default bin/build.sh
+```
 
-## Edit conf/idp.properties
-Set idp.entityID to your entityID (for staging, try shib-idp1.geni.net)
-Set idp.scope to geni.net
-
-## Build the IdP
-sudo JAVA_HOME=/usr bin/build.sh
-
-# Configure Jetty
-See https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93
+_**Document how to answer the questions asked by `build.sh`. This
+requires advance planning. You need a host name, scope, and
+some passwords. Be prepared to answer the questions!**_
 
 
 # Configuring mod_proxy for Jetty from Apache
@@ -167,8 +169,6 @@ http://wiki.eclipse.org/Jetty/Tutorial/Apache
 
 # Configure Jetty as a service
 http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-centos-7-rhel-7.html
-
-
 
 # Configure Apache
 
@@ -213,10 +213,3 @@ sudo yum install -y mod_ssl
 
 An SSL certificate is in /etc/pki/tls/certs/localhost.crt
 The key is in /etc/pki/tls/localhost.key
-
-
-
-# Ansible
-
-* https://github.com/AAROC/DevOps/wiki/idp-ldap-playbook
-* https://www.digitalocean.com/community/tutorials/how-to-configure-apache-using-ansible-on-ubuntu-14-04
