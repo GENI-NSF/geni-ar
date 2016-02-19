@@ -216,20 +216,25 @@ Total time: 1 minute 0 seconds
 
 1. Start Jetty
 
-    ```
+    ```bash
     sudo java -jar ../jetty-distribution-9.3.7.v20160115/start.jar jetty.base=$JETTY_BASE
     ```
 
-1. Check the Jetty log file
+1. Check the Jetty log file for errors
 
-    ```
+    ```bash
     tail -f $JETTY_BASE/logs/jetty.log
-    ````
+    ```
 
 1. _**I had to set idp.home in $JETTY_BASE/start.ini to /opt/shibboleth-idp
-despite that file saying it wasn't necessary if I chose that location. Why?**_
+   despite that file saying it wasn't necessary if I chose that location. Why?**_
 
-1. What other tests can be run at this point?
+1. If everything is working so far, this command will generate output
+   summarizing the environment and information about the IdP's state:
+
+    ```bash
+    /opt/shibboleth-idp/bin/status.sh --url http://localhost:8080/idp
+    ```
 
 # Configuring mod_proxy for Jetty from Apache
 http://wiki.eclipse.org/Jetty/Tutorial/Apache
