@@ -156,13 +156,61 @@ IDP_VERSION=3.2.1
 cd /opt
 sudo tar zxf /path/to/shibboleth-identity-provider-${IDP_VERSION}.tar.gz
 cd shibboleth-identity-provider-${IDP_VERSION}
-sudo JAVA_HOME=/usr/java/default bin/build.sh
+sudo JAVA_HOME=/usr/java/default bin/install.sh
 ```
 
 _**Document how to answer the questions asked by `build.sh`. This
 requires advance planning. You need a host name, scope, and
 some passwords. Be prepared to answer the questions!**_
 
+Here is a sample installation where the install script prompts for
+answers to a number of questions:
+
+```bash
+$ sudo JAVA_HOME=/usr/java/default bin/install.sh
+Source (Distribution) Directory: [/opt/shibboleth-identity-provider-3.2.1]
+
+Installation Directory: [/opt/shibboleth-idp]
+
+Hostname: [aptvm070-1.apt.emulab.net]
+idp.geni.net
+SAML EntityID: [https://idp.geni.net/idp/shibboleth]
+
+Attribute Scope: [apt.emulab.net]
+gpolab.bbn.com
+Backchannel PKCS12 Password: 
+Re-enter password: 
+Cookie Encryption Key Password: 
+Re-enter password: 
+Warning: /opt/shibboleth-idp/bin does not exist.
+Warning: /opt/shibboleth-idp/dist does not exist.
+Warning: /opt/shibboleth-idp/doc does not exist.
+Warning: /opt/shibboleth-idp/system does not exist.
+Warning: /opt/shibboleth-idp/webapp does not exist.
+Generating Signing Key, CN = idp.geni.net URI = https://idp.geni.net/idp/shibboleth ...
+...done
+Creating Encryption Key, CN = idp.geni.net URI = https://idp.geni.net/idp/shibboleth ...
+...done
+Creating Backchannel keystore, CN = idp.geni.net URI = https://idp.geni.net/idp/shibboleth ...
+...done
+Creating cookie encryption key files...
+...done
+Rebuilding /opt/shibboleth-idp/war/idp.war ...
+...done
+
+BUILD SUCCESSFUL
+Total time: 1 minute 0 seconds
+```
+
+| Value | Description |
+| ----- | ----------- |
+| Source (Distribution) Directory | Accept Default |
+| Installation Directory          | Accept Default |
+| Hostname | Choose a CNAME (a DNS alias) so the host can be moved later |
+| SAML EntityID | Accept default |
+| Attribute Scope | ??? |
+| Backchannel PKCS12 Password | Record it for later |
+| Cooke Encryption Key Password | Record it for later |
 
 # Configuring mod_proxy for Jetty from Apache
 http://wiki.eclipse.org/Jetty/Tutorial/Apache
