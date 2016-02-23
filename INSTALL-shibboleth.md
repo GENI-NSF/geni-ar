@@ -236,6 +236,56 @@ Total time: 1 minute 0 seconds
     /opt/shibboleth-idp/bin/status.sh --url http://localhost:8080/idp
     ```
 
+# Install and confgure Apache
+
+See https://wiki.centos.org/HowTos/Https for more information
+
+If it's not already installed, install Apache:
+
+```
+sudo yum install -y httpd mod_ssl openssl
+```
+
+If this is a production installation you need a real SSL certificate.
+If this is a staging or development installation, you can generate a
+self-signed SSL certificate as follows:
+
+```
+# Generate private key 
+openssl genrsa -out ca.key 2048 
+
+# Generate CSR
+# Note: leave all fields blank except CN. Set CN to the fully qualified
+# domain name of the host, or a DNS CNAME for the host
+openssl req -new -key ca.key -out ca.csr
+
+# Generate Self Signed Key
+openssl x509 -req -days 365 -in ca.csr -signkey ca.key -out ca.crt
+
+# Copy the files to the correct locations
+sudo cp ca.crt /etc/pki/tls/certs
+sudo cp ca.key /etc/pki/tls/private/ca.key
+sudo cp ca.csr /etc/pki/tls/private/ca.csr
+```
+
+Edit `/etc/httpd/conf.d/ssl.conf` as instructed at
+https://wiki.centos.org/HowTos/Https
+
+Restart httpd:
+
+```
+sudo /bin/systemctl restart httpd.service
+```
+
+Test by accessing a web page via https:
+
+```
+https://your.host.name
+```
+
+You should see a test page. If you see anything else, stop, debug, and fix
+the issue until you can navigate to a test page at that URL.
+
 # Configuring mod_proxy for Jetty from Apache
 
 _**Note: These instructions appear to be out of date. The Shibboleth
