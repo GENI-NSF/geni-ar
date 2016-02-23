@@ -237,7 +237,11 @@ Total time: 1 minute 0 seconds
     ```
 
 # Configuring mod_proxy for Jetty from Apache
-http://wiki.eclipse.org/Jetty/Tutorial/Apache
+
+_**Note: These instructions appear to be out of date. The Shibboleth
+   wiki has instructions that should be tried first.**_
+
+    http://wiki.eclipse.org/Jetty/Tutorial/Apache
 
 # Configure Jetty as a service
 http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-centos-7-rhel-7.html
