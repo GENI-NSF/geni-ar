@@ -161,6 +161,7 @@ if (count($result['value']) != 0) {
     if (   $state === "REQUESTED"
         or $state === "EMAILED_LEADS"
         or $state === "CONFIRM_REQUESTER"
+        or $state === "EMAIL_CONFIRMED"
         or $state === "DELETED") {
       $errors[] = "Username " . $uid . " already exists";
     }
@@ -203,7 +204,11 @@ if ($result['code'] != 0) {
 if (count($result['value']) != 0) {
   foreach ($result['value'] as $row) {
     $state = $row['request_state'];
-    if ($state === "REQUESTED" or $state=== "EMAILED_LEADS" or $state=== "EMAILED_REQUESTER") {
+    if (   $state === "REQUESTED"
+        or $state === "EMAILED_LEADS"
+        or $state === "CONFIRM_REQUESTER"
+        or $state === "EMAILED_REQUESTER"
+        or $state === "EMAIL_CONFIRMED") {
       $errors[] = "An account request for this email address is pending approval";
     }
   }
