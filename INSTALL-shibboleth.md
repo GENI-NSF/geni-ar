@@ -286,12 +286,47 @@ https://wiki.centos.org/HowTos/Https
     You should see a test page. If you see anything else, stop, debug, and fix
     the issue until you can navigate to a test page at that URL.
 
-# Configuring mod_proxy for Jetty from Apache
+# Configure TLS offloading
 
-_**Note: These instructions appear to be out of date. The Shibboleth
-   wiki has instructions that should be tried first.**_
+Configure Apache to dispatch requests to Jetty via proxy.
 
-    http://wiki.eclipse.org/Jetty/Tutorial/Apache
+See:
+
+* https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-OffloadingTLS
+* http://www.eclipse.org/jetty/documentation/current/configuring-connectors.html#d0e4413
+
+1. Configure Jetty to accept forwarded (proxied) requests
+  a. Read the Jetty documentation, referenced above, about Proxy / Load Balancer
+     connection configuration
+  a. Copy the `jetty.xml` file to `JETTY_BASE`:
+
+      ```
+      cp $JETTY_HOME/etc/jetty.xml $JETTY_BASE/etc
+      ```
+  a. Uncomment the block that starts with the comment:
+
+      "Uncomment to enable handling of X-Forwarded- style headers"
+
+  a. Save the file
+  a. Restart Jetty (command is earlier in this document)
+
+2. Configure Apache to forward to Jetty
+  a. Read the "Offloading TLS" section of the 
+  [Shibboleth Jetty 9.3 documentation](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-OffloadingTLS)
+  a. Insert the documented block (3 lines) inside the `VirtualHost` declaration
+  in `/etc/httpd/conf.d/ssl.conf`
+
+3. Restart Apache
+
+    ```
+    sudo /bin/systemctl restart httpd.service
+    ```
+
+4. Test by navigating to https://your.host.name/idp
+
+You should now see a Shibboleth page that requires customization and says
+something like "Our Identity Provider". If you see errors or anything else,
+stop, debug, and fix the issue(s) until you see the right page.
 
 # Configure Jetty as a service
 http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-centos-7-rhel-7.html
