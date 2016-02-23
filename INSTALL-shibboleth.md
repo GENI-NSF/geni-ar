@@ -297,28 +297,30 @@ See:
 
 1. Configure Jetty to accept forwarded (proxied) requests
 
-  a. Read the Jetty documentation, referenced above, about Proxy / Load Balancer
-     connection configuration
+ 1. Read the Jetty documentation, referenced above, about Proxy / Load Balancer
+    connection configuration
 
-  a. Copy the `jetty.xml` file to `JETTY_BASE`:
+ 1. Copy the `jetty.xml` file to `JETTY_BASE`:
 
-      ```
-      cp $JETTY_HOME/etc/jetty.xml $JETTY_BASE/etc
-      ```
+     ```
+     cp $JETTY_HOME/etc/jetty.xml $JETTY_BASE/etc
+     ```
 
-  a. Uncomment the block that starts with the comment:
+ 1. Uncomment the block that starts with the comment:
 
-      "Uncomment to enable handling of X-Forwarded- style headers"
+     "Uncomment to enable handling of X-Forwarded- style headers"
 
-  a. Save the file
+ 1. Save the file
 
-  a. Restart Jetty (command is earlier in this document)
+ 1. Restart Jetty (command is earlier in this document)
 
 2. Configure Apache to forward to Jetty
-  a. Read the "Offloading TLS" section of the 
-  [Shibboleth Jetty 9.3 documentation](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-OffloadingTLS)
-  a. Insert the documented block (3 lines) inside the `VirtualHost` declaration
-  in `/etc/httpd/conf.d/ssl.conf`
+
+ 1. Read the "Offloading TLS" section of the 
+    [Shibboleth Jetty 9.3 documentation](https://wiki.shibboleth.net/confluence/display/IDP30/Jetty93#Jetty93-OffloadingTLS)
+
+ 1. Insert the documented block (3 lines) inside the `VirtualHost` declaration
+    in `/etc/httpd/conf.d/ssl.conf`
 
 3. Restart Apache
 
