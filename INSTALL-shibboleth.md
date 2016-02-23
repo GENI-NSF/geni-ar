@@ -236,7 +236,7 @@ Total time: 1 minute 0 seconds
     /opt/shibboleth-idp/bin/status.sh --url http://localhost:8080/idp
     ```
 
-# Install and confgure Apache
+# Install and configure Apache
 
 See https://wiki.centos.org/HowTos/Https for more information
 
@@ -283,8 +283,8 @@ https://wiki.centos.org/HowTos/Https
     https://your.host.name
     ```
 
-    You should see a test page. If you see anything else, stop, debug, and fix
-    the issue until you can navigate to a test page at that URL.
+    You should see an Apache test page. If you see anything else, stop, debug,
+    and fix the issue until you can navigate to a test page at that URL.
 
 # Configure TLS offloading
 
@@ -336,47 +336,3 @@ stop, debug, and fix the issue(s) until you see the right page.
 
 # Configure Jetty as a service
 http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-centos-7-rhel-7.html
-
-# Configure Apache
-
-Sample /etc/httpd/conf.d/idp.conf
-
-```
-# Base configuration from http://wiki.eclipse.org/Jetty/Tutorial/Apache
-
-# Turn off support for true Proxy behaviour as we are acting as 
-# a transparent proxy
-ProxyRequests Off
- 
-# Turn off VIA header as we know where the requests are proxied
-ProxyVia Off
- 
-# Turn on Host header preservation so that the servlet container
-# can write links with the correct host and rewriting can be avoided.
-ProxyPreserveHost On
- 
- 
-# Set the permissions for the proxy
-<Proxy *>
-  AddDefaultCharset off
-  Order deny,allow
-  Allow from all
-</Proxy>
- 
-# Turn on Proxy status reporting at /status
-# This should be better protected than: Allow from all
-ProxyStatus On
-<Location /status>
-  SetHandler server-status
-  Order Deny,Allow
-  Allow from all
-</Location>
-
-ProxyPass /idp http://localhost:8080/idp
-```
-
-# Install mod_ssl
-sudo yum install -y mod_ssl
-
-An SSL certificate is in /etc/pki/tls/certs/localhost.crt
-The key is in /etc/pki/tls/localhost.key
