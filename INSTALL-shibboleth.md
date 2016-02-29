@@ -286,6 +286,12 @@ https://wiki.centos.org/HowTos/Https
     You should see an Apache test page. If you see anything else, stop, debug,
     and fix the issue until you can navigate to a test page at that URL.
 
+6. Configure Apache to launch at boot time:
+
+    ```
+    sudo chkconfig httpd on
+    ```
+
 # Configure TLS offloading
 
 Configure Apache to dispatch requests to Jetty via proxy.
@@ -371,3 +377,26 @@ instructions can be found in
     ```
 
 1. Test via web browser at https://your.host.name/idp
+
+1. Configure Jetty to start at boot time
+
+    ```
+    sudo chkconfig jetty on
+    ```
+
+# Open Questions
+
+* There are SLF4J warnings in the
+  `$JETTY_BASE/logs/YYYY-MM-DD.stderrout.log.###` file. How should those get
+  fixed?
+
+    ```
+    SLF4J: Class path contains multiple SLF4J bindings.
+    SLF4J: Found binding in [jar:file:/opt/jetty-base/tmp/jetty-0.0.0.0-8080-idp.war-_idp-any-8193848279567088246.dir/webinf/WEB-INF/lib/logback-classic-1.1.3.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+    SLF4J: Found binding in [jar:file:/opt/jetty-base/lib/logging/logback-classic-1.1.5.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+    SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+    ````
+* Why does the service start show FAILED?
+ - It shows failed using `sudo service jetty start`
+ - It shows failed using `sudo /bin/systemctl start jetty.service`
+ - But it comes up and works. Why the failures? Not waiting long enough?
