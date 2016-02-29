@@ -335,4 +335,35 @@ something like "Our Identity Provider". If you see errors or anything else,
 stop, debug, and fix the issue(s) until you see the right page.
 
 # Configure Jetty as a service
-http://www.itzgeek.com/how-tos/linux/centos-how-tos/install-jetty-web-server-on-centos-7-rhel-7.html
+
+The last step is to cause Jetty to launch at boot time. The definitive
+instructions can be found in
+[the Jetty documentation](http://www.eclipse.org/jetty/documentation/current/startup-unix-service.html)
+
+1. Copy `jetty.sh` to `/etc/init.d`
+
+    ```
+    sudo cp "${JETTY_HOME}"/bin/jetty.sh /etc/init.d/jetty
+    ```
+
+1. Create and populate `/etc/default/jetty`
+
+    ```
+    echo "JETTY_HOME=${JETTY_HOME}" > /tmp/jetty
+    echo "JETTY_BASE=${JETTY_BASE}" > /tmp/jetty
+    sudo mv /tmp/jetty /etc/default/jetty
+    ```
+
+1. Test
+
+    ```
+    sudo service jetty status
+    ```
+
+1. Start Jetty
+
+    ```
+    sudo service jetty start
+    ```
+
+1. Test via web browser at https://your.host.name/idp
