@@ -350,7 +350,7 @@ instructions can be found in
 
     ```
     echo "JETTY_HOME=${JETTY_HOME}" > /tmp/jetty
-    echo "JETTY_BASE=${JETTY_BASE}" > /tmp/jetty
+    echo "JETTY_BASE=${JETTY_BASE}" >> /tmp/jetty
     sudo mv /tmp/jetty /etc/default/jetty
     ```
 
@@ -361,6 +361,10 @@ instructions can be found in
     ```
 
 1. Start Jetty
+
+ * _Note: I get a FAILED message when starting jetty, but if I wait
+   a minute or two it appears that the Shibboleth IdP is up and
+   running. Be patient with it._
 
     ```
     sudo service jetty start
