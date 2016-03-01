@@ -346,6 +346,8 @@ The last step is to cause Jetty to launch at boot time. The definitive
 instructions can be found in
 [the Jetty documentation](http://www.eclipse.org/jetty/documentation/current/startup-unix-service.html)
 
+See also https://wiki.shibboleth.net/confluence/display/IDP30/Running+the+IdP+on+Jetty+behind+Apache+httpd
+
 1. Copy `jetty.sh` to `/etc/init.d`
 
     ```
@@ -400,3 +402,63 @@ instructions can be found in
  - It shows failed using `sudo service jetty start`
  - It shows failed using `sudo /bin/systemctl start jetty.service`
  - But it comes up and works. Why the failures? Not waiting long enough?
+
+# Configure Shibboleth
+
+We will be using LDAP to hold user attributes and passwords.
+The first step in configuring Shibboleth is to
+[configure authentication](https://wiki.shibboleth.net/confluence/display/IDP30/AuthenticationConfiguration).
+Specifically, we will be configuring Shibboleth to use
+[LDAP authentication](https://wiki.shibboleth.net/confluence/display/IDP30/LDAPAuthnConfiguration)
+
+ 1. Configure LDAP as the back-end (**As yet incomplete**):
+
+ `/opt/shibboleth-idp/conf/ldap.properties`
+
+```
+--- ldap.properties.orig    2016-02-19 11:06:24.691612537 -0700
++++ ldap.properties 2016-03-01 13:38:34.017873082 -0700
+@@ -3,19 +3,21 @@
+ 
+ ## Authenticator strategy, either anonSearchAuthenticator, bindSearchAuthenticator, directAuthenticator, adAuthenticator
+ #idp.authn.LDAP.authenticator                   = anonSearchAuthenticator
++idp.authn.LDAP.authenticator                   = bindSearchAuthenticator
+ 
+ ## Connection properties ##
+-idp.authn.LDAP.ldapURL                          = ldap://localhost:10389
++idp.authn.LDAP.ldapURL                          = ldap://localhost:389
+ #idp.authn.LDAP.useStartTLS                     = true
++idp.authn.LDAP.useStartTLS                      = false
+ #idp.authn.LDAP.useSSL                          = false
+ #idp.authn.LDAP.connectTimeout                  = 3000
+ 
+ ## SSL configuration, either jvmTrust, certificateTrust, or keyStoreTrust
+ #idp.authn.LDAP.sslConfig                       = certificateTrust
+ ## If using certificateTrust above, set to the trusted certificate's path
+-idp.authn.LDAP.trustCertificates                = %{idp.home}/credentials/ldap-server.crt
++#idp.authn.LDAP.trustCertificates                = %{idp.home}/credentials/ldap-server.crt
+ ## If using keyStoreTrust above, set to the truststore path
+-idp.authn.LDAP.trustStore                       = %{idp.home}/credentials/ldap-server.truststore
++#idp.authn.LDAP.trustStore                       = %{idp.home}/credentials/ldap-server.truststore
+ 
+ ## Return attributes during authentication
+ ## NOTE: there is a separate property used for attribute resolution
+@@ -25,13 +27,14 @@
+ 
+ # Search DN resolution, used by anonSearchAuthenticator, bindSearchAuthenticator
+ # for AD: CN=Users,DC=example,DC=org
+-idp.authn.LDAP.baseDN                           = ou=people,dc=example,dc=org
++#idp.authn.LDAP.baseDN                           = ou=people,dc=example,dc=org
++idp.authn.LDAP.baseDN                           = ou=people,dc=gpolab,dc=bbn,dc=com
+ #idp.authn.LDAP.subtreeSearch                   = false
+ idp.authn.LDAP.userFilter                       = (uid={user})
+ # bind search configuration
+ # for AD: idp.authn.LDAP.bindDN=adminuser@domain.com
+-idp.authn.LDAP.bindDN                           = uid=myservice,ou=system
+-idp.authn.LDAP.bindDNCredential                 = myServicePassword
++idp.authn.LDAP.bindDN                           = cn=admin,dc=gpolab,dc=bbn,dc=com
++idp.authn.LDAP.bindDNCredential                 = secret
+ 
+ # Format DN resolution, used by directAuthenticator, adAuthenticator
+ # for AD use idp.authn.LDAP.dnFormat=%s@domain.com
+```
