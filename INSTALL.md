@@ -38,22 +38,32 @@ psql -U <USER> [-h <HOST>] <DBNAME> \
 
     What needs to be edited?
 
-# Add users for the administrative area
+# Add account administrators
 
-_More explanation is needed here._
-
-Create a password file for the protected area using `/usr/bin/htpasswd`.
+The administrative web pages are used to approve new accounts and perform other
+account maintenance. Access to these web pages are restricted to users
+in the password file. Each user who will have access to the administrative
+pages must have an entry in the password file. The Apache program
+`htpasswd` is used to manage the password file.
 
 To create the first entry, use the `-c` flag:
 
 ```
-htpasswd -c /etc/geni-ar/passwords alice
+sudo /usr/bin/htpasswd -c /etc/geni-ar/passwords alice
 ```
 
 To add another entry:
 
 ```
-htpasswd /etc/geni-ar/passwords bob
+sudo /usr/bin/htpasswd /etc/geni-ar/passwords bob
 ```
 
 See the htpasswd man page for more info.
+
+# Configure web server
+
+_TBD_
+
+# Test
+
+_TBD_
