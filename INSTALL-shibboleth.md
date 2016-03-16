@@ -416,3 +416,42 @@ Specifically, we will be configuring Shibboleth to use
   1. Change `idp.authn.LDAP.useStartTLS` to `false`
   1. Change `idp.authn.LDAP.baseDN` to `ou=people,dc=gpolab,dc=bbn,dc=com`
 
+## Configure attribute filtering
+
+See https://wiki.shibboleth.net/confluence/display/IDP30/AttributeFilterConfiguration
+
+1. Copy the GENI attribute filter file into /opt/shibboleth-idp/conf
+
+    ```bash
+    sudo cp /usr/share/geni-ar/shibboleth/attribute-filter-geni.xml \
+        /opt/shibboleth-idp/conf/attribute-filter-geni.xml
+    ```
+
+2. Edit `/opt/shibboleth-idp/conf/services.xml` to reference the new
+   attribute filter configuration file
+
+    ```xml
+    <util:list id ="shibboleth.AttributeFilterResources">
+        <value>%{idp.home}/conf/attribute-filter-geni.xml</value>
+    </util:list>
+    ```
+
+## Configure attribute resolution
+
+See https://wiki.shibboleth.net/confluence/display/IDP30/AttributeResolverConfiguration
+
+1. Copy the GENI attribute resolver file into /opt/shibboleth-idp/conf
+
+    ```bash
+    sudo cp /usr/share/geni-ar/shibboleth/attribute-resolver-geni.xml \
+        /opt/shibboleth-idp/conf/attribute-resolver-geni.xml
+    ```
+
+2. Edit `/opt/shibboleth-idp/conf/services.xml` to reference the new
+   attribute resolver configuration file
+
+    ```xml
+    <util:list id ="shibboleth.AttributeResolverResources">
+        <value>%{idp.home}/conf/attribute-resolver-geni.xml</value>
+    </util:list>
+    ```
