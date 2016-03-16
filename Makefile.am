@@ -65,6 +65,8 @@ nobase_dist_pkgdata_DATA = \
 	protected/tutorial_actions.php \
 	protected/tutorial_confirmation.php \
 	protected/whitelist.php \
+	shibboleth/attribute-filter-geni.xml \
+	shibboleth/attribute-resolver-geni.xml \
 	www/confirmemail.php \
 	www/handlerequest.php \
 	www/geni.png \
