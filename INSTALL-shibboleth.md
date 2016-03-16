@@ -430,6 +430,9 @@ See https://wiki.shibboleth.net/confluence/display/IDP30/AttributeFilterConfigur
 2. Edit `/opt/shibboleth-idp/conf/services.xml` to reference the new
    attribute filter configuration file
 
+    Change the value inside `shibboleth.AttributeFilterResources`
+    to point to the new file instead of the default example.
+
     ```xml
     <util:list id ="shibboleth.AttributeFilterResources">
         <value>%{idp.home}/conf/attribute-filter-geni.xml</value>
@@ -449,6 +452,9 @@ See https://wiki.shibboleth.net/confluence/display/IDP30/AttributeResolverConfig
 
 2. Edit `/opt/shibboleth-idp/conf/services.xml` to reference the new
    attribute resolver configuration file
+
+    Change the value inside `shibboleth.AttributeResolverResources`
+    to point to the new file instead of the default example.
 
     ```xml
     <util:list id ="shibboleth.AttributeResolverResources">
