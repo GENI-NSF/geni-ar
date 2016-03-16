@@ -405,16 +405,18 @@ See also https://wiki.shibboleth.net/confluence/display/IDP30/Running+the+IdP+on
 
 # Configure Shibboleth
 
+## Configure LDAP
+
 We will be using LDAP to hold user attributes and passwords.
 The first step in configuring Shibboleth is to
 [configure authentication](https://wiki.shibboleth.net/confluence/display/IDP30/AuthenticationConfiguration).
 Specifically, we will be configuring Shibboleth to use
 [LDAP authentication](https://wiki.shibboleth.net/confluence/display/IDP30/LDAPAuthnConfiguration)
 
- 1. Configure LDAP as the back-end by editing `/opt/shibboleth-idp/conf/ldap.properties`
-  1. Change the port in `idp.authn.LDAP.ldapURL` from 10389 to 389
-  1. Change `idp.authn.LDAP.useStartTLS` to `false`
-  1. Change `idp.authn.LDAP.baseDN` to `ou=people,dc=gpolab,dc=bbn,dc=com`
+1. Configure LDAP as the back-end by editing `/opt/shibboleth-idp/conf/ldap.properties`
+ 1. Change the port in `idp.authn.LDAP.ldapURL` from 10389 to 389
+ 1. Change `idp.authn.LDAP.useStartTLS` to `false`
+ 1. Change `idp.authn.LDAP.baseDN` to `ou=people,dc=gpolab,dc=bbn,dc=com`
 
 ## Configure attribute filtering
 
