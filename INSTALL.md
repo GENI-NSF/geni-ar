@@ -1,31 +1,45 @@
+# Install GENI Account Request System
 
-1. Load the database schema.
+# Install dependencies
 
-   psql -U <USER> [-h <HOST>] <DBNAME> \
-        -f /usr/share/geni-ar/db/postgresql/schema.sql
+* Install LDAP (see INSTALL-LDAP.md)
+* Install Shibboleth (see INSTALL-shibboleth.md)
+* Install PostgreSQL
 
-2. If /etc/geni-ar/settings.php does not exist copy it from
-   /usr/share/geni-ch/etc/settings.php. Edit /etc/geni-ar/settings.php
-   to reflect the local configuration.
+# Load the database schema.
 
-3. Optionally create a password file for the protected area using
-   htpasswd.
+```
+psql -U <USER> [-h <HOST>] <DBNAME> \
+     -f /usr/share/geni-ar/db/postgresql/schema.sql
+```
 
-   For example, to create a new password file:
+# Configure geni-ar
 
-       htpasswd -c /etc/geni-ar/passwords alice
+1. If `/etc/geni-ar/settings.php` does not exist copy it from
+   `/usr/share/geni-ar/etc/settings.php`
 
-   To add an entry:
+    ```
+    sudo cp /usr/share/geni-ar/etc/settings.php /etc/geni-ar/settings.php
+    ```
 
-       htpasswd /etc/geni-ar/passwords bob
+2. Edit /etc/geni-ar/settings.php to reflect the local configuration
 
-   See the apache documentation for more info.
+    What needs to be edited?
 
-4. Optionally set favicon for the web server to the geni-ar favicon.
+# Add users for the administrative area
 
-   ln -s /usr/share/geni-ar/www/favicon.ico /var/www/favicon.ico
+Create a password file for the protected area using `/usr/bin/htpasswd`.
 
-5. Load the following database update:
+To create the first entry, use the `-c` flag:
 
-   psql -U <USER> [-h <HOST>] <DBNAME> \
-        -a -f /usr/share/geni-ar/db/postgresql/update-1.sql
+```
+htpasswd -c /etc/geni-ar/passwords alice
+```
+
+To add another entry:
+
+```
+htpasswd /etc/geni-ar/passwords bob
+```
+
+See the htpasswd man page for more info.
