@@ -4,7 +4,7 @@
 
 * Install LDAP (see INSTALL-LDAP.md)
 * Install Shibboleth (see INSTALL-shibboleth.md)
-* Install PostgreSQL
+* Install PostgreSQL (see INSTALL-postgresql.md)
 
 # Install geni-ar system
 
