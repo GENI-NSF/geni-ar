@@ -22,12 +22,19 @@ sudo /usr/bin/postgresql-setup initdb
 
 # Configure to start automatically
 
+Configure PostgreSQL to start automatically when the host reboots by
+executing these commands:
+
 ```
 sudo /usr/bin/systemctl enable postgresql
 sudo /usr/bin/systemctl start postgresql
 ```
 
 # Set postgres user password
+
+Set the database superuser password using the following command. Be sure
+to replace `SOME_PASSWORD` with a password of your choice. Remember or
+record this password, you may need it in the future.
 
 ```
 sudo -u postgres /usr/bin/psql \
@@ -39,6 +46,10 @@ sudo -u postgres /usr/bin/psql \
 _Remember the user name and password, you will need them
 for `/etc/geni-ar/settings.php`._
 
+Replace `$DB_USER` and `$DB_PASSWORD` below with values of your choosing.
+A good value for `$DB_USER` is "accreq" (short for ACCount REQuest). Any
+valid username is fine.
+
 ```
 sudo -u postgres createuser -S -D -R $DB_USER
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_PASSWORD'"
@@ -47,6 +58,10 @@ sudo -u postgres psql -c "alter user $DB_USER with password '$DB_PASSWORD'"
 # Create geni-ar database
 
 _Remember the database name, you will need it for `/etc/geni-ar/settings.php`._
+
+Replace `$DB_DATABASE` below with a value of your choosing.
+A good value for `$DB_DATABASE` is "accreq" (short for ACCount REQuest). Any
+valid database name is fine.
 
 ```
 sudo -u postgres createdb $DB_DATABASE
