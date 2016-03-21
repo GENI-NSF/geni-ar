@@ -27,33 +27,85 @@ sudo /usr/bin/systemctl enable postgresql
 sudo /usr/bin/systemctl start postgresql
 ```
 
-# To Do
-
-Here's more from the `geni-ch/templates/install_postgresql.sh` script:
+# Set postgres user password
 
 ```
-POSTGRESQL_DIR=/var/lib/pgsql/data
-DB_HOST=localhost
-DB_USER=portal
-DB_DATABASE=portal
-DB_ADMIN_PASSWORD=postgres
-DB_PASSWORD=portal
-
 sudo -u postgres /usr/bin/psql \
-    -c "alter user postgres with password '$DB_ADMIN_PASSWORD'"
+    -c "alter user postgres with password 'SOME_PASSWORD'"
+```
 
-sudo sed -i -e "\$alisten_addresses='*'" $POSTGRESQL_DIR/postgresql.conf
-sudo sed -i -e "s/^host/#host/g" $POSTGRESQL_DIR/pg_hba.conf
-sudo sed -i -e "\$ahost all all 0.0.0.0/0 md5" $POSTGRESQL_DIR/pg_hba.conf
-sudo sed -i -e "\$ahost all all ::1/128 md5" $POSTGRESQL_DIR/pg_hba.conf
+# Create geni-ar user
 
-sudo systemctl restart postgresql.service
+_Remember the user name and password, you will need them
+for `/etc/geni-ar/settings.php`._
 
+```
 sudo -u postgres createuser -S -D -R $DB_USER
 sudo -u postgres psql -c "alter user $DB_USER with password '$DB_PASSWORD'"
+```
+
+# Create geni-ar database
+
+_Remember the database name, you will need it for `/etc/geni-ar/settings.php`._
+
+```
 sudo -u postgres createdb $DB_DATABASE
-echo "$DB_HOST:*:$DB_DATABASE:$DB_USER:$DB_PASSWORD"  > ~/.pgpass
-chmod 0600 ~/.pgpass
-touch ~/.psql_history
-PSQL="psql -U $DB_USER -h $DB_HOST $DB_DATABASE"
+```
+
+# Configure database access via password login
+
+Edit the file `/var/lib/pgsql/data/pg_hba.conf` to replace "ident"
+authentication with "md5" authentication.
+
+Change the two lines ending with "ident":
+
+```
+host    all             all             127.0.0.1/32            ident
+host    all             all             ::1/128                 ident
+```
+
+by replacing "ident" with "md5" so that they look like this:
+
+```
+host    all             all             127.0.0.1/32            md5
+host    all             all             ::1/128                 md5
+```
+
+Then restart the database server
+
+```
+sudo /usr/bin/systemctl restart postgresql
+```
+
+# Test database connection
+
+```
+psql -U $DB_USER -h $DB_HOST $DB_DATABASE
+```
+
+# [Optional] Create a `.pgpass` file
+
+_This step is optional._
+
+To make it easier to log in to the database manually it is possible to
+store the password(s) in a file so that they don't need to be typed
+each time. The file is `$HOME/.pgpass`. Each line of `$HOME/.pgpass`
+has the following general form:
+
+```
+Host:*:Database:User:Password
+```
+
+For instance, to access the database "example" on host "localhost" with
+username "scott" and password "tiger" the entry would look like this:
+
+```
+localhost:*:example:scott:tiger
+```
+
+This file must have restrictive permissions to protect the entries.
+To set appropriate permissions:
+
+```
+chmod 0600 $HOME/.pgpass
 ```
