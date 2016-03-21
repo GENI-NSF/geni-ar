@@ -39,6 +39,10 @@ nobase_dist_pkgdata_DATA = \
 	etc/settings.php \
 	etc/user-email.txt \
 	etc/tutorial-email.txt \
+	ldap/backend.gpolab.bbn.com.ldif \
+	ldap/eduperson.ldif \
+	ldap/frontend.gpolab.bbn.com.ldif \
+	ldap/users.gpolab.bbn.com.ldif \
 	lib/php/ar_constants.php \
 	lib/php/db_utils.php \
 	lib/php/email_utils.php \
