@@ -94,9 +94,27 @@ sudo /usr/bin/systemctl restart postgresql
 
 # Test database connection
 
+Use the command `/usr/bin/psql` to test access to the database. The
+general form of the command is:
+
 ```
 psql -U $DB_USER -h $DB_HOST $DB_DATABASE
 ```
+
+For example, a session might look like this (for user 'accreq',
+host 'localhost', and database 'accreq'):
+
+```
+$ psql -U accreq -h localhost accreq
+Password for user accreq:
+psql (9.2.15)
+Type "help" for help.
+
+accreq=> \q
+$
+```
+
+Use the psql command "\q" to quit the session.
 
 # [Optional] Create a `.pgpass` file
 
