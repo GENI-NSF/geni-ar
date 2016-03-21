@@ -1,0 +1,308 @@
+#----------------------------------------------------------------------
+# A word about passwords. The passwords are prefixed with {SHA}, and
+# are base64 encoded binary sha digests of the plain text password. To
+# generate these passwords in python:
+#
+# >>> import sha
+# >>> from base64 import b64encode
+# >>> ctx = sha.new('geni')
+# >>> b64encode(ctx.digest())
+# 'LK4b/5Efbj7luqt2YhV275eDcMQ='
+# >>> 
+#
+#----------------------------------------------------------------------
+# More about passwords. There is an easier way...
+#
+# Take the output from "openssl passwd -1" and enter it into LDAP
+# like this:
+#
+# userPassword: {crypt}TheOutputGoesHere
+#
+#----------------------------------------------------------------------
+
+dn: uid=tmitchel,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: tmitchel
+sn: Mitchell
+givenName: Tom
+cn: Tom Mitchell
+displayName: Tom Mitchell
+# default password is geni
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: tmitchel@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=ahelsing,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: ahelsing
+sn: Helsinger
+givenName: Aaron
+cn: Aaron Helsinger
+displayName: Aaron Helsinger
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: ahelsing@geni.net
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=sedwards,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: sedwards
+sn: Edwards
+givenName: Sarah
+cn: Sarah Edwards
+displayName: Sarah Edwards
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: sedwards@geni.net
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=mbrinn,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: mbrinn
+sn: Brinn
+givenName: Marshall
+cn: Marshall Brinn
+displayName: Marshall Brinn
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: mbrinn@geni.net
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=mberman,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: mberman
+sn: Berman
+givenName: Mark
+cn: Mark Berman
+displayName: Mark Berman
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: mberman@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=nriga,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: nriga
+sn: Riga
+givenName: Niky
+cn: Niky Riga
+displayName: Niky Riga
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: nriga@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=celliott,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: celliott
+sn: Elliott
+givenName: Chip
+cn: Chip Elliott
+displayName: Chip Elliott
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: celliott@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=jachin,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: jachin
+sn: Achin
+givenName: Joanne
+cn: Joanne Achin
+displayName: Joanne Achin
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: jachin@bbn.com
+telephoneNumber: 617-873-8132
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=johren,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: johren
+sn: Ohren
+givenName: Jeanne
+cn: Jeanne Ohren
+displayName: Jeanne Ohren
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: johren@bbn.com
+telephoneNumber: 617-873-8132
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=vthomas,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: vthomas
+sn: Thomas
+givenName: Vic
+cn: Vic Thomas
+displayName: Vic Thomas
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: vthomas@bbn.com
+telephoneNumber: 952-545-5721
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=bujcich,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: bujcich
+sn: Ujcich
+givenName: Ben
+cn: Ben Ujcich
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: bujcich@bbn.com
+telephoneNumber: 617-873-3200
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=tupty,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: tupty
+sn: Upthegrove
+givenName: Tim
+cn: Tim Upthegrove
+displayName: Tim Upthegrove
+# default password is geni
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: tupty@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=hdempsey,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: hdempsey
+sn: Dempsey
+givenName: Heidi
+cn: Heidi Dempsey
+displayName: Heidi Dempsey
+# default password is geni
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: hdempsey@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=lnevers,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: lnevers
+sn: Nevers
+givenName: Luisa
+cn: Luisa Nevers
+displayName: Luisa Nevers
+# default password is geni
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: lnevers@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=asydney,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: asydney
+sn: Sydney
+givenName: Ali
+cn: Ali Sydney
+displayName: Ali Sydney
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: asydney@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=inki,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: inki
+sn: Riga
+givenName: Niky
+cn: Niky Riga
+displayName: Niky Riga
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: nriga@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=rrhain,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: rrhain
+sn: Hain
+givenName: Regina
+cn: Regina Hain
+displayName: Regina Hain
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: rrhain@bbn.com
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=kdownie,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: kdownie
+sn: Downie
+givenName: Keith
+cn: Keith Downie
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: kdownie@bbn.com
+telephoneNumber: 617-873-3200
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=bthapa,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: bthapa
+sn: Thapa
+givenName: Bishal
+cn: Bishal Thapa
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: bthapa@bbn.com
+telephoneNumber: 617-873-3200
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
+
+dn: uid=chmeyer,ou=people,dc=gpolab,dc=bbn,dc=com
+objectClass: inetOrgPerson
+objectClass: eduPerson
+uid: chmeyer
+sn: Meyer
+givenName: Charlie
+cn: Charlie Meyer
+userPassword: {SHA}LK4b/5Efbj7luqt2YhV275eDcMQ=
+mail: chmeyer@bbn.com
+telephoneNumber: 617-873-3200
+eduPersonAffiliation: member
+eduPersonAffiliation: staff
+o: GPO Lab
