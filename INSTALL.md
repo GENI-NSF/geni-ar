@@ -36,7 +36,20 @@ psql -U <USER> [-h <HOST>] <DBNAME> \
 
 2. Edit `/etc/geni-ar/settings.php` to reflect the local configuration
 
-    What needs to be edited?
+    The following settings _must_ be changed to appropriate values:
+
+    | Setting | Description |
+    | ------- | ----------- |
+    | $db_dsn | Database connection string, see documentation in file for format |
+    | $idp_approval_email | Destination email address for new request notification |
+    | $idp_leads_email | Destination email address for policy board |
+    | $idp_audit_email | Destination email address for audit/log messages |
+    | $acct_manager_url | URL of the management home page, based on apache configuration |
+    | $base_dn | Base LDAP distinguished name for searches |
+    | $user_dn | Base user DN to append to new user IDs |
+    | $ldaprdn | Administrative LDAP user for adding/modifying LDAP entries |
+    | $ldappass | Password for Administrative LDAP user |
+
 
 # Add account administrators
 
