@@ -26,8 +26,15 @@ apache2.conf: $(srcdir)/apache2.conf.in
 lib/php/ar_constants.php: $(srcdir)/lib/php/ar_constants.php.in
 lib/php/email_utils.php: $(srcdir)/lib/php/email_utils.php.in
 
-EXTRA_DIST = apache2.conf.in
-CLEANFILES = apache2.conf
+EXTRA_DIST = \
+	apache2.conf.in \
+	lib/php/ar_constants.php.in \
+	lib/php/email_utils.php.in
+
+CLEANFILES = \
+	apache2.conf \
+	lib/php/ar_constants.php \
+	lib/php/email_utils.php
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
