@@ -6,6 +6,10 @@
   ([#138](https://github.com/GENI-NSF/geni-ar/issues/138))
 * Notice pending requests in an email-confirmed state
   ([#141](https://github.com/GENI-NSF/geni-ar/issues/141))
+* Add CentOS 7 installation docs
+  ([#143](https://github.com/GENI-NSF/geni-ar/issues/143))
+* Add RPM packaging
+  ([#144](https://github.com/GENI-NSF/geni-ar/issues/144))
 
 # [Release 1.6](https://github.com/GENI-NSF/geni-ar/milestones/1.6)
 
