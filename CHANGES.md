@@ -1,5 +1,7 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
+
 # [Release 1.7](https://github.com/GENI-NSF/geni-ar/milestones/1.7)
 
 * Reduce number of admin emails
