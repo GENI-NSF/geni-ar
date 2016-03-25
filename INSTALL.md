@@ -6,6 +6,18 @@
 * Install Shibboleth (see INSTALL-shibboleth.md)
 * Install PostgreSQL (see INSTALL-postgresql.md)
 
+# Install packages
+
+_These should be handled by a package install_
+
+_Note: run these two commands separately, the second depends on the
+first._
+
+```
+sudo yum install epel-release
+sudo yum install php php-pear-MDB2-Driver-pgsql
+```
+
 # Install geni-ar system
 
 If geni-ar is not available from a package, install manually:
