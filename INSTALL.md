@@ -25,7 +25,7 @@ If geni-ar is not available from a package, install manually:
 ```
 cd /path/to/geni-ar
 ./autogen.sh
-./configure
+./configure --prefix=/usr --sysconfdir=/etc --bindir=/usr/local/bin --sbindir=/usr/local/sbin
 make
 sudo make install
 ```
