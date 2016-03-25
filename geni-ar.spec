@@ -33,6 +33,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_bindir}/geni-add-log
 %{_bindir}/geni-convert-logs
 %{_datadir}/%{name}/apache2.conf
+%{_datadir}/%{name}/apache-2.4.conf
 %{_datadir}/%{name}/db/postgresql/schema.sql
 %{_datadir}/%{name}/db/postgresql/update-1.sql
 %{_datadir}/%{name}/etc/confirm-email.txt
