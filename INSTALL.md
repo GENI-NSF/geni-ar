@@ -87,7 +87,14 @@ See the htpasswd man page for more info.
 
 # Configure web server
 
-_TBD_
+Make geni-ar available via the web server. Edit `/etc/httpd/conf.d/ssl.conf`
+to add the following line at the end of and inside the VirtualHost block.
+This statement should just after the lines that were added for the
+Shibboleth installation described in INSTALL-shibboleth.md.
+
+```
+Include /usr/share/geni-ar/apache-2.4.conf
+```
 
 # Test
 
