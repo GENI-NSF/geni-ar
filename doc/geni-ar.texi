@@ -1,0 +1,230 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename geni-ar.info
+@settitle The GENI Account Request System
+@c %**end of header
+
+@include version.texi
+
+@c combine the program index into the concept index
+@syncodeindex pg cp
+
+@copying
+Copyright @copyright{} 2016 Raytheon BBN Technologies
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and/or hardware specification (the "Work") to
+deal in the Work without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Work, and to permit persons to whom the Work
+is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Work.
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+IN THE WORK.
+@end copying
+
+@titlepage
+@title The GENI Account Request System
+@subtitle Version @value{VERSION}
+@subtitle @value{UPDATED-MONTH}
+@author Tom Mitchell
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@c Output the table of the contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top GENI Account Requests
+
+@insertcopying
+@end ifnottex
+
+@menu
+* Introduction::    Introduction.
+* Installation::     Installation.
+* Operations::       Operator's guide.
+* System Administration:: Administrator's guide.
+* Index::            Complete index.
+@end menu
+
+
+@node Introduction
+@chapter Introduction
+
+@cindex introduction
+@cindex PHP
+@cindex Python
+
+The GENI Account Request system allows GENI users to request accounts
+on the GENI identity provider and to recover or change their passwords.
+
+@node Installation
+@chapter Installation
+
+@cindex installation
+
+The installation guide is provided with the source distribution in the
+file @code{INSTALL.md}. Additional installation guides are also included
+in the source distribution for installation and configuration of software
+dependencies like Shibboleth and LDAP. Please see the source distribution
+for complete installation instructions.
+
+Installation is currently only supported on CentOS 7. It should be possible
+to port the software to other Linux distributions like Ubuntu.
+
+
+@node Operations
+@chapter Operations
+
+@section Introduction
+
+@emph{This section unintentionally left blank.}
+
+@image{UI,6in}
+
+@section Handling Account Requests
+
+@emph{This section unintentionally left blank.}
+
+System sends email. Email has an approve link if the account request looks
+good. Email has a link to handle the request if the user needs to be
+contacted about their request. This is typically because the email address
+is a public email system (e.g. GMail, HotMail, qq.com, etc.). Or if the
+account request lacks key information, like a valid purpose. Or if the
+school or company is new to GENI and they will need a project lead.
+
+@section Example Request 1
+
+This is a de-identified version of an actual account request.
+
+@example
+
+first_name: alfred
+last_name: neuman
+email: alfredneuman98@@gmail.com
+organization: testoncloud
+title: Linux Admin
+reason: Tesing about cloud.
+
+@end example
+
+This account request lacks several pieces of important information:
+@enumerate
+@item A school or business email address
+@item A valid organization
+@item A clear reason for using GENI
+@item Possibly a project lead, but there is too little information to know
+@end enumerate
+
+Here is a reply to this applicant which enumerates the things they need
+to do to get a GENI account:
+
+@example
+
+Dear alfred,
+
+Thank you for your interest in GENI. In order to grant access we
+will need additional information:
+
+1. Please submit a new account request using your school or
+   work email address. If for some reason you are unable to do
+   this, please write us back to explain the circumstances.
+
+2. Please enter your school or company name in the organization field
+
+3. Please provide more information about your proposed use of GENI.
+   "Tesing about cloud" is too vague.
+
+3. Please be aware that all research on GENI happens in a project.
+   If you do not qualify as a GENI project lead you will need a GENI
+   project lead at your school or company who can oversee your work.
+   More information about GENI project leads is available at
+   http://groups.geni.net/geni/wiki/GENIConcepts
+
+Thanks,
+The GENI Project Office
+
+@end example
+
+@section Example Request 2
+
+This is a de-identified version of an actual account request. This is a very
+common type of request. It appears to be a student at a University who
+wants to use GENI for academic work. The only question is whether the
+University already has a project lead to create a project for this user.
+
+How do you determine if a University already has users?
+
+How do you know if there is a project lead at a University?
+
+@example
+
+first_name: Alfred
+last_name: Neuman
+email: aneuman1@@example.edu
+organization: Example University
+title: Video transmission in software defined networking
+reason: I would like to test the behavior that has streaming
+        video from a CCTV camera on a network sdn
+
+@end example
+
+Looks good. If this is a new University, they will need a project lead.
+
+How to tell if this is a new University? Click on the "Approved Reqs" tab.
+Then use the "Search:" box to type in the university email address
+(``example.edu''). If there are already accounts for this university or
+company they will show up in the search.
+
+@example
+
+Dear Alfred,
+
+Thank you for your interest in GENI. In order to get an account you
+need to have a GENI project lead at your school. Perhaps your advisor
+is a good person to ask. Have them request a GENI account. Once we
+have a professor at your school approved as a GENI project lead, we
+will be able to approve your account so that you can use GENI.
+
+More information about GENI Project Leads is available at
+http://groups.geni.net/geni/wiki/GENIConcepts.
+
+Thanks,
+The GENI Project Office
+
+@end example
+
+@node System Administration
+@chapter System Administration
+
+@section Introduction
+
+@emph{This section unintentionally left blank.}
+
+@section Log files
+
+@subsection Apache log file
+@cindex log files
+@cindex Apache
+
+@emph{This section unintentionally left blank.}
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye
