@@ -13,7 +13,7 @@
 Copyright @copyright{} 2016 Raytheon BBN Technologies
 
 Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and/or hardware specification (the "Work") to
+a copy of this software and/or hardware specification (the ``Work'') to
 deal in the Work without restriction, including without limitation the
 rights to use, copy, modify, merge, publish, distribute, sublicense,
 and/or sell copies of the Work, and to permit persons to whom the Work
@@ -22,7 +22,7 @@ is furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Work.
 
-THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+THE WORK IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND, EXPRESS
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
@@ -93,7 +93,16 @@ to port the software to other Linux distributions like Ubuntu.
 
 @emph{This section unintentionally left blank.}
 
+@c Note: do not include the image extension, it gets figured out
+@c       automatically. This uses UI.png for the image.
 @image{UI,6in}
+
+Things to discuss:
+@enumerate
+@item Whitelisted schools and companies
+@item Overview of the account request flow
+@item Menu choices -- email requester
+@end enumerate
 
 @section Handling Account Requests
 
@@ -146,7 +155,7 @@ will need additional information:
 2. Please enter your school or company name in the organization field
 
 3. Please provide more information about your proposed use of GENI.
-   "Tesing about cloud" is too vague.
+   ``Tesing about cloud'' is too vague.
 
 3. Please be aware that all research on GENI happens in a project.
    If you do not qualify as a GENI project lead you will need a GENI
@@ -184,8 +193,8 @@ reason: I would like to test the behavior that has streaming
 
 Looks good. If this is a new University, they will need a project lead.
 
-How to tell if this is a new University? Click on the "Approved Reqs" tab.
-Then use the "Search:" box to type in the university email address
+How to tell if this is a new University? Click on the ``Approved Reqs'' tab.
+Then use the ``Search:'' box to type in the university email address
 (``example.edu''). If there are already accounts for this university or
 company they will show up in the search.
 
