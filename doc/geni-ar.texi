@@ -216,6 +216,32 @@ The GENI Project Office
 
 @end example
 
+@section Example Request 2
+
+@example
+
+first_name: Alfred
+last_name: Neuman
+email: neumy97@hotmail.com
+organization: University of Illnois at Urbana Champaign
+title: Student Researcher
+reason: Research
+
+@end example
+
+Things to note:
+@enumerate
+@item email is an anonymous mail service, hotmail
+@item organization is a US institution that may be a member of InCommon
+@end enumerate
+
+Where to check for InCommon membership?
+
+Just because they're in InCommon doesn't mean they don't need an account.
+Search for existing accounts from the same school, or search on the portal
+for existing accounts where the eppn is from the school, not the GENI IdP.
+
+
 @node System Administration
 @chapter System Administration
 
