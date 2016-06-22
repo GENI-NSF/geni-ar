@@ -2,6 +2,9 @@
 @c %**start of header
 @setfilename geni-ar.info
 @settitle The GENI Account Request System
+
+@c indent the first paragraphs like the others
+@firstparagraphindent insert
 @c %**end of header
 
 @include version.texi
@@ -66,7 +69,6 @@ IN THE WORK.
 
 @cindex introduction
 @cindex PHP
-@cindex Python
 
 The GENI Account Request system allows GENI users to request accounts
 on the GENI identity provider and to recover or change their passwords.
@@ -89,33 +91,231 @@ to port the software to other Linux distributions like Ubuntu.
 @node Operations
 @chapter Operations
 
-@section Introduction
+@section Handling Account Requests
 
-@emph{This section unintentionally left blank.}
+Operators are notified by email when an account request has
+been confirmed by the requester.
+The email notification has an approve link to an expedited approval
+page. This link can be used if the account request contains enough
+information to approve it. The email notification contains a second
+link to allow the operator to access the full account request system
+to handle the request in a variety of ways.
 
+When an account request arrives, it should:
+
+@itemize
+@item contain a school or company email address. The use of public email
+systems like GMail, HotMail, qq.com, Yahoo, etc. is discouraged.
+@item contain a recognizable organization, usually a school or company
+name. Organizations like `organization' or similar are discouraged.
+@item contain a reasonable reason for using GENI. Sometimes when a
+classroom of students is requesting access they don't know what to enter,
+so flexibility on this field is advisable. But in normal cases, look
+for a reasonable research purpose.
+@item contain a first and last name. Sometimes students get clever and
+enter an obviously fake name like `spongebob' or `32'. These account
+requests should be denied.
+@end itemize
+
+Typically we write back to requesters for the following reasons:
+
+@enumerate
+@item They have used a public or anonymous email service
+@item Their organization is wrong or cannot be found
+@item Their reason for using GENI is too vague or unclear
+@item Their school or company does not already have a project lead
+@end enumerate
+
+@section Account Request Handling Options
+
+Account Requests are displayed with a drop-down menu of applicable
+options for handling the request. At each stage in the processing,
+until a request is ultimately approved or denied, this drop-down
+menu will appear.
+
+@cindex Approve
+@cindex Options, Approve
+@subsection Approve
+Approves the account request and emails the requester a standard email
+explaining how to use their account.
+
+After approval the request will appear on the ``Approved Reqs'' tab.
+
+@anchor {Email Requester}
+@cindex Email Requester
+@cindex Options, Email Requester
+@subsection Email Requester
+Takes the operator to a page containing a template email. The operator
+can edit the email before it is sent. The email is sent to the requester
+with the @samp{Reply-To} field set to @email{help@@geni.net} so
+that the requester can reply with additional information or questions.
+
+After emailing the requester, the request will apear on the ``Waiting
+for Requester Response'' tab.
+
+@anchor{Email Leads}
+@cindex Email Leads
+@cindex Options, Email Leads
+@subsection Email Leads
+Takes the operator to a page containing a template email. The operator
+can edit the email before it is sent. The email is sent to the
+GENI Project Leads
+with the @samp{Reply-To} field set to @email{help@@geni.net}.
+This option is typically used to ask the leads if a request should be
+approved or if they require additional information before making a
+decision.
+
+After emailing the leads, the request will appear on the ``Waiting for Leads''
+tab.
+
+@cindex Add Note
+@cindex Options, Add Note
+@subsection Add Note
+
+It is sometimes useful to attach a note to an account request. This can
+remind an operator of something later, or server to communicate information
+to other operators. For instance, if a requester's school does not yet
+have a project lead and they are asked to find one, it can be useful
+to add a note saying, ``waiting for project lead'' so operators know they
+should not approve the request until there is a project lead for this
+requester.
+
+After adding a note to a request the note is visible to the far right
+of the account request. Scroll right to see it.
+
+@cindex Deny
+@cindex Options, Deny
+@subsection Deny
+
+If it is determined that a requester should not be granted a request,
+the request should be denied using the @samp{Deny} option. Denying a
+request cannot be undone by the web UI.
+
+After denying a request the request will appear on the
+@samp{Denied Reqs} tab.
+
+@cindex Confirm Requester
+@cindex Options, Confirm Requester
+@subsection Confirm Requester
+This option is obsolete. Please do not use ``Confirm Requester''.
+
+
+
+@section Operator Tabs
+
+The user interface is divided into tabs. Each tab
+displays requests in that state. For instance the ``Email Confirmed''
+tab displays account requests that have had their email address
+confirmed, but have not been processed by an operator. The use and purpose
+of each tab is explained below.
+
+@float Figure,{operator tabs}
 @c Note: do not include the image extension, it gets figured out
 @c       automatically. This uses UI.png for the image.
 @image{UI,6in}
+@caption{Operator tabs}
+@end float
 
-Things to discuss:
-@enumerate
-@item Whitelisted schools and companies
-@item Overview of the account request flow
-@item Menu choices -- email requester
-@end enumerate
+@anchor {Current Reqs}
+@cindex Current Reqs
+@cindex Tabs, Current Reqs
+@subsection Current Reqs
 
-@section Handling Account Requests
+Requests on the @samp{Current Reqs} tab have not yet been confirmed
+by the requester. An email is automatically sent when an account
+request is received. If a request stays in this state for a week or more
+it is likely that:
 
-@emph{This section unintentionally left blank.}
+@itemize
+@item The email went to the requester's junk email folder
+@item The requester mistyped their email address
+@item The requester changed their mind about wanting a GENI account
+@end itemize
 
-System sends email. Email has an approve link if the account request looks
-good. Email has a link to handle the request if the user needs to be
-contacted about their request. This is typically because the email address
-is a public email system (e.g. GMail, HotMail, qq.com, etc.). Or if the
-account request lacks key information, like a valid purpose. Or if the
-school or company is new to GENI and they will need a project lead.
+This tab can be useful when researching the state of an account
+request. Sometimes a requester will ask why their request has not
+been processed. It may be that it is stuck waiting for their confirmation.
+If that is the case, verify that the email address is correct on the
+account request. If it is not, ask the requester to submit a new
+account request with the correct email address.
 
-@section Example Request 1
+In general, no action is required by operators for account requests
+on this tab.
+
+@cindex Email Confirmed
+@cindex Tabs, Email Confirmed
+@subsection Email Confirmed
+
+This tab displays account requests that have had their email addressed
+confirmed by the requester. Requests on this tab have not yet been
+processed by an operator.
+Each request in the ``Email Confirmed'' state should be processed by
+an operator using the dropdown menu. Here is what each option will
+do for account requests:
+
+If the request looks good, it can
+be approved using the ``Approve'' option. If more information is needed
+from the requester, an email can be sent using the ``Email Requester''
+option. If the GENI Project Leads should be consulted about the request
+they can be contacted using the ``Email Leads'' option.
+
+@cindex Waiting for Confirmation
+@cindex Tabs, Waiting for Confirmation
+@subsection Waiting for Confirmation
+
+This tab is empty. In the future it will display the account
+requests described in @ref{Current Reqs}.
+See @url{https://github.com/GENI-NSF/geni-ar/issues/148}
+
+@cindex Waiting for Leads
+@cindex Tabs, Waiting for Leads
+@subsection Waiting for Leads
+
+Account reqeusts on the @samp{Waiting for Leads} tab are pending
+input from the GENI Project Leads. An operator has used the
+@samp{Email Leads} option to ask the leads for their input.
+
+@xref{Email Leads}
+
+@cindex Waiting for Requester Response
+@cindex Tabs, Waiting for Requester Response
+@subsection Waiting for Requester Response
+
+Account requests listed on this tab are pending further input from the
+requester. An operator has used the @samp{Email Requester} option to
+contact the requester to request additional information. If a user
+writes back with more information, the account request can be
+approved or denied from here. It is also possible to use the
+@samp{Email Requester} option again to email the requester for more
+information.
+
+@xref{Email Requester}
+
+@cindex Approved Reqs
+@cindex Tabs, Approved Reqs
+@subsection Approved Reqs
+
+The @samp{Approved Reqs} tab lists all the account requests that
+have been approved and are active. No action can be taken on these
+account requests because they have already been processed. This
+tab can be used to see if there are other existing accounts for
+this school or company.
+
+@cindex Denied Reqs
+@cindex Tabs, Denied Reqs
+@subsection Denied Reqs
+
+The @samp{Denied Reqs} tab lists all the account requests that have been
+denied. This tab can be useful to locate previous requests from a
+requester who is particularly persistent.
+
+@cindex whitelist
+@section Email Domain Whitelist
+
+@emph{The email domain whitelist will be described in the future.}
+
+@section Example Requests
+@subsection Example Request 1
 
 This is a de-identified version of an actual account request.
 
@@ -168,7 +368,7 @@ The GENI Project Office
 
 @end example
 
-@section Example Request 2
+@subsection Example Request 2
 
 This is a de-identified version of an actual account request. This is a very
 common type of request. It appears to be a student at a University who
@@ -216,13 +416,13 @@ The GENI Project Office
 
 @end example
 
-@section Example Request 2
+@subsection Example Request 2
 
 @example
 
 first_name: Alfred
 last_name: Neuman
-email: neumy97@hotmail.com
+email: neumy97@@hotmail.com
 organization: University of Illnois at Urbana Champaign
 title: Student Researcher
 reason: Research
