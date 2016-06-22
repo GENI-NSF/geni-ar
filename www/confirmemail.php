@@ -39,21 +39,21 @@ function confirm_email($nonce, $db_id) {
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE];
         $email = $result['email'];
-        
+
         $sql = "UPDATE idp_account_request SET request_state='EMAIL_CONFIRMED'"
              . " where email = " . $db_conn->quote($email, 'text')
              . " and (request_state='REQUESTED')";
         $update_result = db_execute_statement($sql);
         if ($update_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
-            delete_confirmation($db_id, $nonce); 
+            delete_confirmation($db_id, $nonce);
             return $email;
         } else {
-            error_log("Failed to update user account status: " . 
+            error_log("Failed to update user account status: " .
                       $update_result[RESPONSE_ARGUMENT::OUTPUT]);
             return $email;
         }
     } else {
-        error_log("Error getting email confirm record: " 
+        error_log("Error getting email confirm record: "
                  . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
         return "";
     }
@@ -63,7 +63,7 @@ function confirm_email($nonce, $db_id) {
 function check_whitelist($user_email) {
     $db_conn = db_conn();
     $institution = get_domain($user_email);
-    $sql = "SELECT * from idp_whitelist " 
+    $sql = "SELECT * from idp_whitelist "
     . "where institution=" . $db_conn->quote($institution, 'text');
     $result = db_fetch_row($sql, "get from idp_whitelist");
 
@@ -73,7 +73,7 @@ function check_whitelist($user_email) {
         error_log("Failed to lookup in idp_whitelist: "
                   . $result[RESPONSE_ARGUMENT::OUTPUT]);
         return false;
-    }               
+    }
 }
 
 function accept_user($user_email) {
@@ -84,7 +84,7 @@ function accept_user($user_email) {
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
     } else {
-        error_log("Error getting user record: " 
+        error_log("Error getting user record: "
                   . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
         return false;
     }
@@ -118,20 +118,20 @@ function accept_user($user_email) {
             return false;
         }
 
-        $sql = "UPDATE idp_account_request SET request_state='APPROVED', " 
+        $sql = "UPDATE idp_account_request SET request_state='APPROVED', "
              . "created_ts=now() at time zone 'utc' where id ='" . $id . '\'';
         $update_result = db_execute_statement($sql);
 
         if ($update_result[RESPONSE_ARGUMENT::CODE] != 0) {
-            error_log("Error updating user record: " 
-                      . $update_result[RESPONSE_ARGUMENT::OUTPUT]); 
+            error_log("Error updating user record: "
+                      . $update_result[RESPONSE_ARGUMENT::OUTPUT]);
         }
 
         send_admin_success_email($result);
         send_user_success_email($user_email, $result['username_requested'], $result['first_name']);
 
         return true;
-    } 
+    }
 }
 
 function send_user_success_email($user_email, $uid, $firstname) {
@@ -225,7 +225,7 @@ function send_admin_confirmation_email($user_email) {
     $body .= "$server_host.\n\n";
 
     $db_conn = db_conn();
-    $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text');  
+    $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text');
 
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
@@ -263,28 +263,28 @@ function send_admin_confirmation_email($user_email) {
 <img src="geni.png" width="88" height="75" alt="GENI"/>
 </a>
 
-<?php 
+<?php
 if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
     $nonce = $_REQUEST['n'];
     $db_id = $_REQUEST['id'];
 
     $email = confirm_email($nonce, $db_id);
 
-    if($email != "") { 
+    if($email != "") {
         if (check_whitelist($email)) {
             if (accept_user($email)) {
                 print "<h2>Account successfully created</h2>";
                 print "<a href='https://portal.geni.net'>Login to GENI</a>";
             } else {
                 send_admin_confirmation_email($email);
-                print "<h2>Email address $email successfully confrimed</h2>";
+                print "<h2>Email address $email successfully confirmed</h2>";
                 print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
             }
         } else {
             send_admin_confirmation_email($email);
-            print "<h2>Email address $email successfully confrimed</h2>";
+            print "<h2>Email address $email successfully confirmed</h2>";
             print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
-        }  
+        }
     } else {
         print "<h2>Error</h2>";
         print "<p>Could not confirm email. ";
@@ -303,7 +303,7 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
 </div>
 
 <div id="footer">
-Need help? Questions? Email 
+Need help? Questions? Email
 <a href="mailto:help@geni.net">GENI Help</a>.
 <br>
 <a href="http://www.geni.net/">GENI</a>
