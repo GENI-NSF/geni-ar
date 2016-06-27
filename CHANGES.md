@@ -1,11 +1,20 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
+
+* Add initial system documentation
+  ([#152](https://github.com/GENI-NSF/geni-ar/issues/152))
+
 # [Release 1.7](https://github.com/GENI-NSF/geni-ar/milestones/1.7)
 
 * Reduce number of admin emails
   ([#138](https://github.com/GENI-NSF/geni-ar/issues/138))
 * Notice pending requests in an email-confirmed state
   ([#141](https://github.com/GENI-NSF/geni-ar/issues/141))
+* Add CentOS 7 installation docs
+  ([#143](https://github.com/GENI-NSF/geni-ar/issues/143))
+* Add RPM packaging
+  ([#144](https://github.com/GENI-NSF/geni-ar/issues/144))
 
 # [Release 1.6](https://github.com/GENI-NSF/geni-ar/milestones/1.6)
 
