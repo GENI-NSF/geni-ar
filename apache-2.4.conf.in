@@ -1,0 +1,18 @@
+Alias /geni @pkgdatadir@/www
+<Directory @pkgdatadir@/www>
+  Options MultiViews
+  Require all granted
+  php_value include_path ".:/usr/share/pear:@pkgdatadir@/lib/php:@pkgsysconfdir@"
+</Directory>
+
+Alias /manage @pkgdatadir@/protected
+<Directory @pkgdatadir@/protected>
+  AuthType Basic
+  AuthName "GENI Account Manager"
+  # (Following line optional)
+  AuthBasicProvider file
+  AuthUserFile @pkgsysconfdir@/passwords
+  Require valid-user
+  Options MultiViews
+  php_value include_path ".:/usr/share/pear:@pkgdatadir@/lib/php:@pkgsysconfdir@"
+</Directory>

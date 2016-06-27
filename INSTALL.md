@@ -6,6 +6,18 @@
 * Install Shibboleth (see INSTALL-shibboleth.md)
 * Install PostgreSQL (see INSTALL-postgresql.md)
 
+# Install packages
+
+_These should be handled by a package install_
+
+_Note: run these two commands separately, the second depends on the
+first._
+
+```
+sudo yum install epel-release
+sudo yum install php php-pear-MDB2-Driver-pgsql
+```
+
 # Install geni-ar system
 
 If geni-ar is not available from a package, install manually:
@@ -13,7 +25,7 @@ If geni-ar is not available from a package, install manually:
 ```
 cd /path/to/geni-ar
 ./autogen.sh
-./configure
+./configure --prefix=/usr --sysconfdir=/etc --bindir=/usr/local/bin --sbindir=/usr/local/sbin
 make
 sudo make install
 ```
@@ -36,7 +48,20 @@ psql -U <USER> [-h <HOST>] <DBNAME> \
 
 2. Edit `/etc/geni-ar/settings.php` to reflect the local configuration
 
-    What needs to be edited?
+    The following settings _must_ be changed to appropriate values:
+
+    | Setting | Description |
+    | ------- | ----------- |
+    | $db_dsn | Database connection string, see documentation in file for format |
+    | $idp_approval_email | Destination email address for new request notification |
+    | $idp_leads_email | Destination email address for policy board |
+    | $idp_audit_email | Destination email address for audit/log messages |
+    | $acct_manager_url | URL of the management home page, based on apache configuration |
+    | $base_dn | Base LDAP distinguished name for searches |
+    | $user_dn | Base user DN to append to new user IDs |
+    | $ldaprdn | Administrative LDAP user for adding/modifying LDAP entries |
+    | $ldappass | Password for Administrative LDAP user |
+
 
 # Add account administrators
 
@@ -62,7 +87,14 @@ See the htpasswd man page for more info.
 
 # Configure web server
 
-_TBD_
+Make geni-ar available via the web server. Edit `/etc/httpd/conf.d/ssl.conf`
+to add the following line at the end of and inside the VirtualHost block.
+This statement should just after the lines that were added for the
+Shibboleth installation described in INSTALL-shibboleth.md.
+
+```
+Include /usr/share/geni-ar/apache-2.4.conf
+```
 
 # Test
 
