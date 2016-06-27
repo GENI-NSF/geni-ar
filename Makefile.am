@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+SUBDIRS = doc
+
 #----------------------------------------------------------------------
 # Handle file replacements. Files can contain configure variables, and
 # will be processed by this sed script. Process files via the

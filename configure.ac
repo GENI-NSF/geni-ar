@@ -3,5 +3,5 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 AM_MAINTAINER_MODE([enable])
 AC_PROG_MKDIR_P
 AC_PROG_INSTALL
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile doc/Makefile])
 AC_OUTPUT
