@@ -2,6 +2,9 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* Add initial system documentation
+  ([#152](https://github.com/GENI-NSF/geni-ar/issues/152))
+
 # [Release 1.7](https://github.com/GENI-NSF/geni-ar/milestones/1.7)
 
 * Reduce number of admin emails
