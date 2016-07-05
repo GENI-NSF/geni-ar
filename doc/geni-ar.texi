@@ -134,14 +134,14 @@ tab displays account requests that have had their email address
 confirmed, but have not been processed by an operator. The use and purpose
 of each tab is explained below.
 
-@float Figure,{operator tabs}
+@float Figure,fig:operatorTabs
 @c Note: do not include the image extension, it gets figured out
 @c       automatically. This uses UI.png for the image.
 @image{UI,6in}
 @caption{Operator tabs}
 @end float
 
-@anchor {Current Reqs}
+@anchor{Current Reqs}
 @cindex Current Reqs
 @cindex Tabs, Current Reqs
 @subsection Current Reqs
@@ -200,7 +200,7 @@ Account reqeusts on the @samp{Waiting for Leads} tab are pending
 input from the GENI Project Leads. An operator has used the
 @samp{Email Leads} option to ask the leads for their input.
 
-@xref{Email Leads}
+@xref{Email Leads}.
 
 @cindex Waiting for Requester Response
 @cindex Tabs, Waiting for Requester Response
@@ -214,7 +214,7 @@ approved or denied from here. It is also possible to use the
 @samp{Email Requester} option again to email the requester for more
 information.
 
-@xref{Email Requester}
+@xref{Email Requester}.
 
 @cindex Approved Reqs
 @cindex Tabs, Approved Reqs
@@ -249,7 +249,7 @@ explaining how to use their account.
 
 After approval the request will appear on the ``Approved Reqs'' tab.
 
-@anchor {Email Requester}
+@anchor{Email Requester}
 @cindex Email Requester
 @cindex Options, Email Requester
 @subsection Email Requester
