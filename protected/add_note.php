@@ -25,6 +25,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
+require_once('response_format.php');
 
 global $acct_manager_url;
 
@@ -43,15 +44,21 @@ $conn = db_conn();
 //add the note
 $sql = "UPDATE " . $AR_TABLENAME . " SET notes=" . $conn->quote($text, 'text') . " WHERE ID=". $conn->quote($id, 'integer');
 $result = db_execute_statement($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres datbase update failed. Could not add note.");
-} elseif ($state==="REQUESTED") {
-  header("Location: " . $acct_manager_url . "/display_requests.php#current");
-} elseif ($state==="EMAILED_LEADS") {
-  header("Location: " . $acct_manager_url . "/display_requests.php#leads");
-} elseif ($state==="EMAILED_REQUESTER") {
-  header("Location: " . $acct_manager_url . "/display_requests.php#requester");
-} elseif ($state === "CONFIRM_REQUESTER") {
+} elseif ($state===AR_STATE::REQUESTED) {
+  // This tab is now gone and there shouldn't be anything in this state we care about
+  // header("Location: " . $acct_manager_url . "/display_requests.php#currentrequestsdiv");
+  header("Location: " . $acct_manager_url . "/display_requests.php#requesterconfirmationdiv");
+} elseif ($state===AR_STATE::LEADS) {
+  header("Location: " . $acct_manager_url . "/display_requests.php#waitingforleaddiv");
+} elseif ($state===AR_STATE::EMAIL_CONF) {
+  header("Location: " . $acct_manager_url . "/display_requests.php#confirmedrequestsdiv");
+} elseif ($state===AR_STATE::APPROVED) {
+  header("Location: " . $acct_manager_url . "/display_requests.php#approvedrequestsdiv");
+} elseif ($state===AR_STATE::REQUESTER) {
+  header("Location: " . $acct_manager_url . "/display_requests.php#requesterresponsediv");
+} elseif ($state === AR_STATE::CONFIRM) {
   header("Location: " . $acct_manager_url . "/display_requests.php#requesterconfirmationdiv");
 } else {
   header("Location: " . $acct_manager_url . "/display_requests.php");
