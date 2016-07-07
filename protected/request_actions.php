@@ -26,6 +26,7 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('log_actions.php');
 require_once('email_utils.php');
+require_once('response_format.php');
 
 global $leads_email;
 global $acct_manager_url;
@@ -42,7 +43,7 @@ $action = $_REQUEST['action'];
 
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE id=" . $id;
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
@@ -88,7 +89,7 @@ function deny_passwd($id, $uid, $row)
   global $acct_manager_url;
 
   $res = add_log($uid, "Passwd Change Denied");
-  if ($res != 0) {
+  if ($res != RESPONSE_ERROR::NONE) {
     process_error ("Logging failed.  Will not change request status.");
     exit();
   }
@@ -97,7 +98,7 @@ function deny_passwd($id, $uid, $row)
     . " SET request_state='" . AR_STATE::APPROVED . "'"
     . " where id ='" . $id . '\'';
   $res = db_execute_statement($sql);
-  if ($res['code'] != 0) {
+  if ($res[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Database action failed."
                   . " Could not change request status for " . $uid);
     exit();
@@ -135,7 +136,7 @@ if ($action === "passwd")
       exit();
     } 
     $res = add_log($uid, "Passwd Changed");
-    if ($res != 0) {
+    if ($res != RESPONSE_ERROR::NONE) {
       process_error ("Logging failed.  Will not change request status.");
       exit();
     } 
@@ -166,7 +167,7 @@ if ($action === "passwd")
 
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
       $res = db_execute_statement($sql);
-      if ($res['code'] != 0) {
+      if ($res[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 	process_error ("Database action failed.  Could not change request status for " . $uid);
 	exit();
       }
@@ -189,7 +190,7 @@ else if ($action === "approve")
       {
 	//Add log to action table
 	$res = add_log($uid, AR_ACTION::ACCOUNT_CREATED);
-	if ($res != 0) {
+	if ($res != RESPONSE_ERROR::NONE) {
 	  process_error ("ERROR: Logging failed.  Will not create account for " . $uid);
 	  exit();
 	}
@@ -206,14 +207,14 @@ else if ($action === "approve")
 	// Now set created timestamp in postgres db
 	$sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
 	$result = db_execute_statement($sql);
-	if ($result['code'] != 0) {
+	if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 	  process_error("Postgres database update failed");
 	  exit();
 	}
 
 	$sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
 	$result = db_execute_statement($sql);
-	if ($result['code'] != 0) {
+	if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 	  process_error("Postgres database update failed");
 	  exit();
 	}
@@ -251,13 +252,13 @@ else if ($action === "approve")
 else if ($action === 'deny')
   {
     $res = add_log($uid, "Account Denied");
-    if ($res != 0) {
+    if ($res != RESPONSE_ERROR::NONE) {
       process_error ("ERROR: Logging failed.  Will not deny account");
       exit();
     }
     $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::DENIED . "' where id ='" . $id . '\'';
     $result = db_execute_statement($sql);
-    if ($result['code'] != 0) {
+    if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       process_error("Postgres database update failed");
       exit();
     }
@@ -277,7 +278,7 @@ else if ($action === "confirm")
     print '<head><title>Confirm Requester</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php?arstate=CONFIRM_REQUESTER">';
+    print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::CONFIRM . '">';
     print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
@@ -305,7 +306,7 @@ else if ($action === "leads")
     print '<head><title>Email Leads</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php?arstate=EMAILED_LEADS">';
+    print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::LEADS . '">';
     print 'To: <input type="text" name="sendto" value="' . $idp_leads_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
@@ -327,7 +328,7 @@ else if ($action === "requester")
     print '<head><title>Email Requester</title></head>';
     print '<a href="' . $acct_manager_url . '">Return to main page</a>';
     
-    print '<form method="POST" action="send_email.php?arstate=EMAILED_REQUESTER">';
+    print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::REQUESTER . '">';
     print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
     print '<br><br>';
     $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
