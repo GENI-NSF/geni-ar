@@ -26,6 +26,7 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
+require_once('response_format.php');
 
 global $acct_manager_url;
 global $base_dn;
@@ -64,9 +65,9 @@ if ($action === "delete") {
     if (array_key_exists('uidNumber',$attrs)) {
       $acct = $accts[0];
       $req_id = $acct['uidnumber'][0];
-      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE id='" . $req_id . '\'';
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::DELETED . "' WHERE id='" . $req_id . '\'';
       $result = db_execute_statement($sql);
-      if ($result['code'] != 0) {
+      if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 	process_error("Postgres database update failed");
 	exit();
       }

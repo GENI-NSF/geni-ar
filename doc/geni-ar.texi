@@ -141,32 +141,6 @@ of each tab is explained below.
 @caption{Operator tabs}
 @end float
 
-@anchor{Current Reqs}
-@cindex Current Reqs
-@cindex Tabs, Current Reqs
-@subsection Current Reqs
-
-Requests on the @samp{Current Reqs} tab have not yet been confirmed
-by the requester. An email is automatically sent when an account
-request is received. If a request stays in this state for a week or more
-it is likely that:
-
-@itemize
-@item The email went to the requester's junk email folder
-@item The requester mistyped their email address
-@item The requester changed their mind about wanting a GENI account
-@end itemize
-
-This tab can be useful when researching the state of an account
-request. Sometimes a requester will ask why their request has not
-been processed. It may be that it is stuck waiting for their confirmation.
-If that is the case, verify that the email address is correct on the
-account request. If it is not, ask the requester to submit a new
-account request with the correct email address.
-
-In general, no action is required by operators for account requests
-on this tab.
-
 @cindex Email Confirmed
 @cindex Tabs, Email Confirmed
 @subsection Email Confirmed
@@ -188,9 +162,26 @@ they can be contacted using the ``Email Leads'' option.
 @cindex Tabs, Waiting for Confirmation
 @subsection Waiting for Confirmation
 
-This tab is empty. In the future it will display the account
-requests described in @ref{Current Reqs}.
-See @url{https://github.com/GENI-NSF/geni-ar/issues/148}
+Requests on the @samp{Waiting for Confirmation} tab have not yet been confirmed
+by the requester. An email is automatically sent when an account
+request is received. If a request stays in this state for a week or more
+it is likely that:
+
+@itemize
+@item The email went to the requester's junk email folder
+@item The requester mistyped their email address
+@item The requester changed their mind about wanting a GENI account
+@end itemize
+
+This tab can be useful when researching the state of an account
+request. Sometimes a requester will ask why their request has not
+been processed. It may be that it is stuck waiting for their confirmation.
+If that is the case, verify that the email address is correct on the
+account request. If it is not, ask the requester to submit a new
+account request with the correct email address.
+
+In general, no action is required by operators for account requests
+on this tab.
 
 @cindex Waiting for Leads
 @cindex Tabs, Waiting for Leads

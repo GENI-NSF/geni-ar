@@ -85,7 +85,7 @@ function change_passwd() {
             if($email) {
                 $db_conn = db_conn();
                 $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($email, 'text') 
-                     . " and (request_state='APPROVED')"; // ??
+		  . " and (request_state='" . AR_STATE::APPROVED . "')"; // ??
                 $db_result = db_fetch_rows($sql, "fetch accounts with that email $email");
                 if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
                     $result = $db_result[RESPONSE_ARGUMENT::VALUE];

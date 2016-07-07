@@ -40,9 +40,11 @@ function confirm_email($nonce, $db_id) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE];
         $email = $result['email'];
 
-        $sql = "UPDATE idp_account_request SET request_state='EMAIL_CONFIRMED'"
+	// Old style started requests as REQUESTED. Now start as CONFIRM. Cover both,
+	// so when this code is applied accounts awaiting confirmation are covered.
+        $sql = "UPDATE idp_account_request SET request_state='" . AR_STATE::EMAIL_CONF . "'"
              . " where email = " . $db_conn->quote($email, 'text')
-             . " and (request_state='REQUESTED')";
+	  . " and (request_state='" . AR_STATE::REQUESTED . "' or request_state='" . AR_STATE::CONFIRM . "')";
         $update_result = db_execute_statement($sql);
         if ($update_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
             delete_confirmation($db_id, $nonce);
@@ -79,7 +81,7 @@ function check_whitelist($user_email) {
 function accept_user($user_email) {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text')
-        . " and (request_state='EMAIL_CONFIRMED')";
+      . " and (request_state='" . AR_STATE::EMAIL_CONF . "')";
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
@@ -118,7 +120,7 @@ function accept_user($user_email) {
             return false;
         }
 
-        $sql = "UPDATE idp_account_request SET request_state='APPROVED', "
+        $sql = "UPDATE idp_account_request SET request_state='" . AR_STATE::APPROVED . "', "
              . "created_ts=now() at time zone 'utc' where id ='" . $id . '\'';
         $update_result = db_execute_statement($sql);
 

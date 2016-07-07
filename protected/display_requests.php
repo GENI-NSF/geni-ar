@@ -22,6 +22,7 @@
 // IN THE WORK.
 //----------------------------------------------------------------------
 require_once('db_utils.php');
+require_once('response_format.php');
 require_once('ar_constants.php');
 include_once('/etc/geni-ar/settings.php');
 
@@ -59,7 +60,7 @@ function get_values($row)
 
 
 require_once("header.php");
-show_header("Account Request Management", array("#currentrequests", "#confirmedrequests", "#requesterconfirmation", "#waitingforlead",
+show_header("Account Request Management", array("#confirmedrequests", "#requesterconfirmation", "#waitingforlead",
                                                "#requesterresponse", "#approvedrequests", "#deniedrequests"));
 ?>
 
@@ -79,58 +80,13 @@ $(document).ready(function(){
 <!-- TODO: Will some of these go away with the new system? Seems like a lot of states -->
 <div class='nav2'>
   <ul class='tabs'>
-    <li><a class='tab' data-tabindex='1' href='#currentrequestsdiv'>Current Reqs</a></li>
-    <li><a class='tab' data-tabindex='2' href='#confirmedrequestsdiv'>Email Confirmed</a></li>
-    <li><a class='tab' data-tabindex='3' href='#requesterconfirmationdiv'>Waiting for Confirmation</a></li>
-    <li><a class='tab' data-tabindex='4' href='#waitingforleaddiv'>Waiting for Leads</a></li>
-    <li><a class='tab' data-tabindex='5' href='#requesterresponsediv'>Waiting for Requester Response</a></li>
-    <li><a class='tab' data-tabindex='6' href='#approvedrequestsdiv'>Approved Reqs</a></li>
-    <li><a class='tab' data-tabindex='7' href='#deniedrequestsdiv'>Denied Reqs</a></li>
+    <li><a class='tab' data-tabindex='1' href='#confirmedrequestsdiv'>Email Confirmed</a></li>
+    <li><a class='tab' data-tabindex='2' href='#requesterconfirmationdiv'>Waiting for Confirmation</a></li>
+    <li><a class='tab' data-tabindex='3' href='#waitingforleaddiv'>Waiting for Leads</a></li>
+    <li><a class='tab' data-tabindex='4' href='#requesterresponsediv'>Waiting for Requester Response</a></li>
+    <li><a class='tab' data-tabindex='5' href='#approvedrequestsdiv'>Approved Reqs</a></li>
+    <li><a class='tab' data-tabindex='6' href='#deniedrequestsdiv'>Denied Reqs</a></li>
   </ul>
-</div>
-
-<div class='card' id='currentrequestsdiv'>
-<h2>Current Account Requests</h2>
-<table id='currentrequests'>
-<thead>
-<tr>
-  <th>&nbsp;</th><th>Institution</th><th>Job Title</th><th>Account Reason</th>
-  <th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th>
-  <th>Username</th><th>Requested (UTC)</th><th>Notes</th>
-</tr>
-</thead>
-<tbody>
-<?php
-
-$conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='"
-  . AR_STATE::REQUESTED . "' or request_state='" . AR_STATE::PASSWD . '\'';
-$result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
-  process_error("Query failed to postgres database");
-  exit();
-}
-$rows = $result['value'];
-
-
-foreach ($rows as $row) {
-  get_values($row);
-  print "<tr>";
-  print'<td class="actions">';
-  print '<form method="POST" action="request_actions.php">';
-  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
-  print $actions;
-  print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
-  print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
-  print "</form>";
-  print "</td>";
-
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$notes</td>";
-  print '</tr>';
-}
-?>
-</tbody>
-</table>
 </div>
 
 <div class='card' id='confirmedrequestsdiv'>
@@ -147,9 +103,9 @@ foreach ($rows as $row) {
 <?php
 
 $conn = db_conn();
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='EMAIL_CONFIRMED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::EMAIL_CONF . "'";
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Query failed to postgres database");
   exit();
 }
@@ -192,9 +148,11 @@ foreach ($rows as $row) {
 
 <?php
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::CONFIRM . '\'';
+// $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::CONFIRM . "'";
+// Useful for debugging, and to cover the transition from old (stay REQUESTED) to new (move to CONFIRM when email sent)
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::CONFIRM . "' or request_state = '" . AR_STATE::REQUESTED . "'";
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
@@ -204,7 +162,7 @@ foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Requested Confirmation' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
-  if ($action_result['code'] != 0) {
+  if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
   }
@@ -215,8 +173,9 @@ foreach ($rows as $row) {
     $action_ts = substr($action_ts,0,16);
   }
   else {
-    $performer = "";
-    $action_ts = "";
+    // Users account request causes the conformation email to be sent automatically
+    $performer = "Self";
+    $action_ts = $requested;
   }
   print "<tr>";
   print'<td class="actions">';
@@ -251,7 +210,7 @@ foreach ($rows as $row) {
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::LEADS . '\'';
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
@@ -260,7 +219,7 @@ foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
-  if ($action_result['code'] != 0) {
+  if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
   }
@@ -307,7 +266,7 @@ foreach ($rows as $row) {
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::REQUESTER . '\'';
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
@@ -317,7 +276,7 @@ foreach ($rows as $row) {
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result['value'];
-  if ($action_result['code'] != 0) {
+  if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
   }
@@ -361,7 +320,7 @@ foreach ($rows as $row) {
 <?php
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::APPROVED . "' ORDER BY created_ts desc";
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
@@ -388,7 +347,7 @@ foreach ($rows as $row) {
           . "           )"
           . " ORDER BY id desc");
   $action_result = db_fetch_rows($sql);
-  if ($action_result['code'] != 0) {
+  if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
   }
@@ -428,7 +387,7 @@ $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::D
 $result = db_fetch_rows($sql);
 
 $rows = $result['value'];
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
