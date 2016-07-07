@@ -79,7 +79,8 @@ class AR_STATE {
   const DENIED = "DENIED";
   const PASSWD = "PW CHANGE REQUESTED";
   const DELETED = "DELETED";
-  const CONFIRM = "CONFIRM_REQUESTER";
+  const CONFIRM = "CONFIRM_REQUESTER"; // Includes waiting to confirm valid email
+  const EMAIL_CONF = "EMAIL_CONFIRMED";
 }
 
 class AR_ACTION {
