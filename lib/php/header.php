@@ -38,7 +38,6 @@ function show_header($title, $table_ids) {
   // [9, 'desc'] means order table based on values in 9th column (zero indexed),
   // in descending order
   $table_orders = array(
-    "#currentrequests" => "[9, 'desc']",
     "#confirmedrequests" => "[9, 'desc']",
     "#requesterconfirmation" => "[9, 'desc']",
     "#waitingforlead" => "[9, 'desc']",
