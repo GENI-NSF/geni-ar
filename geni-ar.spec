@@ -7,6 +7,7 @@ License:        GENI Public License
 URL:            https://github.com/GENI-NSF/geni-ar
 Source:         %{name}-%{version}.tar.gz
 Group:          Applications/Internet
+BuildRequires:  texinfo
 Requires:       httpd, postgresql
 
 %description
@@ -24,12 +25,14 @@ make %{?_smp_mflags}
 %install
 rm -rf $RPM_BUILD_ROOT
 %make_install
+rm -f $RPM_BUILD_ROOT%{_infodir}/dir
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%doc %{_infodir}/geni-ar.info.gz
 %{_bindir}/geni-add-log
 %{_bindir}/geni-convert-logs
 %{_datadir}/%{name}/apache2.conf
