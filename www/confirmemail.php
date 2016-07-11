@@ -43,6 +43,11 @@ function confirm_email($nonce, $db_id) {
 	}
         $email = $result['email'];
 
+	// Note: We could include the specific request ID as an column in idp_email_confirm,
+	// and use that to ensure we update the correct row here.
+	// However, there can be only 1 account with given email address awaiting
+	// confirmation, so this is not necessary
+
 	// Old style started requests as REQUESTED. Now start as CONFIRM. Cover both,
 	// so when this code is applied accounts awaiting confirmation are covered.
 	// FIXME: Could we do some heuristic on request_ts to ensure we get the right row here?
