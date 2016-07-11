@@ -160,6 +160,9 @@ $rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 foreach ($rows as $row) {
   get_values($row);
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Requested Confirmation' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
@@ -168,6 +171,10 @@ foreach ($rows as $row) {
   }
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
+    if (count($logs) > 1) {
+      // Note that for old accounts where we request confirmation manually this could be legit
+      error_log("Display Requested confirmation account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -217,6 +224,9 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 $rows = $result[RESPONSE_ARGUMENT::VALUE];
 foreach ($rows as $row) {
   get_values($row);
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
@@ -225,6 +235,10 @@ foreach ($rows as $row) {
   }
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
+    if (count($logs) > 1) {
+      // Note this is legit if we emailed the leads about the same person multiple times
+      error_log("Display Emailed leads account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -273,6 +287,9 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 $rows = $result[RESPONSE_ARGUMENT::VALUE];
 foreach ($rows as $row) {
   get_values($row);
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
@@ -282,6 +299,10 @@ foreach ($rows as $row) {
   }
 
   if ($logs) {
+    if (count($logs) > 1) {
+      // Note this is legit if we emailed the same person multiple times
+      error_log("Display Emailed Requester account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -338,6 +359,10 @@ foreach ($rows as $row) {
 }
 foreach ($rows as $row) {
   get_values($row);
+  // If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. 
+  // We could avoid this by including the request_id in idp_account_actions
+  // In this case that should be right - the single approved account with this username
   $sql = ("SELECT performer, action_ts from idp_account_actions"
           . " WHERE uid=" . $conn->quote($uname, "text")
           . "       AND (action_performed = "
@@ -354,9 +379,12 @@ foreach ($rows as $row) {
 
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
-  $performer = $logs[0]['performer'];
-  $action_ts = $logs[0]['action_ts'];
-  $action_ts = substr($action_ts,0,16);
+    //    if (count($logs) > 1) {
+    //      error_log("Display Approved account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    //    }
+    $performer = $logs[0]['performer'];
+    $action_ts = $logs[0]['action_ts'];
+    $action_ts = substr($action_ts,0,16);
   } else {
     $performer = '&nbsp;';
     $action_ts = '&nbsp;';
@@ -394,10 +422,16 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 
 foreach ($rows as $row) {
   get_values($row);
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
+    if (count($logs) > 1) {
+      error_log("Display Denied account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);

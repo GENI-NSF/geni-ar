@@ -118,6 +118,9 @@ foreach ($rows as $row) {
   $org = $row['organization'];
   $performer="";
   $action_ts="";
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Deleted' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
   if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
@@ -127,6 +130,9 @@ foreach ($rows as $row) {
 
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
+    if (count($logs) > 1) {
+      error_log("Display deleted account logs for $uname for " . count($logs) . " performer/timestamps. Using only most recent.");
+    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
