@@ -109,7 +109,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Query failed to postgres database");
   exit();
 }
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 
 foreach ($rows as $row) {
@@ -156,7 +156,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 foreach ($rows as $row) {
   get_values($row);
@@ -166,7 +166,7 @@ foreach ($rows as $row) {
     process_error("Postgres database query failed");
     exit();
   }
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
@@ -214,7 +214,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Leads' ORDER BY id desc";
@@ -223,7 +223,7 @@ foreach ($rows as $row) {
     process_error("Postgres database query failed");
     exit();
   }
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
@@ -270,12 +270,12 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Emailed Requester' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($action_result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
@@ -324,7 +324,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 // if created_ts is empty (historic entries), then move to the bottom of the list
 foreach ($rows as $row) {
@@ -352,7 +352,7 @@ foreach ($rows as $row) {
     exit();
   }
 
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
   $performer = $logs[0]['performer'];
   $action_ts = $logs[0]['action_ts'];
@@ -386,7 +386,7 @@ foreach ($rows as $row) {
 $sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::DENIED . '\'';
 $result = db_fetch_rows($sql);
 
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
@@ -396,7 +396,7 @@ foreach ($rows as $row) {
   get_values($row);
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Denied' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];

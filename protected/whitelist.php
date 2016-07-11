@@ -23,6 +23,7 @@
 //----------------------------------------------------------------------
 
 require_once('db_utils.php');
+require_once('response_format.php');
 
 // Insert a new institution into the idp_whitlelist table
 function insert_to_whitelist($institution) {

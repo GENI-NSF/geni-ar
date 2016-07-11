@@ -48,7 +48,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   exit();
 }
 
-$row = $result['value'][0];
+$row = $result[RESPONSE_ARGUMENT::VALUE][0];
 
 $uid = $row['username_requested']; 
 

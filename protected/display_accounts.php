@@ -100,7 +100,7 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   exit();
 }
 
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 
 print '<div class="card" id="deleted">';
@@ -125,7 +125,7 @@ foreach ($rows as $row) {
     exit();
   }
 
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
