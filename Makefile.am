@@ -99,7 +99,7 @@ dist_bin_SCRIPTS = \
 	bin/geni-add-log \
 	bin/geni-convert-logs
 
-pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
+pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 
 install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(pkgsysconfdir)
