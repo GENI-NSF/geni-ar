@@ -134,7 +134,7 @@ function change_passwd() {
                         return true;
                     }
                 } else {
-                    error_log("Error retrieving account");
+		    error_log("Error retrieving account to change password: for email " . $email . " got " . count($result) . " approved requests");
                     return false;
                 }
             }
