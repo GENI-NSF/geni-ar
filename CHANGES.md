@@ -2,6 +2,14 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* When a requester confirms their email address, we look up
+  the requests that are awaiting confirmation and then use
+  that request ID for later operations.
+  In the process, use various constants more, fix
+  some log messages, add some comments, and add some error
+  logs to note when reading account logs by username results
+  in potential confusion.
+  ([#147](https://github.com/GENI-NSF/geni-ar/issues/147))
 * Removed `Current Reqs` tab; default is `Email Confirmed`.
   Added an EMAIL_CONFIRMED state constant, and make more use
   of constants. New requests change to state `CONFIRM`
