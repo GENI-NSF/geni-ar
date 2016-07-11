@@ -171,10 +171,10 @@ foreach ($rows as $row) {
   }
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
-    if (count($logs) > 1) {
-      // Note that for old accounts where we request confirmation manually this could be legit
-      error_log("Displaying Requested confirmation account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
-    }
+    //    if (count($logs) > 1) {
+    //      // Note that for old accounts where we request confirmation manually this could be legit
+    //      error_log("Displaying Requested confirmation account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
+    //    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -235,10 +235,10 @@ foreach ($rows as $row) {
   }
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
-    if (count($logs) > 1) {
-      // Note this is legit if we emailed the leads about the same person multiple times
-      error_log("Displaying Emailed leads account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
-    }
+    //    if (count($logs) > 1) {
+    //      // Note this is legit if we emailed the leads about the same person multiple times
+    //      error_log("Displaying Emailed leads account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
+    //    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -299,10 +299,10 @@ foreach ($rows as $row) {
   }
 
   if ($logs) {
-    if (count($logs) > 1) {
-      // Note this is legit if we emailed the same person multiple times
-      error_log("Displaying Emailed Requester account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
-    }
+    //    if (count($logs) > 1) {
+    //      // Note this is legit if we emailed the same person multiple times
+    //      error_log("Displaying Emailed Requester account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
+    //    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
@@ -429,9 +429,9 @@ foreach ($rows as $row) {
   $action_result = db_fetch_rows($sql);
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
-    if (count($logs) > 1) {
-      error_log("Displaying Denied account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
-    }
+    //    if (count($logs) > 1) {
+    //      error_log("Displaying Denied account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
+    //    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
