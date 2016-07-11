@@ -42,6 +42,7 @@ if ($action === "delete") {
   }
 
   // Delete account
+  // FIXME: Log the delete before doing it?
   $res = add_log($id,"Account Deleted");
   if ($res != 0) {
     process_error ("ERROR: Logging failed.  Will not delete account");
@@ -63,6 +64,9 @@ if ($action === "delete") {
 
     //change status in postgres database
     if (array_key_exists('uidNumber',$attrs)) {
+      if (count($accts) != 1) {
+	error_log("Found " . count($accts) . " accounts in LDAP for uid " . $id);
+      }
       $acct = $accts[0];
       $req_id = $acct['uidnumber'][0];
       $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::DELETED . "' WHERE id='" . $req_id . '\'';
@@ -72,7 +76,7 @@ if ($action === "delete") {
 	exit();
       }
 
-      if ($result['value'] === 1) {
+      if ($result[RESPONSE_ARGUMENT::VALUE] === 1) {
 	header("Location: " . $acct_manager_url . "/display_accounts.php");
       } else {
 	process_error("Failed to change request state for deleted account for " . $id);
