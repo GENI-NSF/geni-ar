@@ -158,7 +158,7 @@ function db_fetch_row($query, $msg = "")
     return generate_database_response($code, null, null);
   } else {
     if (is_int($nr) && $nr > 1) {
-      error_log("db_fetch_row returning 1st of $nr rows for query: $query");
+      error_log("Warning: db_fetch_row Expected 1 row, returning 1st of $nr rows for query: $query");
     }
     $row = $resultset->fetchRow(MDB2_FETCHMODE_ASSOC);
     //print "result has " . count($row) . " rows<br/>\n";
