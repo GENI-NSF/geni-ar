@@ -60,6 +60,12 @@ function create_email_confirm_link($base_path, $id1, $id2) {
 
 // Insert the password change request into the idp_email_confirm table
 function insert_email_confirm($email, $nonce) {
+    // Note: We could include the specific request ID as an arg
+    // Then we could use that in insert_email_confirm so that confirmemail.php
+    // has the correct request ID handy (in idp_email_confirm DB table).
+    // However, there can be only 1 account with given email address awaiting
+    // confirmation, so this is not necessary
+
     $db_conn = db_conn();
     $sql = "insert into idp_email_confirm (email, nonce) values (";
     $sql .= $db_conn->quote($email, 'text');
@@ -303,6 +309,12 @@ if ($errors) {
   $sql .= ')';
   $result = db_execute_statement($sql, 'insert idp account request');
 
+  // Note: We could add "returning id" to that clause, to get the specific request ID
+  // Then we could use that in insert_email_confirm so that confirmemail.php
+  // has the correct request ID handy (in idp_email_confirm DB table).
+  // However, there can be only 1 account with given email address awaiting
+  // confirmation, so this is not necessary
+
   // An error occurred. First, log the query and result for debugging
   if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     error_log("DB Error query: $sql");
@@ -340,10 +352,10 @@ if ($errors) {
 	$email_body = str_replace("'","''",$email_body);
 	$email_body = str_replace("\\","\\\\",$email_body);
 
-	$res = add_log_with_comment($db_id, "Requested Confirmation",$email_body);
+	$res = add_log_with_comment($uid, "Requested Confirmation",$email_body);
 	if ($res != RESPONSE_ERROR::NONE) {
 	  //try again without the comment
-	  $res = add_log($db_id,"Requested Confirmation");
+	  $res = add_log($uid,"Requested Confirmation");
 	  if ($res != RESPONSE_ERROR::NONE) {
 	    error_log("Failed to log email to " . $email . " for account " . $uid);
 	    // Keep going though
