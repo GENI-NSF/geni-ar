@@ -25,6 +25,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('response_format.php');
 
 global $acct_manager_url;
 
@@ -39,14 +40,14 @@ if ($user === "ALL")
     $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\' order by action_ts desc';
   }
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   print '<a href="' . $acct_manager_url . '">Return to main page</a>';
   print '<br></br>';
   process_error("Postgres database query failed");
   exit();
 }
 
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 function get_values($row)
 {
