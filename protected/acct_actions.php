@@ -65,7 +65,7 @@ if ($action === "delete") {
     //change status in postgres database
     if (array_key_exists('uidNumber',$attrs)) {
       if (count($accts) != 1) {
-	error_log("Found " . count($accts) . " accounts in LDAP for uid " . $id);
+	error_log("acct_actions DELETE: Found (deleted) " . count($accts) . " accounts in LDAP for uid " . $id);
       }
       $acct = $accts[0];
       $req_id = $acct['uidnumber'][0];
