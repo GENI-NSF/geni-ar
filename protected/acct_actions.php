@@ -84,7 +84,7 @@ if ($action === "delete") {
       } 
     }
   } else {
-    add_log_comment($uid, "Account Deleted", "FAILED");
+    add_log_comment($id, "Account Deleted", "FAILED");
     process_error( "Failed to delete account for " . $id);
     exit();
   }
