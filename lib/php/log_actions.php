@@ -71,6 +71,13 @@ function add_log_with_comment($uid, $action, $comment)
 
 function create_log($query_vars,$query_values)
 {
+  // FIXME
+  // Note that we log things by uid (username).
+  // handlerequest et al ensure that there's only 1 request with this username
+  // that is approved or pending. But there could be a DENIED request with same username.
+  // We could store the request ID not just the username, to ensure logs are associated with the proper request
+  // For example, manually do CONFIRM REQUESTER on a request, then deny it, then open a new request with same username
+  // - logs will get mixed up
   $sql = "INSERT INTO idp_account_actions ("; 
   $sql .= implode (',',$query_vars);
   $sql .= ') VALUES (';
@@ -89,6 +96,13 @@ function create_log($query_vars,$query_values)
 
 function add_log_comment($uid, $log, $comment)
 {
+  // FIXME
+  // Note that we log things by uid (username).
+  // handlerequest et al ensure that there's only 1 request with this username
+  // that is approved or pending. But there could be a DENIED request with same username.
+  // We could store the request ID not just the username, to ensure logs are associated with the proper request
+  // For example, manually do CONFIRM REQUESTER on a request, then deny it, then open a new request with same username
+  // - logs will get mixed up
   $sql = "SELECT id from idp_account_actions where uid = '" . $uid . "' and action_performed = '" . $log . "' ORDER BY id desc";
   $result = db_fetch_rows($sql);
   $rows = $result['value'];
