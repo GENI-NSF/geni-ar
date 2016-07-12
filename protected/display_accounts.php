@@ -130,9 +130,6 @@ foreach ($rows as $row) {
 
   $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
-    //    if (count($logs) > 1) {
-    //      error_log("Displaying Deleted account logs for $uname found " . count($logs) . " performer/timestamps. Using only most recent.");
-    //    }
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
