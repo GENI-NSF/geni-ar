@@ -23,6 +23,7 @@
 //----------------------------------------------------------------------
 
 require_once('db_utils.php');
+require_once('response_format.php');
 
 // Insert a new institution into the idp_whitlelist table
 function insert_to_whitelist($institution) {
@@ -63,7 +64,7 @@ function delete_from_whitelist($institutions) {
 function print_whitelist() {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_whitelist";
-    $db_result = db_fetch_rows($sql, "insert idp_passwd_reset");
+    $db_result = db_fetch_rows($sql, "read idp_whitelist");
 
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $institutions = $db_result[RESPONSE_ARGUMENT::VALUE];

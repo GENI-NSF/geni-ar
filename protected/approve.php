@@ -35,6 +35,7 @@ function accept_user($id) {
       . " and (request_state='" . AR_STATE::EMAIL_CONF . "')";
     $db_result = db_fetch_rows($sql, "fetch accounts with id $id");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        // FIXME: Could this return 0 rows?
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
     } else {
         error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);

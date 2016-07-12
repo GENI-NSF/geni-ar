@@ -2,10 +2,11 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
-* Removed `Current Reqs` tab; default is `Email Confirmed`.
-  Added an EMAIL_CONFIRMED state constant, and make more use
-  of constants. New requests change to state `CONFIRM`
-  once the automatic email to confirm their address is sent.
+* Look up the correct account request when email address is
+  confirmed and we email the admins.
+  ([#147](https://github.com/GENI-NSF/geni-ar/issues/147))
+* Removed `Current Reqs` tab; requests pending confirmation
+  are on Waiting for Confirmation tab.
   ([#148](https://github.com/GENI-NSF/geni-ar/issues/148))
 * Add initial system documentation
   ([#152](https://github.com/GENI-NSF/geni-ar/issues/152))

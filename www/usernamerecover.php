@@ -29,6 +29,7 @@ require_once('ar_constants.php');
 
 // Return username associated with $email, "" if no user found.
 function retrieve_username($email) {
+    // Note we assume at most 1 approved request with a given email address
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where "
          . "email = " . $db_conn->quote($email, "text")

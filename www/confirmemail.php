@@ -35,29 +35,40 @@ function confirm_email($nonce, $db_id) {
     . "where id =" . $db_conn->quote($db_id, 'integer')
     . " and nonce =" . $db_conn->quote($nonce, 'text');
     $db_result = db_fetch_row($sql, "get idp_email_confirm");
-
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE];
+	if (is_null($result)) {
+	  error_log("Found no email confirmation record for id $db_id, nonce $nonce");
+          return array("", null);
+	}
         $email = $result['email'];
+
+	// Note: We could include the specific request ID as an column in idp_email_confirm,
+	// and use that to ensure we update the correct row here.
+	// However, there can be only 1 account with given email address awaiting
+	// confirmation, so this is not necessary
 
 	// Old style started requests as REQUESTED. Now start as CONFIRM. Cover both,
 	// so when this code is applied accounts awaiting confirmation are covered.
-        $sql = "UPDATE idp_account_request SET request_state='" . AR_STATE::EMAIL_CONF . "'"
+	// FIXME: Could we do some heuristic on request_ts to ensure we get the right row here?
+        $sql2 = "UPDATE idp_account_request SET request_state='" . AR_STATE::EMAIL_CONF . "'"
              . " where email = " . $db_conn->quote($email, 'text')
-	  . " and (request_state='" . AR_STATE::REQUESTED . "' or request_state='" . AR_STATE::CONFIRM . "')";
-        $update_result = db_execute_statement($sql);
+	  . " and (request_state='" . AR_STATE::REQUESTED . "' or request_state='" . AR_STATE::CONFIRM . "')"
+	  . "RETURNING id";
+        $update_result = db_fetch_row($sql2, "update idp_account_request confirm email");
         if ($update_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
             delete_confirmation($db_id, $nonce);
-            return $email;
+	    $acctreq_id = $update_result[RESPONSE_ARGUMENT::VALUE]['id'];
+	    return array($email, $acctreq_id);
         } else {
             error_log("Failed to update user account status: " .
                       $update_result[RESPONSE_ARGUMENT::OUTPUT]);
-            return $email;
+            return array($email, null);
         }
     } else {
         error_log("Error getting email confirm record: "
                  . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
-        return "";
+        return array("", null);
     }
 }
 
@@ -78,10 +89,13 @@ function check_whitelist($user_email) {
     }
 }
 
-function accept_user($user_email) {
+function accept_user($user_email, $acctreq_id) {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text')
       . " and (request_state='" . AR_STATE::EMAIL_CONF . "')";
+    if (! is_null($acctreq_id)) {
+      $sql = $sql . " and id =" . $db_conn->quote($acctreq_id, 'integer');
+    }
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
@@ -218,7 +232,7 @@ function delete_confirmation($id, $nonce) {
 }
 
 // Email admins about new request
-function send_admin_confirmation_email($user_email) {
+function send_admin_confirmation_email($user_email, $acctreq_id) {
     global $AR_EMAIL_HEADERS, $idp_approval_email, $acct_manager_url;
     $server_host = $_SERVER['SERVER_NAME'];
     $subject = "New GENI Identity Provider Account Request on $server_host";
@@ -228,9 +242,12 @@ function send_admin_confirmation_email($user_email) {
 
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where email=" . $db_conn->quote($user_email, 'text');
+    if (! is_null($acctreq_id)) {
+      $sql = $sql  . " and id = " . $db_conn->quote($acctreq_id, 'integer');
+    }
 
     $db_result = db_fetch_rows($sql, "fetch accounts with that email $user_email");
-    if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+    if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE && ! is_null($db_result[RESPONSE_ARGUMENT::VALUE]) && count($db_result[RESPONSE_ARGUMENT::VALUE]) == 1) {
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
         $email_vars = array('first_name', 'last_name', 'email', 'organization', 'title', 'reason');
         foreach ($email_vars as $var) {
@@ -240,7 +257,7 @@ function send_admin_confirmation_email($user_email) {
         $id = $result['id'];
         $body .= "\nSee $acct_manager_url" . "/approve.php?id=$id to approve this request.\n";
     } else {
-        error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
+        error_log("Error getting user record for email $user_email, reqid $acctreq_id: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
     }
 
     $body .= "\nSee $acct_manager_url" . "/display_requests.php to handle this request.\n";
@@ -270,20 +287,20 @@ if (array_key_exists('n', $_REQUEST) && array_key_exists('id', $_REQUEST)) {
     $nonce = $_REQUEST['n'];
     $db_id = $_REQUEST['id'];
 
-    $email = confirm_email($nonce, $db_id);
+    list($email, $acctreq_id) = confirm_email($nonce, $db_id);
 
     if($email != "") {
         if (check_whitelist($email)) {
-            if (accept_user($email)) {
+	  if (accept_user($email, $acctreq_id)) {
                 print "<h2>Account successfully created</h2>";
                 print "<a href='https://portal.geni.net'>Login to GENI</a>";
             } else {
-                send_admin_confirmation_email($email);
+	        send_admin_confirmation_email($email, $acctreq_id);
                 print "<h2>Email address $email successfully confirmed</h2>";
                 print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
             }
         } else {
-            send_admin_confirmation_email($email);
+	    send_admin_confirmation_email($email, $acctreq_id);
             print "<h2>Email address $email successfully confirmed</h2>";
             print "<p>You should hear from us in a few days regarding the status of your new account.</p>";
         }

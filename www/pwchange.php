@@ -141,7 +141,7 @@ if (!array_key_exists($EMAIL_KEY, $_REQUEST)) {
                     $change_url = create_newpasswd_link($_SERVER['PHP_SELF'], $db_id, $nonce);
                     send_passwd_change_email($email, $change_url);
                     print "<h2>An email to reset your password has been sent.</h2>";
-                    print "<p>If this was done by accident, simply ignore the email you receive</p>";
+                    print "<p>If this was done by accident, simply ignore the email you receive.</p>";
                 } else {
                     $error = "Internal Error";  
                 }

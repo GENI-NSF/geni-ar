@@ -140,7 +140,7 @@ for ($x=1; $x<=intval($num); $x++)
       process_error("Postgres database query failed");
       exit();
     }
-    $row = $result['value'][0];
+    $row = $result[RESPONSE_ARGUMENT::VALUE][0];
     $id = $row['id'];
 
     //Now create ldap accounts

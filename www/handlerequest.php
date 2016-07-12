@@ -60,6 +60,12 @@ function create_email_confirm_link($base_path, $id1, $id2) {
 
 // Insert the password change request into the idp_email_confirm table
 function insert_email_confirm($email, $nonce) {
+    // Note: We could include the specific request ID as an arg
+    // Then we could use that in insert_email_confirm so that confirmemail.php
+    // has the correct request ID handy (in idp_email_confirm DB table).
+    // However, there can be only 1 account with given email address awaiting
+    // confirmation, so this is not necessary
+
     $db_conn = db_conn();
     $sql = "insert into idp_email_confirm (email, nonce) values (";
     $sql .= $db_conn->quote($email, 'text');
@@ -152,7 +158,7 @@ if (array_key_exists('email', $_REQUEST) && $_REQUEST['email']) {
 // Get a database connection so that values can be quoted
 $db_conn = db_conn();
 
-//check if there is a pending request for this username
+// check if there is a pending request for this username
 $sql = "SELECT * from idp_account_request where username_requested = ";
 $sql .= $db_conn->quote($uid, 'text');
 $result = db_fetch_rows($sql);
@@ -161,8 +167,8 @@ if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   error_log("Postgres database query failed");
   exit();
 }
-if (count($result['value']) != 0) {
-  foreach ($result['value'] as $row) {
+if (count($result[RESPONSE_ARGUMENT::VALUE]) != 0) {
+  foreach ($result[RESPONSE_ARGUMENT::VALUE] as $row) {
     $state = $row['request_state'];
     if (   $state === AR_STATE::REQUESTED
 	   or $state === AR_STATE::LEADS
@@ -173,24 +179,24 @@ if (count($result['value']) != 0) {
     }
     if ($state == AR_STATE::REQUESTER) {
       //get the request id
-      $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='" . AR_STATE::REQUESTER . "')";
-      $result = db_fetch_rows($sql);
-      if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+      $sql2 = "SELECT id from idp_account_request where username_requested='" . $uid . "' and (request_state='" . AR_STATE::REQUESTER . "')";
+      $result2 = db_fetch_rows($sql2);
+      if ($result2[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
         print("Postgres database query failed");
         error_log("Postgres database query failed");
         exit();
       }
-      if (count($result['value']) === 1) {
-        $id = $result['value'][0]['id'];
+      if (count($result2[RESPONSE_ARGUMENT::VALUE]) === 1) {
+        $id = $result2[RESPONSE_ARGUMENT::VALUE][0]['id'];
       } else {
         print("Error retrieving account");
-        error_log("Error retrieving account");
+        error_log("Error retrieving account request - found " . count($result2[RESPONSE_ARGUMENT::VALUE]) . " rows waiting on requester with username " . $uid);
         exit();
       }
       // deny original request and submit this one
-      $sql = "UPDATE idp_account_request SET request_state='" . AR_STATE::DENIED . "' where id='" . $id . '\'';
-      $result = db_execute_statement($sql);
-      if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+      $sql3 = "UPDATE idp_account_request SET request_state='" . AR_STATE::DENIED . "' where id='" . $id . '\'';
+      $result3 = db_execute_statement($sql3);
+      if ($result3[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
         print ("Database action failed.  Could not change request status for password change request for" . $uid);
         error_log ("Database action failed.  Could not change request status for password change request for " . $uid);
         exit();
@@ -200,15 +206,15 @@ if (count($result['value']) != 0) {
 }
 
 //check if there is a pending request for this email
-$sql = "SELECT * from idp_account_request where email='" . $email . '\'';
-$result = db_fetch_rows($sql);
-if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
+$sql4 = "SELECT * from idp_account_request where email='" . $email . '\'';
+$result4 = db_fetch_rows($sql4);
+if ($result4[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   print("Postgres database query failed");
   error_log("Postgres database query failed");
   exit();
 }
-if (count($result['value']) != 0) {
-  foreach ($result['value'] as $row) {
+if (count($result4[RESPONSE_ARGUMENT::VALUE]) != 0) {
+  foreach ($result4[RESPONSE_ARGUMENT::VALUE] as $row) {
     $state = $row['request_state'];
     if (   $state === AR_STATE::REQUESTED
 	   or $state === AR_STATE::LEADS
@@ -303,6 +309,12 @@ if ($errors) {
   $sql .= ')';
   $result = db_execute_statement($sql, 'insert idp account request');
 
+  // Note: We could add "returning id" to that clause, to get the specific request ID
+  // Then we could use that in insert_email_confirm so that confirmemail.php
+  // has the correct request ID handy (in idp_email_confirm DB table).
+  // However, there can be only 1 account with given email address awaiting
+  // confirmation, so this is not necessary
+
   // An error occurred. First, log the query and result for debugging
   if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     error_log("DB Error query: $sql");
@@ -340,10 +352,10 @@ if ($errors) {
 	$email_body = str_replace("'","''",$email_body);
 	$email_body = str_replace("\\","\\\\",$email_body);
 
-	$res = add_log_with_comment($db_id, "Requested Confirmation",$email_body);
+	$res = add_log_with_comment($uid, "Requested Confirmation",$email_body);
 	if ($res != RESPONSE_ERROR::NONE) {
 	  //try again without the comment
-	  $res = add_log($db_id,"Requested Confirmation");
+	  $res = add_log($uid,"Requested Confirmation");
 	  if ($res != RESPONSE_ERROR::NONE) {
 	    error_log("Failed to log email to " . $email . " for account " . $uid);
 	    // Keep going though
