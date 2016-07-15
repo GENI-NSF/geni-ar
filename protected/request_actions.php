@@ -187,8 +187,8 @@ else if ($action === "leads")
 
     //$replyto = $idp_approval_email . "," . $idp_leads_email;
     $replyto = $idp_approval_email;
-    print '<head><title>Email Leads</title></head>';
-    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+    print '<html><head><title>Email Leads</title></head>';
+    print '<body><a href="' . $acct_manager_url . '">Return to main page</a>';
     
     print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::LEADS . '">';
     print 'To: <input type="text" name="sendto" value="' . $idp_leads_email . '">';
@@ -201,7 +201,7 @@ else if ($action === "leads")
     print "<input type=\"hidden\" name=\"log\" value=\"Emailed Leads\"/>";
     print "<input type=\"hidden\" name=\"reply\" value=\"$replyto\"/>";
     print '<input type="submit" value="SEND"/>';
-    print "</form>";
+    print "</form></body></html>";
     
   }
 else if ($action === "requester")
@@ -209,8 +209,8 @@ else if ($action === "requester")
     $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::USER);
     $filetext = str_replace("REQUESTER",$firstname,$filetext);
     
-    print '<head><title>Email Requester</title></head>';
-    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
+    print '<html><head><title>Email Requester</title></head>';
+    print '<body><a href="' . $acct_manager_url . '">Return to main page</a>';
     
     print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::REQUESTER . '">';
     print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
@@ -223,15 +223,15 @@ else if ($action === "requester")
     print "<input type=\"hidden\" name=\"log\" value=\"Emailed Requester\"/>";
     print "<input type=\"hidden\" name=\"reply\" value=\"$idp_approval_email\"/>";
     print '<input type="submit" value="SEND"/>';
-    print "</form>";
+    print "</form></body></html>";
     
   } 
 else if ($action === "note") 
   {
     $oldnote = $row['notes'];
     $state = $row['request_state'];
-    print '<head><title>Email Requester</title></head>';
-    print '<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>';
+    print '<html><head><title>Email Requester</title></head>';
+    print '<body><a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>';
     print '<br><br>';
     print '<form method="POST" action="add_note.php">';
     print '<textarea name="note" rows="8" cols="40"></textarea>';
@@ -245,17 +245,24 @@ else if ($action === "note")
     print '<form method="POST" action="display_requests.php">';
     print '<input type="submit" value="CANCEL"/>';    
     print "</form>";
-  }    
+    print "</body></html>";
+  } else {
+  error_log("Unknown request action '$action'");
+  print "<html><head><title>Request Unknown</title></head>\n";
+  print "<body><h1>Error: Action '$action' unknown</h1>\n";
+  print "</body></html>";
+}
 
 ldap_close($ldapconn);
 
 function process_error($msg)
 {
   global $acct_manager_url;
-
+  print "<html><head><title>Error processing request action</title>";
+  print "<body><h1>";
   print "$msg";
-  print ('<br><br>');
-  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>'); 
+  print ('</h1><br/><br/>');
+  print ('<a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a></body></html>');
   error_log($msg);
 }
 ?>
