@@ -2,6 +2,8 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* Add link to page to manage whitelisted domains.
+  ([#150](https://github.com/GENI-NSF/geni-ar/issues/150))
 * Look up the correct account request when email address is
   confirmed and we email the admins.
   ([#147](https://github.com/GENI-NSF/geni-ar/issues/147))
