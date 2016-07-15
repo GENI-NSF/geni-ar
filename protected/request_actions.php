@@ -80,101 +80,7 @@ $attrs['homeDirectory'] = "";
 $title = $row['title'];
 $reason = $row['reason'];
 
-/**
- * Deny a password change request.
- */
-function deny_passwd($id, $uid, $row)
-{
-  global $AR_TABLENAME;
-  global $acct_manager_url;
-
-  $res = add_log($uid, "Passwd Change Denied");
-  if ($res != RESPONSE_ERROR::NONE) {
-    process_error ("Logging failed.  Will not change request status.");
-    exit();
-  }
-
-  $sql = "UPDATE " . $AR_TABLENAME
-    . " SET request_state='" . AR_STATE::APPROVED . "'"
-    . " where id ='" . $id . '\'';
-  $res = db_execute_statement($sql);
-  if ($res[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-    process_error("Database action failed."
-                  . " Could not change request status for " . $uid);
-    exit();
-  }
-  header("Location: " . $acct_manager_url . "/display_requests.php");
-}
-
-if ($row['request_state'] === AR_STATE::PASSWD)
-  {
-    if ($action === "passwd")
-      {
-        /* Oddly, do nothing. This case is taken care of below in the
-           humongous if/then/else statement. */
-      }
-    else if ($action === "deny")
-      {
-        deny_passwd($id, $uid, $row);
-        exit();
-      }
-    else
-      {
-        process_error("This a password change request");
-        exit();
-      }
-  }
-
-if ($action === "passwd")
-  {
-    if ($row['request_state'] != AR_STATE::PASSWD) {
-      process_error("This is not a password change request");
-      exit();
-    }
-    if (ldap_check_account($ldapconn,$uid) == false) {
-      process_error("Cannot change password for uid=" . $uid . ". Account does not exist.");
-      exit();
-    } 
-    $res = add_log($uid, "Passwd Changed");
-    if ($res != RESPONSE_ERROR::NONE) {
-      process_error ("Logging failed.  Will not change request status.");
-      exit();
-    } 
-
-    $filter = "(uidNumber=" . $id . ")";
-    $result = ldap_search($ldapconn, $base_dn, $filter);
-    $entry = ldap_first_entry($ldapconn,$result);
-
-    $dn = ldap_get_dn($ldapconn,$entry);
-    $newattrs['userPassword'] = $row['password_hash'];
-    $ret = ldap_modify($ldapconn,$dn,$newattrs);
-    if ($ret === false) {
-      process_error ("ERROR: Failed to change password for ldap account for " . $uid);
-      exit();
-    } else {
-      //notify the user
-      $subject = "GENI Identity Provider Account Password Changed";
-      $body = 'The password for the GENI Identity Provider account'
-        . " with username '$uid' has been changed as requested.\n";
-      $body .= "If you did not request this change please contact"
-        . " the GENI Project Office immediately at help@geni.net.\n";
-      $body .= "\n";
-      $body .= "Thank you,\n";
-      $body .= "GENI Operations\n";
-      $headers = $AR_EMAIL_HEADERS;
-      $headers .= "Cc: $idp_approval_email";
-      mail($user_email, $subject, $body,$headers);
-
-      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::APPROVED . "' where id ='" . $id . '\'';
-      $res = db_execute_statement($sql);
-      if ($res[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-	process_error ("Database action failed.  Could not change request status for " . $uid);
-	exit();
-      }
-      header("Location: " . $acct_manager_url . "/display_requests.php");
-    }
-  }
-else if ($action === "approve") 
+if ($action === "approve") 
   {
     //First check if account exists
     if (ldap_check_account($ldapconn,$uid))
@@ -269,28 +175,6 @@ else if ($action === 'deny')
     mail($idp_audit_email, $subject, $body,$headers);
 
     header("Location: " . $acct_manager_url . "/display_requests.php");
-  }
-else if ($action === "confirm")
-  {
-    $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::CONFIRM);
-    $filetext = str_replace("REQUESTER",$firstname,$filetext);
-    
-    print '<head><title>Confirm Requester</title></head>';
-    print '<a href="' . $acct_manager_url . '">Return to main page</a>';
-    
-    print '<form method="POST" action="send_email.php?arstate=' . AR_STATE::CONFIRM . '">';
-    print 'To: <input type="text" name="sendto" value="' . $user_email . '">';
-    print '<br><br>';
-    $email_body = '<textarea name="email_body" rows="30" cols="80">' . $filetext. '</textarea>';
-    print $email_body;
-    print '<br><br>';
-    print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
-    print "<input type=\"hidden\" name=\"uid\" value=\"$uid\"/>";
-    print "<input type=\"hidden\" name=\"log\" value=\"Requested Confirmation\"/>";
-    print "<input type=\"hidden\" name=\"reply\" value=\"$idp_approval_email\"/>";
-    print '<input type="submit" value="SEND"/>';
-    print "</form>";
-    
   }
 else if ($action === "leads")
   {

@@ -117,7 +117,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="passwd">CHANGE PASSWRD</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
@@ -183,7 +183,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
@@ -242,7 +242,7 @@ foreach ($rows as $row) {
   print "<tr>";
   print'<td class="actions">';
   print '<form method="POST" action="request_actions.php">';
-  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="confirm">CONFIRM REQUESTER</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
+  $actions = '<select class="actionselect" name=action><option disabled selected> -- select an option -- </option><option value="approve">APPROVE</option><option value="deny">DENY</option><option value="leads">EMAIL LEADS</option><option value="requester">EMAIL REQUESTER</option><option value="note">ADD NOTE</option></select>';
   print $actions;
   print '<input type="submit" value="SUBMIT" class="actionsubmit" disabled />';
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";

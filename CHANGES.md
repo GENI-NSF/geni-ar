@@ -2,6 +2,9 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* Remove obsolete options for admin to `CONFIRM REQUESTER`
+  or `CHANGE PASSWRD`. These are self service now.
+  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149))
 * Look up the correct account request when email address is
   confirmed and we email the admins.
   ([#147](https://github.com/GENI-NSF/geni-ar/issues/147))
