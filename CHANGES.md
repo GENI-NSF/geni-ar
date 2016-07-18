@@ -2,6 +2,8 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* Check that phone numbers use only legal characters.
+  ([#146](https://github.com/GENI-NSF/geni-ar/issues/146))
 * Add link to page to manage whitelisted domains.
   ([#150](https://github.com/GENI-NSF/geni-ar/issues/150))
 * Remove obsolete options for admin to `CONFIRM REQUESTER`

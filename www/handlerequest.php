@@ -251,6 +251,21 @@ if ($p1 === $p2) {
   $errors[] = "Passwords do not match.";
 }
 
+// Check for a phone number that LDAP can handle
+// Here we require the first character be non-space,
+// and otherwise accept all characters the ITU standard E.123 accepts,
+// less those that our LDAP implementation seems to dislike.
+// Note that this allows clearly bogus phone numbers, eg.
+// "+" or "nophone"
+if (array_key_exists('phone', $_REQUEST) && $_REQUEST['phone']) {
+  $phone = $_REQUEST['phone'];
+  $pattern = '/^[\+\(\)0-9a-zA-Z\/\.\-\,]+[\+ \(\)0-9a-zA-Z\/\.\-\,]*$/';
+  $ret = preg_match($pattern, $phone);
+  if ($ret === FALSE || $ret === 0) {
+    $errors[] = "Invalid phone number.";
+  }
+}
+
 $required_vars = array('first_name', 'last_name', 'email', 'username_requested',
                        'phone', 'password_hash', 'organization', 'title', 'reason');
 
