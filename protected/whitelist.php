@@ -63,7 +63,7 @@ function delete_from_whitelist($institutions) {
 
 function print_whitelist() {
     $db_conn = db_conn();
-    $sql = "SELECT * from idp_whitelist";
+    $sql = "SELECT * from idp_whitelist ORDER BY institution";
     $db_result = db_fetch_rows($sql, "read idp_whitelist");
 
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {

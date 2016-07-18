@@ -2,6 +2,8 @@
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
+* Sort whitelisted institutions.
+  ([#140](https://github.com/GENI-NSF/geni-ar/issues/140))
 * Check that phone numbers use only legal characters.
   ([#146](https://github.com/GENI-NSF/geni-ar/issues/146))
 * Add link to page to manage whitelisted domains.
