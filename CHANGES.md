@@ -4,6 +4,14 @@
 
 * Sort whitelisted institutions.
   ([#140](https://github.com/GENI-NSF/geni-ar/issues/140))
+* Check that phone numbers use only legal characters.
+  ([#146](https://github.com/GENI-NSF/geni-ar/issues/146))
+* Add link to page to manage whitelisted domains.
+  ([#150](https://github.com/GENI-NSF/geni-ar/issues/150))
+* Remove obsolete options for admin to `CONFIRM REQUESTER`
+  or `CHANGE PASSWRD`. These are self service now.
+  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149)), 
+  ([#117](https://github.com/GENI-NSF/geni-ar/issues/117))
 * Look up the correct account request when email address is
   confirmed and we email the admins.
   ([#147](https://github.com/GENI-NSF/geni-ar/issues/147))

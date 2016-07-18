@@ -34,7 +34,7 @@ class EMAIL_TEMPLATE {
   const DIRECTORY = "@pkgsysconfdir@";
   const ALT_DIRECTORY = "@pkgdatadir@/etc";
 
-  const CONFIRM = 'confirm-email.txt';
+  const CONFIRM = 'confirm-email.txt'; // Unused (OBE)
   const LEADS = 'leads-email.txt';
   const NOTIFICATION = 'notification-email.txt';
   const TUTORIAL = 'tutorial-email.txt';
