@@ -158,7 +158,7 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['userPassword'] = $pw_hash;
     $attrs['mail'] = $email;
     $attrs['eduPersonAffiliation'][] = "member";
-    $attrs['eduPersonAffiliation'] []= "staff";
+    $attrs['eduPersonAffiliation'] []= "tutorial";
     $attrs['telephoneNumber'] = $org_phone;
     $attrs['o'] = "BBN";
     $attrs['uidNumber'] = $id;
