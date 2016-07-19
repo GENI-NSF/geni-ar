@@ -1,5 +1,12 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.9](https://github.com/GENI-NSF/geni-ar/milestones/1.9)
+
+* Tutorial accounts get the affiliation `tutorial` not `staff`.
+  ([#163](https://github.com/GENI-NSF/geni-ar/issues/163))
+* Show URL (e.g. profile) for requests.
+  ([#165](https://github.com/GENI-NSF/geni-ar/issues/165))
+
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
 * Sort whitelisted institutions.
