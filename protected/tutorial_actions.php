@@ -88,7 +88,7 @@ for ($x=1; $x<=$num; $x++)
       }
     $uid = $user_prefix . $usernum;
     if (ldap_check_account($ldapconn,$uid)) {
-      process_error("ERROR: username " . $uid . " is already in use");
+      process_error("ERROR: username " . $uid . " is already in use; try a new username prefix");
       exit();
     }
   }
@@ -120,7 +120,7 @@ for ($x=1; $x<=intval($num); $x++)
     $ret = add_log_with_comment($uid, AR_ACTION::TUTORIAL_ACCOUNT_CREATED,
                                 $comment);
     if ($ret != RESPONSE_ERROR::NONE) {
-      process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
+      process_error("ERROR: Logging failed creating account $uid.  Will not create this or following tutorial requests or accounts.");
       exit();
     }
     //create the password hash
@@ -148,6 +148,7 @@ for ($x=1; $x<=intval($num); $x++)
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
       process_error($msg);
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       add_log_with_comment($uid,"Tutorial Account Creation Failure",$msg);
       exit();
     }
@@ -157,6 +158,7 @@ for ($x=1; $x<=intval($num); $x++)
     $result = db_fetch_rows($sql);
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       process_error("Postgres database query failed");
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       exit();
     }
     $row = $result[RESPONSE_ARGUMENT::VALUE][0];
@@ -188,6 +190,7 @@ for ($x=1; $x<=intval($num); $x++)
     $ret = ldap_add($ldapconn, $new_dn, $attrs);
     if ($ret === false) {
       $msg = "Failed to create Tutorial Account for " . $uid . ". Accounts created for users with lower numbers.";
+      error_log("Failed to add LDAP entry for tutorial account $new_dn: " . ldap_err2str(ldap_errno()));
       process_error ($msg);
       add_log_with_comment($uid, "Tutorial Account Creation Failed", $msg);
       exit();
@@ -197,7 +200,8 @@ for ($x=1; $x<=intval($num); $x++)
     $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-      process_error("Couldn't update created timestamp. Postgres database update failed");
+      process_error("Couldn't update created timestamp for account $uid. Postgres database update failed");
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       exit();
     }
 
@@ -224,7 +228,10 @@ function process_error($msg)
 {
   global $acct_manager_url;
 
-  print ($msg);
+  require_once("header.php");
+  show_header("Error Creating GENI IdP Tutorial Accounts", array());
+  print ("<body><br/>");
+  print ("<h1>$msg</h1>");
   print ('<br><br>');
   print ('<a href="#" onclick="history.go(-1)">Edit request</a>');
   print ('<br><br>');
