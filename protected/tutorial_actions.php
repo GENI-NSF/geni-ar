@@ -37,7 +37,7 @@ if ($ldapconn === -1) {
 }
 
 //get request data
-$num = $_REQUEST['num'];
+$num = $_REQUEST['acctnum'];
 if (!is_numeric($num)) {
   process_error("ERROR: number of accounts must be a number");
   exit();
@@ -45,9 +45,27 @@ if (!is_numeric($num)) {
 
 $user_prefix = $_REQUEST['userprefix'];
 $pw_prefix =  $_REQUEST['pwprefix'];
-$org_email =  $_REQUEST['email'];                            
+$org_email =  $_REQUEST['email'];
 $org_phone =  $_REQUEST['phone'];
-$desc = $_REQUEST['desc'];   
+$desc = $_REQUEST['desc'];
+
+// expiration
+if (! array_key_exists('expiration', $_REQUEST)) {
+  process_error("ERROR: Missing expiration (no key)");
+  exit();
+}
+$expire = $_REQUEST['expiration'];
+if (! (isset($expire) && ! is_null($expire) && $expire != "")) {
+  process_error("ERROR: Missing expiration (empty)");
+  error_log("expiration: $expire");
+  exit();
+}
+$desired_expire_array = date_parse($expire);
+// If you didn't specify a time for the project expiration
+if ($desired_expire_array["hour"] == 0 and $desired_expire_array["minute"] == 0 and $desired_expire_array["second"] == 0 and $desired_expire_array["fraction"] == 0) {
+  // renew for the end of the day
+  $expire = $expire . " 23:59:59";
+}
 
 //check for valid username
 if (strlen($user_prefix) > 6) {
@@ -70,7 +88,7 @@ for ($x=1; $x<=$num; $x++)
       }
     $uid = $user_prefix . $usernum;
     if (ldap_check_account($ldapconn,$uid)) {
-      print ("ERROR: username " . $uid . " is already in use");
+      process_error("ERROR: username " . $uid . " is already in use");
       exit();
     }
   }
@@ -88,6 +106,7 @@ $query_vars[] = 'organization';
 $query_vars[] = 'title';
 $query_vars[] = 'reason';
 $query_vars[] = 'request_state';
+$query_vars[] = 'expiration';
 
 for ($x=1; $x<=intval($num); $x++)
   {
@@ -112,7 +131,7 @@ for ($x=1; $x<=intval($num); $x++)
 
     $conn = db_conn();
 
-    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
+    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED,$expire);
     $query_vals = array();
     foreach ($values as $val) {
       $query_vals[] = $conn->quote($val,"text");

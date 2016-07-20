@@ -24,8 +24,15 @@
 include_once('/etc/geni-ar/settings.php');
 
 global $acct_manager_url;
+require_once("header.php");
+show_header("Create GENI IdP Tutorial Accounts", array());
 
-print '<head><title>Create Tutorial Accounts</title></head>';
+// print '<head><title>Create Tutorial Accounts</title></head>';
+
+// Other styling/includes that Portal uses when using datepicker
+print "<script src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js'></script>";
+print "<link type='text/css' href='https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/humanity/jquery-ui.css' rel='stylesheet' />";
+
 print '<a href="' . $acct_manager_url . '">Return to main page</a>';
 
 print '<h1>';
@@ -41,11 +48,22 @@ print '<p>Tutorial Description: <input type="text" name="desc" required></p>';
 print '<p>User Prefix: <input type="text" name="userprefix" required></p>';
 print '<p>Password Prefix: <input type="text" name="pwprefix" required></p>';
 print '<p>Organizer Email: <input type="email" name="email" required></p>';
-print '<p>Organizer Phone: <input type="text" name="phone" required></p>';
-print '<p>Number of Accounts: <input type="number" name="num" required></p>';
+print '<p>Organizer Phone: <input type="tel" name="phone" required></p>';
+print '<p>Number of Accounts: <input type="number" name="acctnum" required></p>';
+// Note HTML5 date type isn't honored by firefox
+print '<p>Account Expiration: <input type="date" name="expiration" required id="datepicker"></p>';
 print '<br><br>';
 print '<input type="submit" value="CREATE ACCOUNTS"/>';
 print "</form>";
-print '<form method="POST" action="index.html">';
+print '<form method="POST" action="display_requests.php">';
 print '<input type="submit" value="CANCEL"/>';
 print "</form>";
+// For datepicker, see https://api.jqueryui.com/datepicker/
+?>
+<script>
+  $(function() {
+    // minDate = 1 will not allow today or earlier, only future dates.
+      // maxDate and defaultDate are other options
+      $( "#datepicker" ).datepicker({ minDate: 1, dateFormat:'yy-mm-dd' });
+  });
+</script>
