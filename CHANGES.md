@@ -2,12 +2,18 @@
 
 # [Release 1.9](https://github.com/GENI-NSF/geni-ar/milestones/1.9)
 
+## Changes
+
 * Tutorial accounts get the affiliation `tutorial` not `staff`.
   ([#163](https://github.com/GENI-NSF/geni-ar/issues/163))
 * Do not set the `staff` affiliation, only `member`.
   ([#166](https://github.com/GENI-NSF/geni-ar/issues/166))
 * Show URL (e.g. profile) for requests.
   ([#165](https://github.com/GENI-NSF/geni-ar/issues/165))
+
+## Installation Notes
+
+* None
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
@@ -19,7 +25,7 @@
   ([#150](https://github.com/GENI-NSF/geni-ar/issues/150))
 * Remove obsolete options for admin to `CONFIRM REQUESTER`
   or `CHANGE PASSWRD`. These are self service now.
-  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149)), 
+  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149)),
   ([#117](https://github.com/GENI-NSF/geni-ar/issues/117))
 * Look up the correct account request when email address is
   confirmed and we email the admins.
