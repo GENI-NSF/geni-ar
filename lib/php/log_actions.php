@@ -71,35 +71,49 @@ function add_log_with_comment($uid, $action, $comment)
 
 function create_log($query_vars,$query_values)
 {
+  // FIXME
+  // Note that we log things by uid (username).
+  // handlerequest et al ensure that there's only 1 request with this username
+  // that is approved or pending. But there could be a DENIED request with same username.
+  // We could store the request ID not just the username, to ensure logs are associated with the proper request
+  // For example, manually do CONFIRM REQUESTER on a request, then deny it, then open a new request with same username
+  // - logs will get mixed up
   $sql = "INSERT INTO idp_account_actions ("; 
   $sql .= implode (',',$query_vars);
   $sql .= ') VALUES (';
   $sql .= implode(',',$query_values);
   $sql .= ')';
   $result = db_execute_statement($sql);
-  if ($result['code'] != 0) {
+  if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Couldn't create log. Postgres database insert failed");
     error_log("Database error executing: $sql");
     error_log("Database error: " . $result['output']);
     exit();
 }
 
-  return $result['code'];
+  return $result[RESPONSE_ARGUMENT::CODE];
 }
 
 function add_log_comment($uid, $log, $comment)
 {
+  // FIXME
+  // Note that we log things by uid (username).
+  // handlerequest et al ensure that there's only 1 request with this username
+  // that is approved or pending. But there could be a DENIED request with same username.
+  // We could store the request ID not just the username, to ensure logs are associated with the proper request
+  // For example, manually do CONFIRM REQUESTER on a request, then deny it, then open a new request with same username
+  // - logs will get mixed up
   $sql = "SELECT id from idp_account_actions where uid = '" . $uid . "' and action_performed = '" . $log . "' ORDER BY id desc";
   $result = db_fetch_rows($sql);
   $rows = $result['value'];
   $id = $rows[0]['id'];
   $sql = "UPDATE idp_account_actions SET comment='" . $comment ."' WHERE id=" . $id;
   $result = db_execute_statement($sql);
-  if ($result['code'] != 0) {
+  if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Couldn't add comment to log. Postgres database update failed");
     exit();
   }
 
-  return $result['code'];
+  return $result[RESPONSE_ARGUMENT::CODE];
 }
 ?>

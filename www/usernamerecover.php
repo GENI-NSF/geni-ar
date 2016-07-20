@@ -29,10 +29,11 @@ require_once('ar_constants.php');
 
 // Return username associated with $email, "" if no user found.
 function retrieve_username($email) {
+    // Note we assume at most 1 approved request with a given email address
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where "
          . "email = " . $db_conn->quote($email, "text")
-         . " and request_state = 'APPROVED'";
+      . " and request_state = '" . AR_STATE::APPROVED . "'";
     $db_result = db_fetch_row($sql, "get from idp_account_request");
 
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {

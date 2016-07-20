@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
+SUBDIRS = doc
+
 #----------------------------------------------------------------------
 # Handle file replacements. Files can contain configure variables, and
 # will be processed by this sed script. Process files via the
@@ -13,7 +15,7 @@ edit = sed \
 	-e 's|@pkgsysconfdir[@]|$(pkgsysconfdir)|g' \
 	-e 's|@prefix[@]|$(prefix)|g'
 
-apache2.conf lib/php/ar_constants.php lib/php/email_utils.php: Makefile
+apache2.conf apache-2.4.conf lib/php/ar_constants.php lib/php/email_utils.php: Makefile
 	rm -f $@ $@.tmp
 	srcdir=''; \
 	  test -f ./$@.in || srcdir=$(srcdir)/; \
@@ -22,22 +24,25 @@ apache2.conf lib/php/ar_constants.php lib/php/email_utils.php: Makefile
 	mv $@.tmp $@
 
 apache2.conf: $(srcdir)/apache2.conf.in
-
+apache-2.4.conf: $(srcdir)/apache-2.4.conf.in
 lib/php/ar_constants.php: $(srcdir)/lib/php/ar_constants.php.in
 lib/php/email_utils.php: $(srcdir)/lib/php/email_utils.php.in
 
 EXTRA_DIST = \
 	apache2.conf.in \
+	apache-2.4.conf.in \
 	lib/php/ar_constants.php.in \
 	lib/php/email_utils.php.in
 
 CLEANFILES = \
 	apache2.conf \
+	apache-2.4.conf \
 	lib/php/ar_constants.php \
 	lib/php/email_utils.php
 
 nobase_dist_pkgdata_DATA = \
 	apache2.conf \
+	apache-2.4.conf \
 	db/postgresql/schema.sql \
 	db/postgresql/update-1.sql \
 	etc/confirm-email.txt \
@@ -94,7 +99,7 @@ dist_bin_SCRIPTS = \
 	bin/geni-add-log \
 	bin/geni-convert-logs
 
-pkgsysconfdir = $(sysconfdir)/$(PACKAGE_NAME)
+pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 
 install-data-local:
 	$(MKDIR_P) $(DESTDIR)$(pkgsysconfdir)

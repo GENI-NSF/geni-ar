@@ -23,6 +23,7 @@
 //----------------------------------------------------------------------
 
 require_once('db_utils.php');
+require_once('response_format.php');
 
 // Insert a new institution into the idp_whitlelist table
 function insert_to_whitelist($institution) {
@@ -62,13 +63,14 @@ function delete_from_whitelist($institutions) {
 
 function print_whitelist() {
     $db_conn = db_conn();
-    $sql = "SELECT * from idp_whitelist";
-    $db_result = db_fetch_rows($sql, "insert idp_passwd_reset");
+    $sql = "SELECT * from idp_whitelist ORDER BY institution";
+    $db_result = db_fetch_rows($sql, "read idp_whitelist");
 
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
         $institutions = $db_result[RESPONSE_ARGUMENT::VALUE];
         if (count($institutions) > 0) {
-            print "<p>(Check things if you want to delete them)</p>";
+	    print "<p>Listed institutions are whitelisted; users using a confirmed email address from this insitution may use GENI without manual approval.</p>";
+            print "<p>Check a domain to select it for deletion, or add a new institution below.</p>";
             print "<form action='whitelist.php' method='POST'><ul style='list-style-type:none'>";
             $i = 0;
             foreach ($institutions as $inst) {
@@ -88,18 +90,9 @@ function print_whitelist() {
     }
 }
 
+require_once("header.php");
+show_header("GENI IdP Whitelisted Domain Management", array());
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>GENI IDP Whitelist</title>
-<link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
-<link type="text/css" href="geni-ar.css" rel="Stylesheet"/>
-<script type='text/javascript' charset='utf8' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js'></script>
-
-</head>
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -112,10 +105,9 @@ function print_whitelist() {
         });
     });
 </script>
-<body>
 
+<h2  style='margin-top: 80px;' class='card'>Whitelisted Domains</h2>
 <div id="content" class='card' style="width:500px; margin: 30px auto">
-<h2>Whitelist page</h2>
 
 <?php
 

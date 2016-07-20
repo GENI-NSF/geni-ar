@@ -26,6 +26,7 @@ require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
 require_once('log_actions.php');
+require_once('response_format.php');
 
 global $acct_manager_url;
 global $base_dn;
@@ -41,6 +42,7 @@ if ($action === "delete") {
   }
 
   // Delete account
+  // FIXME: Log the delete before doing it?
   $res = add_log($id,"Account Deleted");
   if ($res != 0) {
     process_error ("ERROR: Logging failed.  Will not delete account");
@@ -62,16 +64,19 @@ if ($action === "delete") {
 
     //change status in postgres database
     if (array_key_exists('uidNumber',$attrs)) {
+      if (count($accts) != 1) {
+	error_log("acct_actions DELETE: Found (deleted) " . count($accts) . " accounts in LDAP for uid " . $id);
+      }
       $acct = $accts[0];
       $req_id = $acct['uidnumber'][0];
-      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='DELETED' WHERE id='" . $req_id . '\'';
+      $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . AR_STATE::DELETED . "' WHERE id='" . $req_id . '\'';
       $result = db_execute_statement($sql);
-      if ($result['code'] != 0) {
+      if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
 	process_error("Postgres database update failed");
 	exit();
       }
 
-      if ($result['value'] === 1) {
+      if ($result[RESPONSE_ARGUMENT::VALUE] === 1) {
 	header("Location: " . $acct_manager_url . "/display_accounts.php");
       } else {
 	process_error("Failed to change request state for deleted account for " . $id);
@@ -79,7 +84,7 @@ if ($action === "delete") {
       } 
     }
   } else {
-    add_log_comment($uid, "Account Deleted", "FAILED");
+    add_log_comment($id, "Account Deleted", "FAILED");
     process_error( "Failed to delete account for " . $id);
     exit();
   }

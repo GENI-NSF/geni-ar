@@ -24,6 +24,7 @@
 require_once('db_utils.php');
 require_once('log_actions.php');
 require_once('ar_constants.php');
+require_once('response_format.php');
 include_once('/etc/geni-ar/settings.php');
 
 global $acct_manager_url;
@@ -47,7 +48,7 @@ if ($res === false) {
 
 $sql = "UPDATE " . $AR_TABLENAME . " SET request_state='" . $arstate . "' where id ='" . $id . '\'';
 $result = db_execute_statement($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database update failed");
 }
 
@@ -57,10 +58,10 @@ $email_body = str_replace("\\","\\\\",$email_body);
 
 
 $res = add_log_with_comment($uid, $log,$email_body);
-if ($res != 0) {
+if ($res != RESPONSE_ERROR::NONE) {
   //try again without the comment
   $res = add_log($uid,$log);
-  if ($res != 0)
+  if ($res != RESPONSE_ERROR::NONE)
     process_error("Failed to log email to " . $sendto . " for account " . $uid); 
 } else {
   header("Location: " . $acct_manager_url . "/display_requests.php");

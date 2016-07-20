@@ -32,9 +32,10 @@ require_once('log_actions.php');
 function accept_user($id) {
     $db_conn = db_conn();
     $sql = "SELECT * from idp_account_request where id=" . $db_conn->quote($id, 'integer')
-        . " and (request_state='EMAIL_CONFIRMED')";
+      . " and (request_state='" . AR_STATE::EMAIL_CONF . "')";
     $db_result = db_fetch_rows($sql, "fetch accounts with id $id");
     if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
+        // FIXME: Could this return 0 rows?
         $result = $db_result[RESPONSE_ARGUMENT::VALUE][0];
     } else {
         error_log("Error getting user record: " . $db_result[RESPONSE_ARGUMENT::OUTPUT]);
@@ -66,7 +67,7 @@ function accept_user($id) {
             add_log_comment($uid, AR_ACTION::ACCOUNT_CREATED, "FAILED");
             return false;
         }
-        $sql = "UPDATE idp_account_request SET request_state='APPROVED', " 
+        $sql = "UPDATE idp_account_request SET request_state='" . AR_STATE::APPROVED . "', "
              . "created_ts=now() at time zone 'utc' where id ='" . $id . '\'';
         $update_result = db_execute_statement($sql);
 
@@ -163,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         $sql = "SELECT * from idp_account_request "
         . "where id = " . $db_conn->quote($id, 'integer')
-        . " and (request_state='EMAIL_CONFIRMED')";
+        . " and (request_state='" AR_STATE::EMAIL_CONF . "')";
 
         $db_result = db_fetch_row($sql, "get idp_account_request");
         if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {

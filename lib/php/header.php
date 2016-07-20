@@ -38,7 +38,6 @@ function show_header($title, $table_ids) {
   // [9, 'desc'] means order table based on values in 9th column (zero indexed),
   // in descending order
   $table_orders = array(
-    "#currentrequests" => "[9, 'desc']",
     "#confirmedrequests" => "[9, 'desc']",
     "#requesterconfirmation" => "[9, 'desc']",
     "#waitingforlead" => "[9, 'desc']",
@@ -70,6 +69,7 @@ function show_header($title, $table_ids) {
   echo "<body>";
 
   echo "<ul id='header'>";
+  echo "<li class='headerlink'><a href='whitelist.php'>Manage Whitelist</a></li>";
   echo "<li class='headerlink'><a href='tutorial_confirmation.php'>Create Tutorial Accounts</a></li>";
   echo "<li class='headerlink'><a href='action_log.php?uid=ALL'>Account Action Logs</a></li>";
   echo "<li class='headerlink'><a href='display_accounts.php'>Manage Accounts</a></li>";

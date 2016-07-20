@@ -16,7 +16,7 @@
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,ldapsearch -xLLL -b "dc=shib-idp2,dc=gpolab,dc=bbn,dc=com" uid=* sn givenName cn
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 // WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
 // IN THE WORK.
@@ -25,10 +25,14 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('response_format.php');
 
 global $acct_manager_url;
 
 $user = $_GET["uid"];
+
+// Show all account logs for the given username (or ALL)
+// Note: account logs are by username. So a previously denied account under the same username will show up here
 
 $conn = db_conn();
 if ($user === "ALL")
@@ -39,14 +43,14 @@ if ($user === "ALL")
     $sql = "SELECT * FROM idp_account_actions where uid='" . $user . '\' order by action_ts desc';
   }
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   print '<a href="' . $acct_manager_url . '">Return to main page</a>';
   print '<br></br>';
   process_error("Postgres database query failed");
   exit();
 }
 
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 function get_values($row)
 {

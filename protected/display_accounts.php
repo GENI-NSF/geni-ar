@@ -25,6 +25,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('response_format.php');
 
 global $base_dn;
 global $acct_manager_url;
@@ -92,14 +93,14 @@ foreach ($accts as $acct) {
 }
 print '</tbody></table></div>';
 
-$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='DELETED'";
+$sql = "SELECT * FROM " . $AR_TABLENAME . " WHERE request_state='" . AR_STATE::DELETED . "'";
 $result = db_fetch_rows($sql);
-if ($result['code'] != 0) {
+if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
   process_error("Postgres database query failed");
   exit();
 }
 
-$rows = $result['value'];
+$rows = $result[RESPONSE_ARGUMENT::VALUE];
 
 
 print '<div class="card" id="deleted">';
@@ -117,14 +118,17 @@ foreach ($rows as $row) {
   $org = $row['organization'];
   $performer="";
   $action_ts="";
+  // FIXME: If there are multiple accounts with same username and this action,
+  // then here we take only the most recent. That may not be correct.
+  // We could avoid this by including the request_id in idp_account_actions
   $sql = "SELECT performer, action_ts from idp_account_actions WHERE uid='" . $uname . "' and action_performed='Account Deleted' ORDER BY id desc";
   $action_result = db_fetch_rows($sql);
-  if ($result['code'] != 0) {
+  if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     process_error("Postgres database query failed");
     exit();
   }
 
-  $logs = $action_result['value'];
+  $logs = $action_result[RESPONSE_ARGUMENT::VALUE];
   if ($logs) {
     $performer = $logs[0]['performer'];
     $action_ts = $logs[0]['action_ts'];

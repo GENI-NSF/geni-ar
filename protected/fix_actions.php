@@ -25,6 +25,7 @@ include_once('/etc/geni-ar/settings.php');
 require_once('ldap_utils.php');
 require_once('db_utils.php');
 require_once('ar_constants.php');
+require_once('response_format.php');
 
 $ldapconn = ldap_setup();
 if ($ldapconn === -1) {
@@ -73,16 +74,16 @@ while( $entry ) {
   //and get the request id
   $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' order by id desc"; 
   $result = db_fetch_rows($sql);
-  if ($result['code'] != 0) {
+  if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
     print("Postgres database query failed");
     exit();
   }
-  if (count($result['value']) != 0) {
-    $row = $result['value'][0];
+  if (count($result[RESPONSE_ARGUMENT::VALUE]) != 0) {
+    $row = $result[RESPONSE_ARGUMENT::VALUE][0];
     $id = $row['id'];
   } else {
     $conn = db_conn();
-    $values = array($attrs['givenName'],$attrs['sn'],$attrs['mail'],$uid,$attrs['telephoneNumber'],$attrs['userPassword'],$attrs['o'],"HISTORIC","HISTORIC","APPROVED");
+    $values = array($attrs['givenName'],$attrs['sn'],$attrs['mail'],$uid,$attrs['telephoneNumber'],$attrs['userPassword'],$attrs['o'],"HISTORIC","HISTORIC",AR_STATE::APPROVED);
     $query_vals = array();
     foreach ($values as $val) {
       $query_vals[] = $conn->quote($val,"text");
@@ -108,11 +109,11 @@ while( $entry ) {
     //get request id
     $sql = "SELECT id from idp_account_request where username_requested='" . $uid . "' order by id desc";
     $result = db_fetch_rows($sql);
-    if ($result['code'] != 0) {
+    if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       print("<p>Postgres database query failed</p>");
       exit();
     }
-    $row = $result['value'][0];
+    $row = $result[RESPONSE_ARGUMENT::VALUE][0];
     $id = $row['id'];
   }
 
