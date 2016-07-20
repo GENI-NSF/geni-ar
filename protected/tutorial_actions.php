@@ -37,7 +37,7 @@ if ($ldapconn === -1) {
 }
 
 //get request data
-$num = $_REQUEST['acctnum'];
+$num = $_REQUEST['numaccts'];
 if (!is_numeric($num)) {
   process_error("ERROR: number of accounts must be a number");
   exit();
@@ -50,11 +50,11 @@ $org_phone =  $_REQUEST['phone'];
 $desc = $_REQUEST['desc'];
 
 // expiration
-if (! array_key_exists('expiration', $_REQUEST)) {
+if (! array_key_exists('tutexpiration', $_REQUEST)) {
   process_error("ERROR: Missing expiration (no key)");
   exit();
 }
-$expire = $_REQUEST['expiration'];
+$expire = $_REQUEST['tutexpiration'];
 if (! (isset($expire) && ! is_null($expire) && $expire != "")) {
   process_error("ERROR: Missing expiration (empty)");
   error_log("expiration: $expire");

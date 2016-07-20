@@ -49,9 +49,9 @@ print '<p>User Prefix: <input type="text" name="userprefix" required></p>';
 print '<p>Password Prefix: <input type="text" name="pwprefix" required></p>';
 print '<p>Organizer Email: <input type="email" name="email" required></p>';
 print '<p>Organizer Phone: <input type="tel" name="phone" required></p>';
-print '<p>Number of Accounts: <input type="number" name="acctnum" required></p>';
-// Note HTML5 date type isn't honored by firefox
-print '<p>Account Expiration: <input type="date" name="expiration" required id="datepicker"></p>';
+print '<p>Number of Accounts: <input type="number" name="numaccts" required></p>';
+// Note HTML5 date type isn't honored by firefox, and other browsers are inconsistent
+print '<p>Account Expiration: <input type="text" name="tutexpiration" required id="datepicker"></p>';
 print '<br><br>';
 print '<input type="submit" value="CREATE ACCOUNTS"/>';
 print "</form>";
@@ -64,6 +64,7 @@ print "</form>";
   $(function() {
     // minDate = 1 will not allow today or earlier, only future dates.
       // maxDate and defaultDate are other options
+      // yy-mm-dd makes format match HTML5 date format
       $( "#datepicker" ).datepicker({ minDate: 1, dateFormat:'yy-mm-dd' });
   });
 </script>
