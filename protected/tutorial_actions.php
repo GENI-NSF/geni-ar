@@ -158,7 +158,7 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['userPassword'] = $pw_hash;
     $attrs['mail'] = $email;
     $attrs['eduPersonAffiliation'][] = "member";
-    $attrs['eduPersonAffiliation'] []= "tutorial";
+    $attrs['eduPersonAffiliation'] []= "library-walk-in"; // Limited values are legal here. For us, this means 'tutorial'
     $attrs['telephoneNumber'] = $org_phone;
     $attrs['o'] = "BBN";
     $attrs['uidNumber'] = $id;
