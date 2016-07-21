@@ -64,7 +64,7 @@ while( $entry ) {
   $attrs['userPassword'] = $old_attrs['userPassword'][0];
   $attrs['mail'] = $old_attrs['mail'][0];
   $attrs['eduPersonAffiliation'][] = "member";
-  $attrs['eduPersonAffiliation'] []= "staff";
+  //  $attrs['eduPersonAffiliation'] []= "staff";
   $attrs['telephoneNumber'] = $old_attrs['telephoneNumber'][0];
   $attrs['o'] = $old_attrs['o'][0];
   $attrs['homeDirectory'] = "";

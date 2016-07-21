@@ -36,12 +36,16 @@ function process_error($msg)
 
 function get_values($row)
 {
-  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason, $notes;
+  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason, $notes, $url;
 
   $id = $row['id'];
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
-  $email = $row['email'];
+  if (array_key_exists('email', $row)) {
+    $email = $row['email'];
+  } else {
+    $email = "";
+  }
   $uname = $row['username_requested'];
   $phone = $row['phone'];
   $requested = $row['request_ts'];
@@ -56,6 +60,11 @@ function get_values($row)
     $reason = $row['reason'];
   }
   $notes = $row['notes'];
+  if (array_key_exists('url', $row)) {
+    $url = $row['url'];
+  } else {
+    $url = "";
+  }
 }
 
 
@@ -96,7 +105,7 @@ $(document).ready(function(){
 <tr>
   <th>&nbsp;</th><th>Institution</th><th>Job Title</th><th>Account Reason</th>
   <th>Email Address</th><th>First Name</th><th>Last Name</th><th>Phone Number</th>
-  <th>Username</th><th>Requested (UTC)</th><th>Notes</th>
+  <th>Username</th><th>URL</th><th>Requested (UTC)</th><th>Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -124,7 +133,7 @@ foreach ($rows as $row) {
   print "</form>";
   print "</td>";
 
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$url</td><td>$requested</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
@@ -141,7 +150,7 @@ foreach ($rows as $row) {
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
-  <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
+  <th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
   <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
 </thead>
 <tbody>
@@ -189,7 +198,7 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$url</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
@@ -206,7 +215,7 @@ foreach ($rows as $row) {
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
-<th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
+<th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
 <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
 </thead>
 <tbody>
@@ -248,7 +257,7 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>URL</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
@@ -265,7 +274,7 @@ foreach ($rows as $row) {
 <th> </th>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
-<th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
+<th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
 <th>Action Performer</th><th>Email Sent</th><th>Notes</th></tr>
 </thead>
 <tbody>
@@ -307,7 +316,7 @@ foreach ($rows as $row) {
   print "<input type=\"hidden\" name=\"id\" value=\"$id\"/>";
   print "</form>";
   print "</td>";
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$url</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
@@ -322,7 +331,7 @@ foreach ($rows as $row) {
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
-  <th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
+  <th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
   <th>Performer</th><th>Created (UTC)</th><th>Notes</th></tr>
 </thead>
 <tbody>
@@ -376,7 +385,7 @@ foreach ($rows as $row) {
   }
   /* Format username as link to log page */
   $uname_link = "<a href='action_log.php?uid=$uname'>$uname</a>";
-  print "<tr><td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
+  print "<tr><td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$url</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
@@ -391,7 +400,7 @@ foreach ($rows as $row) {
 <tr>
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
-<th>Phone Number</th><th>Username</th><th>Requested (UTC)</th>
+<th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
 <th>Performer</th><th>Denied (UTC)</th><th>Notes</th></tr>
 </thead>
 <tbody>
@@ -418,7 +427,7 @@ foreach ($rows as $row) {
     $action_ts = $logs[0]['action_ts'];
     $action_ts = substr($action_ts,0,16);
   }
-  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
+  print "<td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname</td><td>$url</td><td>$requested</td><td>$performer</td><td>$action_ts</td><td>$notes</td>";
   print '</tr>';
 }
 ?>
