@@ -80,7 +80,7 @@ $comment = "Created account for Tutorial: " . $desc . " for " . $org_email;
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
-$query_vars[] = 'email';
+//$query_vars[] = 'email';
 $query_vars[] = 'username_requested';
 $query_vars[] = 'phone';
 $query_vars[] = 'password_hash';
@@ -112,7 +112,8 @@ for ($x=1; $x<=intval($num); $x++)
 
     $conn = db_conn();
 
-    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
+    //    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
+    $values = array($desc,$lastname,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
     $query_vals = array();
     foreach ($values as $val) {
       $query_vals[] = $conn->quote($val,"text");
@@ -156,7 +157,7 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['cn'] = $fullname;
     $attrs['displayName'] = $fullname;
     $attrs['userPassword'] = $pw_hash;
-    $attrs['mail'] = $email;
+    //    $attrs['mail'] = $email;
     $attrs['eduPersonAffiliation'][] = "member";
     $attrs['eduPersonAffiliation'] []= "staff";
     $attrs['telephoneNumber'] = $org_phone;

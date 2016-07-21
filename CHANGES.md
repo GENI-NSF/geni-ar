@@ -4,7 +4,9 @@
 
 ## Changes
 
-* None
+* Tutorial accounts no longer get an email address. Users
+  will need to self-assert their address at the Portal.
+  ([#164](https://github.com/GENI-NSF/geni-ar/issues/164))
 
 ## Installation Notes
 
