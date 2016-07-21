@@ -55,12 +55,16 @@ if (! array_key_exists('tutexpiration', $_REQUEST)) {
   exit();
 }
 $expire = $_REQUEST['tutexpiration'];
-if (! (isset($expire) && ! is_null($expire) && $expire != "")) {
+if (! (isset($expire) && $expire != "")) {
   process_error("ERROR: Missing expiration (empty)");
   error_log("expiration: $expire");
   exit();
 }
 $desired_expire_array = date_parse($expire);
+if ($desired_expire_array === FALSE || $desired_expire_array['error_count'] > 0) {
+  process_error("ERROR: Malformed desired expiration date: " . print_r($desired_expire_array['errors'], True));
+  exit();
+}
 // If you didn't specify a time for the project expiration
 if ($desired_expire_array["hour"] == 0 and $desired_expire_array["minute"] == 0 and $desired_expire_array["second"] == 0 and $desired_expire_array["fraction"] == 0) {
   // renew for the end of the day
