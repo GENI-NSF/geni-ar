@@ -101,7 +101,7 @@ function make_ldap_attrs($row) {
     $user_email = $row['email'];
     $attrs['mail'] = $user_email;
     $attrs['eduPersonAffiliation'][] = "member";
-    $attrs['eduPersonAffiliation'] []= "staff";
+    //    $attrs['eduPersonAffiliation'] []= "staff";
     $attrs['telephoneNumber'] = $row['phone'];
     $org = $row['organization'];
     $attrs['o'] = $org;
