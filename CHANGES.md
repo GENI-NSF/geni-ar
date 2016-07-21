@@ -4,7 +4,12 @@
 
 ## Changes
 
-* None
+* Tutorial accounts get the affiliation `library-walk-in` not `staff`.
+  ([#163](https://github.com/GENI-NSF/geni-ar/issues/163))
+* Do not set the `staff` affiliation, only `member`.
+  ([#166](https://github.com/GENI-NSF/geni-ar/issues/166))
+* Show URL (e.g. profile) for requests.
+  ([#165](https://github.com/GENI-NSF/geni-ar/issues/165))
 
 ## Installation Notes
 

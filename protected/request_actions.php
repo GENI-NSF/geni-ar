@@ -68,7 +68,7 @@ $attrs['userPassword'] = $row['password_hash'];
 $user_email = $row['email'];
 $attrs['mail'] = $user_email;
 $attrs['eduPersonAffiliation'][] = "member";
-$attrs['eduPersonAffiliation'] []= "staff";
+//$attrs['eduPersonAffiliation'] []= "staff";
 $attrs['telephoneNumber'] = $row['phone'];
 $org = $row['organization'];
 $attrs['o'] = $org;
@@ -230,7 +230,7 @@ else if ($action === "note")
   {
     $oldnote = $row['notes'];
     $state = $row['request_state'];
-    print '<html><head><title>Email Requester</title></head>';
+    print '<html><head><title>Add Note</title></head>';
     print '<body><a href="' . $acct_manager_url . '/display_requests.php">Return to Account Requests</a>';
     print '<br><br>';
     print '<form method="POST" action="add_note.php">';
