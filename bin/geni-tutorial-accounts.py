@@ -24,18 +24,23 @@ class TutorialAcctCreator:
         uname = "%s%s" %(uprefix,num)
         org = "Tutorial"
         title = "User"
-        email = "%s@gpolab.bbn.com" %(uname)
+#        email = "%s@gpolab.bbn.com" %(uname)
 
         password = "%s%s" %(pwprefix,num)
         salt     = base64.urlsafe_b64encode(uuid.uuid4().bytes)
         t_sha = hashlib.sha512()
         t_sha.update(password+salt)
         pw_hash =  base64.urlsafe_b64encode(t_sha.digest())
-        sql = ('INSERT into idp_account_request ' 
-               + "(first_name,last_name,email,username_requested,phone,password_hash,organization,title,reason)"
-               + " values ('%s','%s','%s','%s', '%s','%s','%s','%s', '%s');\n")
+#        sql = ('INSERT into idp_account_request ' 
+#               + "(first_name,last_name,email,username_requested,phone,password_hash,organization,title,reason)"
+#               + " values ('%s','%s','%s','%s', '%s','%s','%s','%s', '%s');\n")
 
-        fullsql = sql %(firstname,lastname,email,uname,phone,pw_hash,org,title,desc)
+#        fullsql = sql %(firstname,lastname,email,uname,phone,pw_hash,org,title,desc)
+        sql = ('INSERT into idp_account_request ' 
+               + "(first_name,last_name,username_requested,phone,password_hash,organization,title,reason)"
+               + " values ('%s','%s','%s', '%s','%s','%s','%s', '%s');\n")
+
+        fullsql = sql %(firstname,lastname,uname,phone,pw_hash,org,title,desc)
         print "%s" %fullsql
 
         psql.stdin.write(fullsql)
