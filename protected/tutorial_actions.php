@@ -150,7 +150,7 @@ for ($x=1; $x<=intval($num); $x++)
 
     $result = db_execute_statement($sql, 'insert idp account request');
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-      $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
+      $msg = "Could not create request for " . $uid . " (DB error). Aborting process.  Accounts created for users with lower numbers.";
       process_error($msg);
       error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       add_log_with_comment($uid,"Tutorial Account Creation Failure",$msg);
