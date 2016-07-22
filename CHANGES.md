@@ -22,6 +22,10 @@
    ```
    psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-3.sql
    ```
+* Allow null `email` in `idp_account_request` (for tutorials):
+   ```
+   psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-4.sql
+   ```
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
