@@ -39,6 +39,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/apache-2.4.conf
 %{_datadir}/%{name}/db/postgresql/schema.sql
 %{_datadir}/%{name}/db/postgresql/update-1.sql
+%{_datadir}/%{name}/db/postgresql/update-2.sql
+%{_datadir}/%{name}/db/postgresql/update-3.sql
 %{_datadir}/%{name}/etc/confirm-email.txt
 %{_datadir}/%{name}/etc/leads-email.txt
 %{_datadir}/%{name}/etc/notification-email.txt

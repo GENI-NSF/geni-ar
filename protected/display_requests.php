@@ -36,7 +36,7 @@ function process_error($msg)
 
 function get_values($row)
 {
-  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason, $notes, $url;
+  global $id, $firstname, $lastname, $email, $uname, $phone, $requested, $created, $org, $title, $reason, $notes, $url, $expire;
 
   $id = $row['id'];
   $firstname = $row['first_name'];
@@ -65,6 +65,7 @@ function get_values($row)
   } else {
     $url = "";
   }
+  $expire = $row['expiration'];
 }
 
 
@@ -332,7 +333,7 @@ foreach ($rows as $row) {
 <th>Institution</th><th>Job Title</th><th>Account Reason</th>
 <th>Email Address</th><th>First Name</th><th>Last Name</th>
   <th>Phone Number</th><th>Username</th><th>URL</th><th>Requested (UTC)</th>
-  <th>Performer</th><th>Created (UTC)</th><th>Notes</th></tr>
+  <th>Performer</th><th>Created (UTC)</th><th>Notes</th><th>Expiration</th></tr>
 </thead>
 <tbody>
 <?php
@@ -385,7 +386,7 @@ foreach ($rows as $row) {
   }
   /* Format username as link to log page */
   $uname_link = "<a href='action_log.php?uid=$uname'>$uname</a>";
-  print "<tr><td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$url</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td>";
+  print "<tr><td>$org</td><td>$title</td><td>$reason</td><td>$email</td><td>$firstname</td><td>$lastname</td><td>$phone</td><td>$uname_link</td><td>$url</td><td>$requested</td><td>$performer</td><td>$created</td><td>$notes</td><td>$expire</td>";
   print '</tr>';
 }
 ?>

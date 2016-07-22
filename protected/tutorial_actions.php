@@ -37,7 +37,7 @@ if ($ldapconn === -1) {
 }
 
 //get request data
-$num = $_REQUEST['num'];
+$num = $_REQUEST['numaccts'];
 if (!is_numeric($num)) {
   process_error("ERROR: number of accounts must be a number");
   exit();
@@ -45,9 +45,31 @@ if (!is_numeric($num)) {
 
 $user_prefix = $_REQUEST['userprefix'];
 $pw_prefix =  $_REQUEST['pwprefix'];
-$org_email =  $_REQUEST['email'];                            
+$org_email =  $_REQUEST['email'];
 $org_phone =  $_REQUEST['phone'];
-$desc = $_REQUEST['desc'];   
+$desc = $_REQUEST['desc'];
+
+// expiration
+if (! array_key_exists('tutexpiration', $_REQUEST)) {
+  process_error("ERROR: Missing expiration (no key)");
+  exit();
+}
+$expire = $_REQUEST['tutexpiration'];
+if (! (isset($expire) && $expire != "")) {
+  process_error("ERROR: Missing expiration (empty)");
+  error_log("expiration: $expire");
+  exit();
+}
+$desired_expire_array = date_parse($expire);
+if ($desired_expire_array === FALSE || $desired_expire_array['error_count'] > 0) {
+  process_error("ERROR: Malformed desired expiration date: " . print_r($desired_expire_array['errors'], True));
+  exit();
+}
+// If you didn't specify a time for the project expiration
+if ($desired_expire_array["hour"] == 0 and $desired_expire_array["minute"] == 0 and $desired_expire_array["second"] == 0 and $desired_expire_array["fraction"] == 0) {
+  // renew for the end of the day
+  $expire = $expire . " 23:59:59";
+}
 
 //check for valid username
 if (strlen($user_prefix) > 6) {
@@ -70,7 +92,7 @@ for ($x=1; $x<=$num; $x++)
       }
     $uid = $user_prefix . $usernum;
     if (ldap_check_account($ldapconn,$uid)) {
-      print ("ERROR: username " . $uid . " is already in use");
+      process_error("ERROR: username " . $uid . " is already in use; try a new username prefix");
       exit();
     }
   }
@@ -88,6 +110,7 @@ $query_vars[] = 'organization';
 $query_vars[] = 'title';
 $query_vars[] = 'reason';
 $query_vars[] = 'request_state';
+$query_vars[] = 'expiration';
 
 for ($x=1; $x<=intval($num); $x++)
   {
@@ -101,7 +124,7 @@ for ($x=1; $x<=intval($num); $x++)
     $ret = add_log_with_comment($uid, AR_ACTION::TUTORIAL_ACCOUNT_CREATED,
                                 $comment);
     if ($ret != RESPONSE_ERROR::NONE) {
-      process_error("ERROR: Logging failed.  Will not create tutorial requests or accounts.");
+      process_error("ERROR: Logging failed creating account $uid.  Will not create this or following tutorial requests or accounts.");
       exit();
     }
     //create the password hash
@@ -112,8 +135,7 @@ for ($x=1; $x<=intval($num); $x++)
 
     $conn = db_conn();
 
-    //    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
-    $values = array($desc,$lastname,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED);
+    $values = array($desc,$lastname,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED,$expire);
     $query_vals = array();
     foreach ($values as $val) {
       $query_vals[] = $conn->quote($val,"text");
@@ -130,6 +152,7 @@ for ($x=1; $x<=intval($num); $x++)
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
       process_error($msg);
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       add_log_with_comment($uid,"Tutorial Account Creation Failure",$msg);
       exit();
     }
@@ -139,6 +162,7 @@ for ($x=1; $x<=intval($num); $x++)
     $result = db_fetch_rows($sql);
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
       process_error("Postgres database query failed");
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       exit();
     }
     $row = $result[RESPONSE_ARGUMENT::VALUE][0];
@@ -170,6 +194,7 @@ for ($x=1; $x<=intval($num); $x++)
     $ret = ldap_add($ldapconn, $new_dn, $attrs);
     if ($ret === false) {
       $msg = "Failed to create Tutorial Account for " . $uid . ". Accounts created for users with lower numbers.";
+      error_log("Failed to add LDAP entry for tutorial account $new_dn: " . ldap_err2str(ldap_errno()));
       process_error ($msg);
       add_log_with_comment($uid, "Tutorial Account Creation Failed", $msg);
       exit();
@@ -179,7 +204,8 @@ for ($x=1; $x<=intval($num); $x++)
     $sql = "UPDATE " . $AR_TABLENAME . ' SET created_ts=now() at time zone \'utc\' where id =\'' . $id . '\'';
     $result = db_execute_statement($sql);
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-      process_error("Couldn't update created timestamp. Postgres database update failed");
+      process_error("Couldn't update created timestamp for account $uid. Postgres database update failed");
+      error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       exit();
     }
 
@@ -206,7 +232,10 @@ function process_error($msg)
 {
   global $acct_manager_url;
 
-  print ($msg);
+  require_once("header.php");
+  show_header("Error Creating GENI IdP Tutorial Accounts", array());
+  print ("<body><br/>");
+  print ("<h1>$msg</h1>");
   print ('<br><br>');
   print ('<a href="#" onclick="history.go(-1)">Edit request</a>');
   print ('<br><br>');
