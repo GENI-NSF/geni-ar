@@ -4,6 +4,8 @@
 
 ## Changes
 
+* Add expiration on tutorial accounts.
+  ([#158](https://github.com/GENI-NSF/geni-ar/issues/158))
 * Tutorial accounts get the affiliation `library-walk-in` not `staff`.
   ([#163](https://github.com/GENI-NSF/geni-ar/issues/163))
 * Do not set the `staff` affiliation, only `member`.
@@ -13,7 +15,10 @@
 
 ## Installation Notes
 
-* None
+* Add `expiration` column to `idp_account_request`:
+   ```
+   psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-3.sql
+   ```
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 

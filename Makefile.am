@@ -45,6 +45,8 @@ nobase_dist_pkgdata_DATA = \
 	apache-2.4.conf \
 	db/postgresql/schema.sql \
 	db/postgresql/update-1.sql \
+	db/postgresql/update-2.sql \
+	db/postgresql/update-3.sql \
 	etc/confirm-email.txt \
 	etc/leads-email.txt \
 	etc/notification-email.txt \

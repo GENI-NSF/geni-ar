@@ -27,7 +27,8 @@ CREATE TABLE idp_account_request (
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
   request_state VARCHAR DEFAULT 'REQUESTED',
-  notes VARCHAR
+  notes VARCHAR,
+  expiration timestamp DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS idp_account_actions;
