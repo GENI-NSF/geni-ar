@@ -102,7 +102,6 @@ $comment = "Created account for Tutorial: " . $desc . " for " . $org_email;
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
-//$query_vars[] = 'email';
 $query_vars[] = 'username_requested';
 $query_vars[] = 'phone';
 $query_vars[] = 'password_hash';
@@ -127,11 +126,12 @@ for ($x=1; $x<=intval($num); $x++)
       process_error("ERROR: Logging failed creating account $uid.  Will not create this or following tutorial requests or accounts.");
       exit();
     }
+
     //create the password hash
     $pw = $pw_prefix . $usernum;
     $pw_hash = SSHA::newHash($pw);
+
     $lastname = "User" . $usernum;
-    $email = $uid . "@gpolab.bbn.com";
 
     $conn = db_conn();
 
@@ -181,7 +181,6 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['cn'] = $fullname;
     $attrs['displayName'] = $fullname;
     $attrs['userPassword'] = $pw_hash;
-    //    $attrs['mail'] = $email;
     $attrs['eduPersonAffiliation'][] = "member";
     $attrs['eduPersonAffiliation'] []= "library-walk-in"; // Limited values are legal here. For us, this means 'tutorial'
     $attrs['telephoneNumber'] = $org_phone;
