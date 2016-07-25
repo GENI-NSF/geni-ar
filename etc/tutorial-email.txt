@@ -12,9 +12,9 @@ will receive an email to confirm their address before they can use the
 Portal.
 
 Users should also modify their profile to provide their
-correct full name. After logging in to the Portal, select the menu
-under their account name, and pick 'Profile'. Then select 'Modify user
-supplied account details'. On that page, they should supply their full
-name, and preferably their school or institution name under the final
-"Intended use of GENI" field.
+correct full name. After logging in to the Portal, tutorial users
+should select the menu under their account name, and pick
+'Profile'. Then select 'Modify user supplied account details'. On
+that page, they should supply their full name, and preferably their
+school or institution name under the final "Intended use of GENI" field.
 
