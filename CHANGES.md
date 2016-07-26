@@ -4,6 +4,8 @@
 
 ## Changes
 
+* Add script to print/email expired accounts, for use in crontab.
+  ([#167](https://github.com/GENI-NSF/geni-ar/issues/167))
 * Add expiration on tutorial accounts.
   ([#158](https://github.com/GENI-NSF/geni-ar/issues/158))
 * Tutorial accounts get the affiliation `library-walk-in` not `staff`.

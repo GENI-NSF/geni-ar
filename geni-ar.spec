@@ -35,6 +35,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_infodir}/geni-ar.info.gz
 %{_bindir}/geni-add-log
 %{_bindir}/geni-convert-logs
+%{_bindir}/geni-ar-expiring-accounts
 %{_datadir}/%{name}/apache2.conf
 %{_datadir}/%{name}/apache-2.4.conf
 %{_datadir}/%{name}/db/postgresql/schema.sql
