@@ -100,7 +100,7 @@ nobase_dist_pkgdata_DATA = \
 dist_bin_SCRIPTS = \
 	bin/geni-add-log \
 	bin/geni-convert-logs \
-	bin/geni-ar-expiring-accounts
+	bin/geni-ar-expired-accounts
 
 pkgsysconfdir = $(sysconfdir)/$(PACKAGE)
 

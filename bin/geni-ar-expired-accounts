@@ -109,7 +109,7 @@ def find_approval_email(settingsFile, logger):
                 logger.debug("approval email: %s", email)
                 return email
         raise Exception("idp_approval_email set to %s, but could not find that entry in settings file %s" % (emailVar, settingsFile))
-                
+
     raise Exception("No idp_approval_email entry in settings file %s" % settingsFile)
 
 # uri is db_dsn in settings
@@ -161,7 +161,7 @@ def notify_admins(address, accounts, hostname):
     s = smtplib.SMTP('localhost')
     s.sendmail(address, [address], msg.as_string())
     s.quit()
-    
+
 def parse_args(argv):
     global default_conf
     parser = optparse.OptionParser(usage="Notify of (tutorial) accounts that have expired")
