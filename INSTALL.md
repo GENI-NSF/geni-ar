@@ -107,7 +107,7 @@ although it does not require root access.
 Then at the bottom of the file, add these lines:
 ```
 # Email admins the usernames of any expired but active IdP accounts
-0 1 * * 1,2,3,4,5 /usr/local/bin/geni-ar-expired-accounts
+0 1 * * * /usr/local/bin/geni-ar-expired-accounts
 ```
 
 # Test
