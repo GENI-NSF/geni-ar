@@ -21,6 +21,15 @@
    ```
    psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-3.sql
    ```
+* Add crontab entry to detect expired accounts.
+   ```
+   $ sudo crontab -u root -e
+   ```
+  Then at the bottom of the file, add these lines:
+   ```
+# Email admins the usernames of any expired but active IdP accounts
+0 1 * * 1,2,3,4,5 * /usr/local/sbin/geni-ar-expired-accounts
+   ```
 
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 

@@ -96,6 +96,20 @@ Shibboleth installation described in INSTALL-shibboleth.md.
 Include /usr/share/geni-ar/apache-2.4.conf
 ```
 
+# Add crontab entry
+
+Add a cron job to email the administrators of any expired but
+active accounts. This cron job will run in the root user's crontab,
+although it does not require root access.
+```
+   $ sudo crontab -u root -e
+```
+Then at the bottom of the file, add these lines:
+```
+# Email admins the usernames of any expired but active IdP accounts
+0 1 * * 1,2,3,4,5 * /usr/local/sbin/geni-ar-expired-accounts
+```
+
 # Test
 
 _TBD_
