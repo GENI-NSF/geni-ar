@@ -1,0 +1,51 @@
+.TH GENI-AR-EXPIRED-ACCOUNTS 1 "July 27, 2016"
+
+.SH NAME
+geni-ar-expired-accounts \- Find usernames of expired IdP Accounts
+
+.SH SYNOPSIS
+.B geni-ar-expired-accounts
+[\fB--printonly\fR]
+[\fB--debug\fR]
+[\fB--conf \fISETTINGS_FILE\fR]
+
+.SH DESCRIPTION
+Find all active IdP accounts whose expiration has passed, and email
+the admins a list of their usernames.
+Only tutorial accounts currently have an expiration date set.
+The admins must then manually remove these accounts from any
+projects at the Clearinghouse, disable the account at the
+clearinghouse, and then delete the account at the IdP.
+In 'printonly' mode, the list of expired accounts is printed to STDOUT
+only, not emailed. In 'debug' mode, verbose debug information is
+printed.
+The database connection string and 'idp_approval_email' are pulled
+from the geni-ar settings file (default: /etc/geni-ar/settings.php).
+
+This script is intended to be run as a nightly cron job. See below for
+a sample entry.
+
+.SH OPTIONS
+.TP
+\fB--printonly
+Print expired active account usernames to the screen; do not email the
+admins. Default: false.
+.TP
+\fB--debug
+Print verbose debug information to the console during operations. Default: false.
+.TP
+\fB--conf
+Name of settings file from which to parse system-local information. Default: /etc/geni-ar/settings.php.
+        
+.SH FILES
+The email address for the admins and the database connection string are extracted from
+\fB/etc/geni-ar/settings.php\fR or the value of the \fBconf\fR
+argument, in lines labeled '$idp_approval_email' and '$db_dsn' respectively.
+
+.SH EXAMPLES
+crontab entry to notify admins nightly at 1am:
+
+  0 1 * * * /usr/local/bin/geni-ar-expired-accounts
+
+.SH AUTHOR
+geni-ar-expired-accounts was written by Raytheon BBN Technologies.

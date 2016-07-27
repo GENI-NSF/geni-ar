@@ -33,6 +33,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %doc %{_infodir}/geni-ar.info.gz
+%doc %{_mandir}/man1/geni-ar-expired-accounts.1.gz
 %{_bindir}/geni-add-log
 %{_bindir}/geni-convert-logs
 %{_bindir}/geni-ar-expired-accounts
