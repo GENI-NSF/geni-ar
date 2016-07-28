@@ -45,6 +45,7 @@ if (!is_numeric($num)) {
 
 $user_prefix = $_REQUEST['userprefix'];
 $pw_prefix =  $_REQUEST['pwprefix'];
+$org_name =  $_REQUEST['organizer'];
 $org_email =  $_REQUEST['email'];
 $org_phone =  $_REQUEST['phone'];
 $desc = $_REQUEST['desc'];
@@ -98,7 +99,7 @@ for ($x=1; $x<=$num; $x++)
   }
 
 //Ready to create requests and accounts, First log
-$comment = "Created account for Tutorial: " . $desc . " for " . $org_email;
+$comment = "Created account for Tutorial: " . $desc . " run by " . $org_name . " <" . $org_email . ">";
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
@@ -214,6 +215,7 @@ ldap_close($ldapconn);
 
 //send email to organizer
 $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::TUTORIAL);
+$filetext = str_replace("<organizer_name>",$org_name,$filetext);
 $filetext = str_replace("<description>",$desc,$filetext);
 $filetext = str_replace("<username_prefix>",$user_prefix,$filetext);
 $filetext = str_replace("<password_prefix>",$pw_prefix,$filetext);

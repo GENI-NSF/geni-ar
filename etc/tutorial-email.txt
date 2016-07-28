@@ -1,3 +1,5 @@
+<organizer_name>,
+
 The temporary tutorial accounts for the <description> tutorial have been created.
 They are:
 
