@@ -99,7 +99,7 @@ for ($x=1; $x<=$num; $x++)
   }
 
 //Ready to create requests and accounts, First log
-$comment = "Created account for Tutorial: " . $desc . " run by " . $org_name . " <" . $org_email . ">";
+$comment = "Created account for Tutorial: " . $desc . " run by " . $org_name . " (" . $org_email . ")";
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
