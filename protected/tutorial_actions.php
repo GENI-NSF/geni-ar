@@ -50,6 +50,21 @@ $org_email =  $_REQUEST['email'];
 $org_phone =  $_REQUEST['phone'];
 $desc = $_REQUEST['desc'];
 
+if (! $org_name || ! trim($org_name)) {
+  process_error("ERROR: Missing organizer name");
+  exit();
+}
+
+// org_email
+if (! $org_email || ! trim($org_email)) {
+  process_error("ERROR: Missing organizer email");
+  exit();
+}
+if (! filter_var($org_email, FILTER_VALIDATE_EMAIL)) {
+  process_error("ERROR: Invalid organizer email");
+  exit();
+}
+
 // expiration
 if (! array_key_exists('tutexpiration', $_REQUEST)) {
   process_error("ERROR: Missing expiration (no key)");
