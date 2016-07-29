@@ -45,7 +45,7 @@ function get_values($row)
 
   $firstname = $row['givenname'][0];
   $lastname = $row['sn'][0];
-  if (in_array('mail', array_keys((array)$row))) {
+  if (array_key_exists('mail', (array)$row)) {
     $email = $row['mail'][0];
   } else {
     $email = "";

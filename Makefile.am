@@ -47,6 +47,7 @@ nobase_dist_pkgdata_DATA = \
 	db/postgresql/update-1.sql \
 	db/postgresql/update-2.sql \
 	db/postgresql/update-3.sql \
+	db/postgresql/update-4.sql \
 	etc/confirm-email.txt \
 	etc/leads-email.txt \
 	etc/notification-email.txt \

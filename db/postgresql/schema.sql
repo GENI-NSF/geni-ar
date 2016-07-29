@@ -15,7 +15,7 @@ CREATE TABLE idp_account_request (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
-  email VARCHAR NOT NULL,
+  email VARCHAR,
   username_requested VARCHAR NOT NULL,
   phone VARCHAR NOT NULL,
   password_hash VARCHAR NOT NULL,
