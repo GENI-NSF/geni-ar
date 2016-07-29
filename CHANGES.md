@@ -6,6 +6,9 @@
 
 * Add script to print/email expired accounts, for use in crontab.
   ([#167](https://github.com/GENI-NSF/geni-ar/issues/167))
+* Tutorial accounts no longer get an email address. Users
+  will need to self-assert their address at the Portal.
+  ([#164](https://github.com/GENI-NSF/geni-ar/issues/164))
 * Add expiration on tutorial accounts.
   ([#158](https://github.com/GENI-NSF/geni-ar/issues/158))
 * Tutorial accounts get the affiliation `library-walk-in` not `staff`.
@@ -20,6 +23,10 @@
 * Add `expiration` column to `idp_account_request`:
    ```
    psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-3.sql
+   ```
+* Allow null `email` in `idp_account_request` (for tutorials):
+   ```
+   psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-4.sql
    ```
 * Add crontab entry to detect expired accounts.
    ```

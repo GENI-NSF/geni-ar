@@ -47,6 +47,7 @@ print '<form method="POST" action="tutorial_actions.php">';
 print '<p>Tutorial Description: <input type="text" name="desc" required></p>';
 print '<p>User Prefix: <input type="text" name="userprefix" required></p>';
 print '<p>Password Prefix: <input type="text" name="pwprefix" required></p>';
+print '<p>Organizer Name: <input type="text" name="organizer" required></p>';
 print '<p>Organizer Email: <input type="email" name="email" required></p>';
 print '<p>Organizer Phone: <input type="tel" name="phone" required></p>';
 print '<p>Number of Accounts: <input type="number" name="numaccts" required></p>';

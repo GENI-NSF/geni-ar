@@ -45,9 +45,25 @@ if (!is_numeric($num)) {
 
 $user_prefix = $_REQUEST['userprefix'];
 $pw_prefix =  $_REQUEST['pwprefix'];
+$org_name =  $_REQUEST['organizer'];
 $org_email =  $_REQUEST['email'];
 $org_phone =  $_REQUEST['phone'];
 $desc = $_REQUEST['desc'];
+
+if (! $org_name || ! trim($org_name)) {
+  process_error("ERROR: Missing organizer name");
+  exit();
+}
+
+// org_email
+if (! $org_email || ! trim($org_email)) {
+  process_error("ERROR: Missing organizer email");
+  exit();
+}
+if (! filter_var($org_email, FILTER_VALIDATE_EMAIL)) {
+  process_error("ERROR: Invalid organizer email");
+  exit();
+}
 
 // expiration
 if (! array_key_exists('tutexpiration', $_REQUEST)) {
@@ -98,11 +114,10 @@ for ($x=1; $x<=$num; $x++)
   }
 
 //Ready to create requests and accounts, First log
-$comment = "Created account for Tutorial: " . $desc . " for " . $org_email;
+$comment = "Created account for Tutorial: " . $desc . " run by " . $org_name . " (" . $org_email . ")";
 
 $query_vars[] = 'first_name';
 $query_vars[] = 'last_name';
-$query_vars[] = 'email';
 $query_vars[] = 'username_requested';
 $query_vars[] = 'phone';
 $query_vars[] = 'password_hash';
@@ -127,15 +142,16 @@ for ($x=1; $x<=intval($num); $x++)
       process_error("ERROR: Logging failed creating account $uid.  Will not create this or following tutorial requests or accounts.");
       exit();
     }
+
     //create the password hash
     $pw = $pw_prefix . $usernum;
     $pw_hash = SSHA::newHash($pw);
+
     $lastname = "User" . $usernum;
-    $email = $uid . "@gpolab.bbn.com";
 
     $conn = db_conn();
 
-    $values = array($desc,$lastname,$email,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED,$expire);
+    $values = array($desc,$lastname,$uid,$org_phone,$pw_hash,"BBN","Tutorial User",$desc,AR_STATE::APPROVED,$expire);
     $query_vals = array();
     foreach ($values as $val) {
       $query_vals[] = $conn->quote($val,"text");
@@ -150,7 +166,7 @@ for ($x=1; $x<=intval($num); $x++)
 
     $result = db_execute_statement($sql, 'insert idp account request');
     if ($result[RESPONSE_ARGUMENT::CODE] != RESPONSE_ERROR::NONE) {
-      $msg = "Could not create request for " . $uid . ". Aborting process.  Accounts created for users with lower numbers.";
+      $msg = "Could not create request for " . $uid . " (DB error). Aborting process.  Accounts created for users with lower numbers.";
       process_error($msg);
       error_log($result[RESPONSE_ARGUMENT::OUTPUT]);
       add_log_with_comment($uid,"Tutorial Account Creation Failure",$msg);
@@ -181,7 +197,6 @@ for ($x=1; $x<=intval($num); $x++)
     $attrs['cn'] = $fullname;
     $attrs['displayName'] = $fullname;
     $attrs['userPassword'] = $pw_hash;
-    $attrs['mail'] = $email;
     $attrs['eduPersonAffiliation'][] = "member";
     $attrs['eduPersonAffiliation'] []= "library-walk-in"; // Limited values are legal here. For us, this means 'tutorial'
     $attrs['telephoneNumber'] = $org_phone;
@@ -215,6 +230,7 @@ ldap_close($ldapconn);
 
 //send email to organizer
 $filetext = EMAIL_TEMPLATE::load(EMAIL_TEMPLATE::TUTORIAL);
+$filetext = str_replace("<organizer_name>",$org_name,$filetext);
 $filetext = str_replace("<description>",$desc,$filetext);
 $filetext = str_replace("<username_prefix>",$user_prefix,$filetext);
 $filetext = str_replace("<password_prefix>",$pw_prefix,$filetext);
