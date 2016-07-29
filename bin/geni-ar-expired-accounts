@@ -1,0 +1,213 @@
+#!/usr/bin/env python
+# -*- Mode: python -*-
+#
+#----------------------------------------------------------------------
+# Copyright (c) 2016 Raytheon BBN Technologies
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and/or hardware specification (the "Work") to
+# deal in the Work without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Work, and to permit persons to whom the Work
+# is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Work.
+#
+# THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+# MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE WORK OR THE USE OR OTHER DEALINGS
+# IN THE WORK.
+#----------------------------------------------------------------------
+
+# Find accounts that are approved but expired
+# - tutorial accounts are the only ones that get an expiration
+# Either print the list of expired usernames, or email it.
+# An operator must later remove that account from all projects, and delete
+# the account from the IdP
+
+# Operator email and DB connection info are pulled from the geni-ar settings file
+# Set the location of that file in default_conf below
+
+
+from email.mime.text import MIMEText
+import logging
+import optparse
+import smtplib
+import psycopg2
+import psycopg2.extras
+import sys
+import urlparse
+
+default_conf="/etc/geni-ar/settings.php"
+
+# Parse settings.php file and extract acct_manager_url's hostname
+def find_hostname(settingsFile, logger):
+    data = None
+    try:
+        data = open(settingsFile, 'r').read()
+    except Exception:
+        raise Exception("Error reading settings file: %s" % \
+                           settingsFile)
+    lines = data.split('\n')
+    for line in lines:
+        if line.find("$acct_manager_url") == 0:
+            hostname = line.split('//')[1]
+            hostname = hostname.split('/')[0]
+            logger.debug("IdP hostname: %s", hostname)
+            return hostname
+    raise Exception("No acct_manager_url entry in settings file")
+
+# Parse settings.php file and extract db_dsn value
+def find_database_url(settingsFile, logger):
+    data = None
+    try:
+        data = open(settingsFile, 'r').read()
+    except Exception:
+        raise Exception("Error reading settings file: %s" % \
+                           settingsFile)
+    lines = data.split('\n')
+    for line in lines:
+        if line.find("$db_dsn") == 0:
+            db_url = line.split('\'')[1].replace('pgsql', 'postgresql')
+            logger.debug("db_dsn: %s", db_url)
+            return db_url
+    raise Exception("No db_dsn entry in settings file")
+
+# Parse settings.php file and extract idp_approval_email value
+def find_approval_email(settingsFile, logger):
+    data = None
+    try:
+        data = open(settingsFile, 'r').read()
+    except Exception:
+        raise Exception("Error reading settings file: %s" % \
+                           settingsFile)
+    lines = data.split('\n')
+    emailVar = None
+    for line in lines:
+        if line.find("$idp_approval_email") == 0:
+            logger.debug("approval email in this line: %s", line)
+            try:
+                email = line.split('\'')[1]
+                logger.debug("approval email: %s", email)
+                return email
+            except:
+                # Sometimes like on dev systems, the approval email
+                # value is set to another variable
+                emailVar = line.split('=')[1].strip().split(';')[0].strip()
+                break
+
+    if emailVar:
+        for line in lines:
+            if line.find(emailVar) == 0:
+                logger.debug("approval email pointed to var on this line: %s", line)
+                email = line.split('\'')[1]
+                logger.debug("approval email: %s", email)
+                return email
+        raise Exception("idp_approval_email set to %s, but could not find that entry in settings file %s" % (emailVar, settingsFile))
+
+    raise Exception("No idp_approval_email entry in settings file %s" % settingsFile)
+
+# uri is db_dsn in settings
+def db_connect(uri, logger):
+    result = urlparse.urlparse(uri)
+    username = result.username
+    password = result.password
+    database = result.path[1:]
+    hostname = result.hostname
+    logger.debug("Connecting to host %s, db %s, username %s", hostname, database, username)
+    connection = psycopg2.connect(database = database, user = username,
+                                  password = password, host = hostname)
+    return connection
+
+def init_logging(options):
+    level = logging.INFO
+    if options.debug:
+        level = logging.DEBUG
+    logging.basicConfig(level=level)
+
+# Main function. Get usernames of accounts that are APPROVED
+# but have an expiration in the past
+def get_expired_accounts(conn, logger):
+    select_sql = "select username_requested from idp_account_request where request_state  = 'APPROVED' and expiration is not null and expiration < now()";
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute(select_sql)
+    rows = cur.fetchall()
+#    result = []
+#    for row in rows:
+#        if row and row.has_key('username_requested'):
+#            result.append(row['username_requested'])
+    result = [row['username_requested'] for row in rows]
+    cur.close()
+    return result
+
+# Email the admins at the given address with the list of expired accounts
+def notify_admins(address, accounts, hostname):
+    body = "The following accounts on the GENI IdP %s have expired:\n\n" % hostname
+    for account in accounts:
+        body += account + "\n"
+
+    msg = MIMEText(body)
+    msg['Subject'] = "Expired GENI IdP Accounts on %s" % hostname
+    msg['From'] = address
+    msg['To'] = address
+    # Stop cc'ing, it just creates inbox clutter
+    # msg['Cc'] = reply_to
+    msg['Reply-To'] = address
+    s = smtplib.SMTP('localhost')
+    s.sendmail(address, [address], msg.as_string())
+    s.quit()
+
+def parse_args(argv):
+    global default_conf
+    parser = optparse.OptionParser(usage="Notify of (tutorial) accounts that have expired")
+    parser.add_option("--printonly", action="store_true", default=False,
+                      help="Print expired accounts only, do not email.")
+    parser.add_option("--debug", action="store_true", default=False,
+                       help="enable debugging output")
+    parser.add_option("-c", "--conf", default=default_conf,
+                      help="geni-ar settings.php file (default: %s)" % (default_conf))
+    options,args = parser.parse_args()
+    return options,args
+
+def main(argv=None):
+    if argv is None:
+        argv = sys.argv
+    try:
+        options,args = parse_args(argv)
+        init_logging(options)
+    except Exception as e:
+        sys.stderr.write(str(e) + "\n")
+        return 1
+    logger = logging.getLogger()
+    db_url = find_database_url(options.conf, logger)
+    adminAddress = find_approval_email(options.conf, logger)
+    hostname = find_hostname(options.conf, logger)
+    conn = db_connect(db_url, logger)
+    accounts = []
+    try:
+        accounts = get_expired_accounts(conn, logger)
+    finally:
+        conn.close()
+    if not options.printonly and accounts:
+        notify_admins(adminAddress, accounts, hostname)
+        logger.debug("Emailed admins (%s) about %d expired IdP accounts", adminAddress, len(accounts))
+        logger.debug("%s", accounts)
+    else:
+        if options.printonly:
+            logger.info("Found %d expired IdP accounts", len(accounts))
+        else:
+            logger.debug("Found %d expired IdP accounts", len(accounts))
+        if accounts:
+            print "Expired GENI IdP Accounts:\n"
+            for account in accounts:
+                print account
+        elif options.printonly:
+            print "No expired IdP accounts"
+
+if __name__ == "__main__":
+    sys.exit(main())
