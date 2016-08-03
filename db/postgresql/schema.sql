@@ -15,7 +15,7 @@ CREATE TABLE idp_account_request (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
-  email VARCHAR NOT NULL,
+  email VARCHAR,
   username_requested VARCHAR NOT NULL,
   phone VARCHAR NOT NULL,
   password_hash VARCHAR NOT NULL,
@@ -27,7 +27,8 @@ CREATE TABLE idp_account_request (
   username_assigned VARCHAR,
   created_ts timestamp DEFAULT NULL,
   request_state VARCHAR DEFAULT 'REQUESTED',
-  notes VARCHAR
+  notes VARCHAR,
+  expiration timestamp DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS idp_account_actions;

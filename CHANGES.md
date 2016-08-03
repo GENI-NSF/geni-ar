@@ -1,5 +1,50 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.9](https://github.com/GENI-NSF/geni-ar/milestones/1.9)
+
+## Changes
+
+* Add script to print/email expired accounts, for use in crontab.
+  ([#167](https://github.com/GENI-NSF/geni-ar/issues/167))
+* Tutorial accounts no longer get an email address. Users
+  will need to self-assert their address at the Portal.
+  ([#164](https://github.com/GENI-NSF/geni-ar/issues/164))
+* Add expiration on tutorial accounts.
+  ([#158](https://github.com/GENI-NSF/geni-ar/issues/158))
+* Tutorial accounts get the affiliation `library-walk-in` not `staff`.
+  ([#163](https://github.com/GENI-NSF/geni-ar/issues/163))
+* Do not set the `staff` affiliation, only `member`.
+  ([#166](https://github.com/GENI-NSF/geni-ar/issues/166))
+* Show URL (e.g. profile) for requests.
+  ([#165](https://github.com/GENI-NSF/geni-ar/issues/165))
+
+## Installation Notes
+
+* Add `expiration` column to `idp_account_request`:
+
+   ```
+   psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-3.sql
+   ```
+
+* Allow null `email` in `idp_account_request` (for tutorials):
+
+   ```
+   psql -U accreq -h localhost accreq < /usr/share/geni-ar/db/postgresql/update-4.sql
+   ```
+
+* Add crontab entry to detect expired accounts.
+
+   ```
+   $ sudo crontab -u root -e
+   ```
+
+  Then at the bottom of the file, add these lines:
+
+   ```
+   # Email admins the usernames of any expired but active IdP accounts
+   0 1 * * * /usr/local/bin/geni-ar-expired-accounts
+   ```
+
 # [Release 1.8](https://github.com/GENI-NSF/geni-ar/milestones/1.8)
 
 * Sort whitelisted institutions.
@@ -10,7 +55,7 @@
   ([#150](https://github.com/GENI-NSF/geni-ar/issues/150))
 * Remove obsolete options for admin to `CONFIRM REQUESTER`
   or `CHANGE PASSWRD`. These are self service now.
-  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149)), 
+  ([#149](https://github.com/GENI-NSF/geni-ar/issues/149)),
   ([#117](https://github.com/GENI-NSF/geni-ar/issues/117))
 * Look up the correct account request when email address is
   confirmed and we email the admins.

@@ -438,6 +438,27 @@ for existing accounts where the eppn is from the school, not the GENI IdP.
 
 @emph{This section unintentionally left blank.}
 
+@section @code{cron} jobs
+@cindex cron
+
+@subsection Expired account notifications
+GENI IdP accounts can have an expiration date. Tutorial accounts
+in particular will have an expiration, generally a couple days after
+the tutorial ends. This expiration is not enforced; rather,
+after this time the administrator should properly disable
+and delete the account. This cron entry detects IdP accounts
+that are active but expired, and emails the administrators
+of the expired usernames. The administrator should then
+remove that account from any GENI Clearinghouse projects and
+disable the account in the MA, and then Delete the account
+at the GENI IdP.
+
+@example
+# Email admins the usernames of any expired but active IdP accounts
+0 1 * * * /usr/local/bin/geni-ar-expired-accounts
+@end example
+
+
 @section Log files
 
 @subsection Apache log file

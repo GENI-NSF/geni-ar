@@ -45,7 +45,11 @@ function get_values($row)
 
   $firstname = $row['givenname'][0];
   $lastname = $row['sn'][0];
-  $email = $row['mail'][0];
+  if (array_key_exists('mail', (array)$row)) {
+    $email = $row['mail'][0];
+  } else {
+    $email = "";
+  }
   $uid = $row['uid'][0];
   $phone = $row['telephonenumber'][0];
   $org = $row['o'][0];
@@ -61,7 +65,7 @@ show_header("View Accounts", array("#currentaccounts", "#deletedaccounts"));
 <div class='nav2'>
   <ul class='tabs'>
     <li><a class='tab' data-tabindex='1' href='#current'>Current Accounts</a></li>
-    <li><a class='tab' data-tabindex='2' href='#deleted'>Deleted Requests</a></li>
+    <li><a class='tab' data-tabindex='2' href='#deleted'>Deleted Accounts</a></li>
   </ul>
 </div>
 
@@ -113,7 +117,11 @@ print '<tbody>';
 foreach ($rows as $row) {
   $firstname = $row['first_name'];
   $lastname = $row['last_name'];
-  $email = $row['email'];
+  if (array_key_exists('email', $row)) {
+    $email = $row['email'];
+  } else {
+    $email = "";
+  }
   $uname = $row['username_requested'];
   $org = $row['organization'];
   $performer="";
