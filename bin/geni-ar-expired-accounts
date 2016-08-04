@@ -45,6 +45,7 @@ import urlparse
 
 default_conf="/etc/geni-ar/settings.php"
 
+
 # Parse settings.php file and extract acct_manager_url's hostname
 def find_hostname(settingsFile, logger):
     data = None
@@ -133,7 +134,12 @@ def init_logging(options):
 # Main function. Get usernames of accounts that are APPROVED
 # but have an expiration in the past
 def get_expired_accounts(conn, logger):
-    select_sql = "select username_requested from idp_account_request where request_state  = 'APPROVED' and expiration is not null and expiration < now()";
+    select_sql = ('select username_requested' +
+                  ' from idp_account_request' +
+                  ' where request_state = \'APPROVED\'' +
+                  ' and expiration is not null' +
+                  ' and expiration < now()' +
+                  ' order by expiration asc, username_requested asc')
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute(select_sql)
     rows = cur.fetchall()
