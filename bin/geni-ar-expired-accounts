@@ -46,6 +46,14 @@ import urlparse
 default_conf="/etc/geni-ar/settings.php"
 
 
+class ExpiredAccount(object):
+    def __init__(self, username, expiration):
+        self.username = username
+        self.expiration = expiration
+    def __str__(self):
+        return '%s expired %s' % (self.username, self.expiration.date())
+
+
 # Parse settings.php file and extract acct_manager_url's hostname
 def find_hostname(settingsFile, logger):
     data = None
@@ -134,7 +142,7 @@ def init_logging(options):
 # Main function. Get usernames of accounts that are APPROVED
 # but have an expiration in the past
 def get_expired_accounts(conn, logger):
-    select_sql = ('select username_requested' +
+    select_sql = ('select username_requested, expiration' +
                   ' from idp_account_request' +
                   ' where request_state = \'APPROVED\'' +
                   ' and expiration is not null' +
@@ -147,15 +155,16 @@ def get_expired_accounts(conn, logger):
 #    for row in rows:
 #        if row and row.has_key('username_requested'):
 #            result.append(row['username_requested'])
-    result = [row['username_requested'] for row in rows]
+    result = [ExpiredAccount(row['username_requested'], row['expiration'])
+                 for row in rows]
     cur.close()
     return result
 
 # Email the admins at the given address with the list of expired accounts
 def notify_admins(address, accounts, hostname):
-    body = "The following accounts on the GENI IdP %s have expired:\n\n" % hostname
-    for account in accounts:
-        body += account + "\n"
+    body = 'The following accounts on GENI IdP %s have expired:' % (hostname)
+    body += '\n\n'
+    body += '\n'.join([str(a) for a in accounts])
 
     msg = MIMEText(body)
     msg['Subject'] = "Expired GENI IdP Accounts on %s" % hostname
