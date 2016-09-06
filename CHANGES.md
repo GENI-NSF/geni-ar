@@ -4,7 +4,8 @@
 
 ## Changes
 
-* None
+* Fix a syntax error on the approve page
+  ([#176](https://github.com/GENI-NSF/geni-ar/issues/176))
 
 ## Installation Notes
 
