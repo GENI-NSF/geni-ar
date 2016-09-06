@@ -72,14 +72,14 @@ function accept_user($id) {
         $update_result = db_execute_statement($sql);
 
         if ($update_result[RESPONSE_ARGUMENT::CODE] != 0) {
-            error_log("Error updating user record: " . $update_result[RESPONSE_ARGUMENT::OUTPUT]); 
+            error_log("Error updating user record: " . $update_result[RESPONSE_ARGUMENT::OUTPUT]);
         }
         send_admin_success_email($result);
         send_user_success_email($user_email, $result['first_name'],
                                 $result['username_requested']);
 
         return true;
-    } 
+    }
 }
 
 // Populates an attribute object for ldap_add
@@ -140,7 +140,7 @@ function send_admin_success_email($row) {
 function print_error($message) {
     print "<h2>Error:</h2>";
     print "<p>$message</p>";
-}   
+}
 
 ?>
 
@@ -148,7 +148,7 @@ function print_error($message) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>GENI: Reset Password</title>
+<title>GENI: Approve Account</title>
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet" type="text/css">
 <link type="text/css" href="geni-ar.css" rel="Stylesheet"/>
 </head>
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
         $sql = "SELECT * from idp_account_request "
         . "where id = " . $db_conn->quote($id, 'integer')
-        . " and (request_state='" AR_STATE::EMAIL_CONF . "')";
+        . " and (request_state='" . AR_STATE::EMAIL_CONF . "')";
 
         $db_result = db_fetch_row($sql, "get idp_account_request");
         if ($db_result[RESPONSE_ARGUMENT::CODE] == RESPONSE_ERROR::NONE) {
