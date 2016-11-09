@@ -6,6 +6,10 @@
 
 * Fix a syntax error on the approve page
   ([#176](https://github.com/GENI-NSF/geni-ar/issues/176))
+* Clean up expired account reporting
+  ([#178](https://github.com/GENI-NSF/geni-ar/issues/178))
+* Clean up expired account reporting
+  ([#179](https://github.com/GENI-NSF/geni-ar/issues/179))
 
 ## Installation Notes
 
