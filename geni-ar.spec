@@ -1,5 +1,5 @@
 Name:           geni-ar
-Version:        1.9
+Version:        1.10
 Release:        1%{?dist}
 Summary:        GENI account requests
 BuildArch:      noarch
