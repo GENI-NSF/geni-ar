@@ -1,5 +1,15 @@
 # GENI Account Request System Release Notes
 
+# [Release 1.11](https://github.com/GENI-NSF/geni-ar/milestones/1.11)
+
+## Changes
+
+* None
+
+## Installation Notes
+
+* None
+
 # [Release 1.10](https://github.com/GENI-NSF/geni-ar/milestones/1.10)
 
 ## Changes
@@ -8,7 +18,7 @@
   ([#176](https://github.com/GENI-NSF/geni-ar/issues/176))
 * Clean up expired account reporting
   ([#178](https://github.com/GENI-NSF/geni-ar/issues/178))
-* Clean up expired account reporting
+* Close GENI IdP to new accounts
   ([#179](https://github.com/GENI-NSF/geni-ar/issues/179))
 
 ## Installation Notes
