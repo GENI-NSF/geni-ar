@@ -83,6 +83,7 @@ nobase_dist_pkgdata_DATA = \
 	protected/tutorial_requests.php \
 	protected/tutorial_actions.php \
 	protected/tutorial_confirmation.php \
+	protected/verifyuser.php \
 	protected/whitelist.php \
 	shibboleth/attribute-filter-geni.xml \
 	shibboleth/attribute-resolver-geni.xml \
